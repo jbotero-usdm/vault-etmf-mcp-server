@@ -319,7 +319,7 @@ def get_tmf_model_zones() -> str:
     }, indent=2)
 
 # Export ASGI app for deployment
-app = mcp.get_asgi_app()
+app = mcp.streamable_http_app()
 
 if __name__ == "__main__":
     import os
