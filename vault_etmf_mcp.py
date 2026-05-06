@@ -318,10 +318,8 @@ def get_tmf_model_zones() -> str:
         "zones": zones
     }, indent=2)
 
-
 if __name__ == "__main__":
-    # Run the MCP server with SSE transport
-    mcp.run(transport="sse")
-
-# Export ASGI app for Vercel
-app = mcp.get_asgi_app()
+    import os
+    port = int(os.getenv("PORT", 8000))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)
