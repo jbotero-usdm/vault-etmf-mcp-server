@@ -318,6 +318,9 @@ def get_tmf_model_zones() -> str:
         "zones": zones
     }, indent=2)
 
+# Export ASGI app for deployment
+app = mcp.get_asgi_app()
+
 if __name__ == "__main__":
     import os
     port = int(os.getenv("PORT", 8000))
