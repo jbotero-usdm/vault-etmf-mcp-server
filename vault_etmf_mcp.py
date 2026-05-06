@@ -322,3 +322,6 @@ def get_tmf_model_zones() -> str:
 if __name__ == "__main__":
     # Run the MCP server with SSE transport
     mcp.run(transport="sse")
+
+# Export ASGI app for Vercel
+app = mcp.get_asgi_app()
