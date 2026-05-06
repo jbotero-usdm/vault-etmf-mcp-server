@@ -11,10 +11,5 @@
       "src": "/(.*)",
       "dest": "vault_etmf_mcp.py"
     }
-  ],
-  "env": {
-    "VAULT_ETMF_DNS": "@vault_etmf_dns",
-    "VAULT_ETMF_USERNAME": "@vault_etmf_username",
-    "VAULT_ETMF_PASSWORD": "@vault_etmf_password"
-  }
+  ]
 }
