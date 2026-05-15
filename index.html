@@ -4,777 +4,886 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>USDM SmartTMF v2 — AI-Powered TMF Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1F3864;--teal:#00838F;--sky:#0097A7;--dark:#0D1B2A;--surface:#F8FAFC;--card:#FFFFFF;--border:#E2E8F0;--text:#1E293B;--text2:#64748B;--text3:#94A3B8;--green:#10B981;--gbg:#ECFDF5;--gtx:#065F46;--amber:#F59E0B;--abg:#FFFBEB;--atx:#92400E;--red:#EF4444;--rbg:#FEF2F2;--rtx:#991B1B;--blue:#3B82F6;--bbg:#EFF6FF;--btx:#1E40AF;--purple:#8B5CF6;--pbg:#F5F3FF;--ptx:#5B21B6;--r:10px;--sh:0 1px 3px rgba(0,0,0,.08)}
+:root {
+  --navy: #1F3864; --teal: #00838F; --sky: #0097A7; --dark: #0D1B2A;
+  --surface: #F8FAFC; --card: #FFFFFF; --border: #E2E8F0;
+  --text: #1E293B; --text2: #64748B; --text3: #94A3B8;
+  --green: #10B981; --green-bg: #ECFDF5; --green-text: #065F46;
+  --amber: #F59E0B; --amber-bg: #FFFBEB; --amber-text: #92400E;
+  --red: #EF4444; --red-bg: #FEF2F2; --red-text: #991B1B;
+  --blue: #3B82F6; --blue-bg: #EFF6FF; --blue-text: #1E40AF;
+  --purple: #8B5CF6; --purple-bg: #F5F3FF; --purple-text: #5B21B6;
+  --radius: 10px; --shadow-sm: 0 1px 2px rgba(0,0,0,.05); --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.08);
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--surface);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .mono{font-family:'JetBrains Mono',monospace}
 .app{display:flex;height:100vh;overflow:hidden}
 
-/* SIDEBAR */
-.sidebar{width:230px;background:linear-gradient(180deg,var(--dark) 0%,#162544 50%,var(--navy) 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.logo-text span:first-child{font-size:15px;font-weight:700;letter-spacing:-.2px}
-.logo-text span:last-child{display:block;font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--sky);margin-top:-1px}
+/* ===== SIDEBAR ===== */
+.sidebar{width:232px;background:linear-gradient(180deg,var(--dark) 0%,#162544 50%,var(--navy) 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0;border-right:1px solid rgba(255,255,255,.06)}
+.sidebar-logo{padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo img{height:26px;filter:brightness(10)}
+.logo-text{display:flex;flex-direction:column}
+.logo-text span:first-child{font-size:15px;font-weight:700;letter-spacing:-.3px;color:#fff}
+.logo-text span:last-child{font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--sky);margin-top:-1px}
 .sidebar-nav{flex:1;padding:6px 8px;overflow-y:auto}
-.nav-section{margin:14px 0 5px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25)}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);transition:all .12s;margin:1px 0;position:relative}
+.nav-section{margin:14px 0 6px 10px;font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);transition:all .12s ease;margin:1px 0;position:relative}
 .nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
-.nav-item.active{background:rgba(0,151,167,.18);color:#fff;font-weight:600}
+.nav-item.active{background:rgba(0,151,167,.2);color:#fff;font-weight:600}
 .nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--sky)}
-.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.7}.nav-item.active svg{opacity:1}
-.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
-.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:9.5px;color:rgba(255,255,255,.25);line-height:1.6}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:20px;text-align:center}
+.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.3);line-height:1.6}
 
-/* MAIN */
+/* ===== MAIN ===== */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.header{height:52px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0}
-.header-title{font-size:15px;font-weight:700;color:var(--navy);white-space:nowrap}
-.header-sub{font-size:11.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0}
-.pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;white-space:nowrap}
-.pill::before{content:'';width:5px;height:5px;border-radius:50%}
-.pill-g{background:var(--gbg);color:var(--gtx)}.pill-g::before{background:var(--green)}
-.pill-p{background:var(--pbg);color:var(--ptx)}.pill-p::before{background:var(--purple)}
+.header{height:54px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.header-title{font-size:16px;font-weight:700;color:var(--navy);white-space:nowrap}
+.header-sub{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.status-pill{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.status-pill::before{content:'';width:6px;height:6px;border-radius:50%}
+.status-live{background:#ECFDF5;color:#065F46}.status-live::before{background:var(--green)}
+.status-sim{background:#F5F3FF;color:#5B21B6}.status-sim::before{background:var(--purple)}
 .content{flex:1;overflow-y:auto;padding:20px 24px 40px}
 
-/* GRID */
-.g{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
-.mb{margin-bottom:14px}.mb2{margin-bottom:20px}
+/* ===== LAYOUT ===== */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g5{grid-template-columns:repeat(5,1fr)}
+.mb16{margin-bottom:16px}
+.mb20{margin-bottom:20px}
 
-/* CARD */
-.c{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
-.ct{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.ci{font-size:14px}
-.stat{text-align:center;padding:12px 10px}
-.sv{font-size:24px;font-weight:700;color:var(--navy);letter-spacing:-.4px}
-.sl{font-size:10.5px;color:var(--text2);margin-top:2px;font-weight:500}
-.ss{font-size:10px;margin-top:4px;font-weight:600}
+/* ===== CARDS ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
+.card-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.card-title .icon{font-size:15px}
+.stat{text-align:center;padding:14px 12px}
+.stat-val{font-size:26px;font-weight:700;color:var(--navy);letter-spacing:-.5px}
+.stat-label{font-size:11px;color:var(--text2);margin-top:3px;font-weight:500}
+.stat-sub{font-size:10px;margin-top:5px;font-weight:600}
+.up{color:var(--green)}
+.down{color:var(--red)}
+.flat{color:var(--text3)}
 
-/* TABLE */
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{text-align:left;padding:8px 10px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:2px solid var(--border);background:var(--surface)}
-td{padding:8px 10px;border-bottom:1px solid var(--border)}
+/* ===== TABLES ===== */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);border-bottom:2px solid var(--border);background:var(--surface)}
+td{padding:9px 12px;border-bottom:1px solid var(--border)}
 tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:rgba(0,131,143,.015)}
+tbody tr:hover td{background:rgba(0,131,143,.02)}
+td strong{font-weight:600;color:var(--navy)}
 
-/* BADGE */
-.b{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
-.bg{background:var(--gbg);color:var(--gtx)}.ba{background:var(--abg);color:var(--atx)}.br{background:var(--rbg);color:var(--rtx)}.bb{background:var(--bbg);color:var(--btx)}.bp{background:var(--pbg);color:var(--ptx)}.bx{background:#F1F5F9;color:#475569}
-.rag{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
-.rg{background:var(--green)}.ra{background:var(--amber)}.rr{background:var(--red)}
+/* ===== BADGES ===== */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.b-green{background:var(--green-bg);color:var(--green-text)}
+.b-amber{background:var(--amber-bg);color:var(--amber-text)}
+.b-red{background:var(--red-bg);color:var(--red-text)}
+.b-blue{background:var(--blue-bg);color:var(--blue-text)}
+.b-purple{background:var(--purple-bg);color:var(--purple-text)}
+.b-gray{background:#F1F5F9;color:#475569}
+.rag{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+.rag-g{background:var(--green)}.rag-a{background:var(--amber)}.rag-r{background:var(--red)}
 
-/* BTN */
-.btn{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:inherit}
-.bp1{background:var(--teal);color:#fff}.bp1:hover{background:var(--navy)}
-.bo1{background:transparent;border:1px solid var(--border);color:var(--text)}.bo1:hover{background:var(--surface)}
-.bsm{padding:4px 9px;font-size:11px}.bxs{padding:3px 7px;font-size:10px;border-radius:5px}
+/* ===== BUTTONS ===== */
+.btn{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:inherit}
+.btn-p{background:var(--teal);color:#fff}.btn-p:hover{background:var(--navy)}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-o:hover{background:var(--surface)}
+.btn-sm{padding:5px 10px;font-size:11.5px}
+.btn-xs{padding:3px 8px;font-size:10.5px;border-radius:5px}
 
-/* PROGRESS */
-.pb{height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden;display:inline-block}
-.pf{height:100%;border-radius:3px;transition:width .4s}
-.pg{background:linear-gradient(90deg,var(--green),#34D399)}.pa{background:linear-gradient(90deg,var(--amber),#FBBF24)}.pr{background:linear-gradient(90deg,var(--red),#F87171)}.pt{background:linear-gradient(90deg,var(--teal),var(--sky))}
+/* ===== PROGRESS ===== */
+.pbar{height:7px;background:#E2E8F0;border-radius:4px;overflow:hidden}
+.pfill{height:100%;border-radius:4px;transition:width .4s ease}
+.p-green{background:linear-gradient(90deg,#10B981,#34D399)}.p-amber{background:linear-gradient(90deg,#F59E0B,#FBBF24)}.p-red{background:linear-gradient(90deg,#EF4444,#F87171)}.p-teal{background:linear-gradient(90deg,var(--teal),var(--sky))}
 
-/* TABS */
-.tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:9px;border:1px solid var(--border);flex-wrap:wrap;margin-bottom:14px}
-.tab{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .12s;user-select:none}
+/* ===== TABS ===== */
+.tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:9px;border:1px solid var(--border);flex-wrap:wrap}
+.tab{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .12s;user-select:none}
 .tab:hover{color:var(--text);background:rgba(0,0,0,.03)}
-.tab.active{background:var(--card);color:var(--navy);font-weight:700;box-shadow:var(--sh)}
+.tab.active{background:var(--card);color:var(--navy);font-weight:700;box-shadow:var(--shadow)}
 
-/* STEPPER */
-.stepper{display:flex;margin:14px 0}
+/* ===== STEPPER ===== */
+.stepper{display:flex;margin:16px 0}
 .step{flex:1;text-align:center;position:relative}
-.step-dot{width:28px;height:28px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;position:relative;z-index:1}
-.step.done .step-dot{background:var(--green);color:#fff}.step.active .step-dot{background:var(--teal);color:#fff;box-shadow:0 0 0 3px rgba(0,131,143,.15)}
-.step-label{font-size:10px;color:var(--text2);line-height:1.3}
-.step-line{position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
-.step:last-child .step-line{display:none}.step.done .step-line{background:var(--green)}
+.step-dot{width:30px;height:30px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;position:relative;z-index:1}
+.step.done .step-dot{background:var(--green);color:#fff}
+.step.active .step-dot{background:var(--teal);color:#fff;box-shadow:0 0 0 4px rgba(0,131,143,.15)}
+.step-label{font-size:10.5px;color:var(--text2);line-height:1.4}
+.step-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:last-child .step-line{display:none}
+.step.done .step-line{background:var(--green)}
 
-/* PRICING */
-.pc{border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.ph{padding:20px;text-align:center}
-.pn{font-size:16px;font-weight:700}
-.pp{font-size:32px;font-weight:700;margin:8px 0 2px;letter-spacing:-.5px}
-.ppd{font-size:11.5px}
-.pfl{padding:0 18px 18px;flex:1}
-.pfi{display:flex;align-items:start;gap:6px;padding:4px 0;font-size:12px}
-.pfi svg{width:14px;height:14px;color:var(--green);flex-shrink:0;margin-top:2px}
-.pcta{padding:10px 18px 18px;text-align:center}
-.pc.feat{border:2px solid var(--teal);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+/* ===== PRICING ===== */
+.pricing-card{border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pricing-header{padding:22px;text-align:center}
+.pricing-name{font-size:17px;font-weight:700}
+.pricing-price{font-size:34px;font-weight:700;margin:10px 0 2px;letter-spacing:-.5px}
+.pricing-period{font-size:12px}
+.pricing-features{padding:0 20px 20px;flex:1}
+.pricing-feature{display:flex;align-items:start;gap:7px;padding:5px 0;font-size:12.5px}
+.pricing-feature svg{width:15px;height:15px;color:var(--green);flex-shrink:0;margin-top:2px}
+.pricing-cta{padding:12px 20px 20px;text-align:center}
+.pricing-card.featured{border:2px solid var(--teal);box-shadow:var(--shadow-lg)}
 
-/* PANELS */
-.panel{display:none;animation:fu .2s ease}.panel.active{display:block}
-.view{display:none;animation:fu .2s ease}.view.active{display:block}
-@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+/* ===== VEEVA FLOW ===== */
+.flow-row{display:flex;align-items:center;gap:10px;padding:10px 0;flex-wrap:wrap}
+.flow-box{padding:9px 14px;border-radius:8px;font-size:11.5px;font-weight:600;text-align:center}
+.flow-arrow{color:var(--text3);font-size:16px;font-weight:700}
 
-/* MILESTONE */
-.ms-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.ms-row:last-child{border-bottom:none}
-.ms-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.ms-done{background:var(--gbg);color:var(--gtx)}.ms-miss{background:var(--rbg);color:var(--rtx)}.ms-pend{background:var(--abg);color:var(--atx)}.ms-na{background:#F1F5F9;color:var(--text3)}
-.act-item{display:flex;align-items:start;gap:7px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
-.act-item:last-child{border-bottom:none}
-.act-num{width:20px;height:20px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px}
+/* ===== VIEWS ===== */
+.view{display:none;animation:fadeUp .2s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
+/* ===== CRO DETAIL PANELS ===== */
+.cro-panel{display:none;animation:fadeUp .2s ease}
+.cro-panel.active{display:block}
+.metric-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:4px solid var(--border)}
+.metric-ring-val{font-size:18px;font-weight:700}
+.metric-ring-label{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
+.kpi-row{display:flex;gap:12px;flex-wrap:wrap}
+.kpi-box{flex:1;min-width:120px;padding:14px;border-radius:8px;text-align:center}
+.kpi-val{font-size:22px;font-weight:700;letter-spacing:-.3px}
+.kpi-label{font-size:10px;color:var(--text2);margin-top:2px;font-weight:500}
+.issue-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.issue-item:last-child{border-bottom:none}
+.trend-bar{display:flex;align-items:center;gap:6px;font-size:12px}
+.trend-segment{height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
+.action-item{display:flex;align-items:start;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.action-item:last-child{border-bottom:none}
+.action-num{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
 </style>
 </head>
 <body>
 <div class="app">
+<!-- ===== SIDEBAR ===== -->
 <nav class="sidebar">
 <div class="sidebar-logo">
-<div class="logo-text"><span>SmartTMF</span><span>USDM Life Sciences</span></div>
+<div class="logo-text">
+<span>SmartTMF</span>
+<span>USDM Life Sciences</span>
+</div>
 </div>
 <div class="sidebar-nav">
 <div class="nav-section">Core</div>
-<div class="nav-item active" data-v="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
-<div class="nav-item" data-v="documents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>Documents</div>
-<div class="nav-item" data-v="edl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>Expected Document List</div>
-<div class="nav-item" data-v="classification"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>AI Classification</div>
-<div class="nav-item" data-v="qc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>QC Workflow <span class="nav-badge">3</span></div>
-<div class="nav-item" data-v="analytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</div>
-<div class="nav-section">CRO Management</div>
-<div class="nav-item" data-v="cro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>CRO Dashboards</div>
-<div class="nav-item" data-v="onboarding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Onboarding</div>
-<div class="nav-section">Integration</div>
-<div class="nav-item" data-v="veeva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Veeva Vault</div>
-<div class="nav-item" data-v="quality"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Quality Standards</div>
-<div class="nav-section">Business</div>
-<div class="nav-item" data-v="pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</div>
-<div class="nav-item" data-v="scaling"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Multi-Client</div>
+<div class="nav-item active" data-view="dashboard">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+Dashboard
 </div>
-<div class="sidebar-footer">SmartTMF v2.0 · Production<br>CRO names shown for illustration only<br>© 2026 USDM Life Sciences</div>
+<div class="nav-item" data-view="documents">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+Documents
+</div>
+<div class="nav-item" data-view="classification">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+AI Classification
+</div>
+<div class="nav-item" data-view="qc">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+QC Workflow <span class="nav-badge">3</span>
+</div>
+<div class="nav-item" data-view="analytics">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+Analytics
+</div>
+
+<div class="nav-section">CRO Management</div>
+<div class="nav-item" data-view="cro">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+CRO Dashboards
+</div>
+<div class="nav-item" data-view="onboarding">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+Onboarding
+</div>
+
+<div class="nav-section">Integration</div>
+<div class="nav-item" data-view="veeva">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+Veeva Vault
+</div>
+<div class="nav-item" data-view="quality">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+Quality Standards
+</div>
+
+<div class="nav-section">Business</div>
+<div class="nav-item" data-view="pricing">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+Pricing
+</div>
+<div class="nav-item" data-view="scaling">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+Multi-Client
+</div>
+</div>
+<div class="sidebar-footer">
+SmartTMF v2.0 · Production Build<br>
+Box Live · Veeva eTMF Simulation<br>
+© 2026 USDM Life Sciences
+</div>
 </nav>
 
+<!-- ===== MAIN ===== -->
 <main class="main">
 <header class="header">
-<div style="min-width:0"><div class="header-title" id="hT">Dashboard</div><div class="header-sub" id="hS">SmartTMF Pipeline Overview</div></div>
-<div class="header-right"><div class="pill pill-g">Box Connected</div><div class="pill pill-p">Veeva Simulated</div></div>
+<div style="min-width:0">
+<div class="header-title" id="hTitle">Dashboard</div>
+<div class="header-sub" id="hSub">SmartTMF Pipeline Overview — 5 Studies · 5 CROs · Live on Box</div>
+</div>
+<div class="header-right">
+<div class="status-pill status-live">Box Connected</div>
+<div class="status-pill status-sim">Veeva Simulated</div>
+</div>
 </header>
+
 <div class="content" id="content"></div>
 </main>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// DATA LAYER
-// ═══════════════════════════════════════════════════════════════
-const CLIENT = 'Meridian Biosciences';
-
-const STUDIES = [
-  {id:'MRD-101-301',mol:'MRD-101',phase:'Phase 3',ind:'Diffuse Large B-Cell Lymphoma',sites:5,enrolled:36,cro:'Parexel',filed:198,expected:245,status:'Active',milestone:'Ongoing Monitoring'},
-  {id:'MRD-102-201',mol:'MRD-102',phase:'Phase 2',ind:'Ulcerative Colitis',sites:3,enrolled:43,cro:'Kapadi/Alimentiv',filed:172,expected:189,status:'Active',milestone:'Ongoing Monitoring'},
-  {id:'MRD-103-202',mol:'MRD-103',phase:'Phase 2',ind:'Systemic Lupus Erythematosus',sites:3,enrolled:16,cro:'PPD',filed:121,expected:156,status:'Active',milestone:'Ongoing Monitoring'},
-  {id:'MRD-104-101',mol:'MRD-104',phase:'Phase 1',ind:'Solid Tumors',sites:2,enrolled:7,cro:'ICON',filed:82,expected:98,status:'Active',milestone:'FPFV'},
-  {id:'MRD-105-102',mol:'MRD-105',phase:'Phase 1',ind:'Advanced Malignancies',sites:4,enrolled:43,cro:'Kapadi/Alimentiv',filed:195,expected:210,status:'Active',milestone:'Ongoing Monitoring'}
-];
-
-const CROS = [
-  {name:'Parexel',key:'parexel',studies:['MRD-101-301'],cras:2,q4:48,sla:92,qc:88,rej:4,ai:0.91,rag:'green',
-    issues:['Missing PI signature (2 docs)','Late monitoring visit report (1)'],
-    cras_d:[{n:'Jennifer Adams',s:'Onboarded',d:'2024-02-15',sites:'101-001, 101-002',dq:26,qp:92},{n:'David Park',s:'Onboarded',d:'2024-03-01',sites:'101-003/004/005',dq:22,qp:84}],
-    mo:[{m:'Oct',d:14,sl:90,qc:86},{m:'Nov',d:16,sl:93,qc:88},{m:'Dec',d:18,sl:94,qc:91}],trend:'improving',
-    actions:['Follow up on 2 unsigned PI documents from Site 101-004','Schedule QC refresher for David Park (84% pass)','Review monitoring visit report SLA']},
-  {name:'Kapadi/Alimentiv',key:'kapadi',studies:['MRD-102-201','MRD-105-102'],cras:3,q4:72,sla:95,qc:93,rej:2,ai:0.94,rag:'green',
-    issues:['Duplicate filing (1 doc)'],
-    cras_d:[{n:'Emily Chen',s:'Onboarded',d:'2023-09-01',sites:'102-001/002, 105-001/002',dq:32,qp:96},{n:'Robert Liu',s:'Onboarded',d:'2023-09-15',sites:'102-003, 105-003/004',dq:28,qp:93},{n:'Amanda Wright',s:'In Training',d:'—',sites:'Pending',dq:12,qp:87}],
-    mo:[{m:'Oct',d:22,sl:94,qc:91},{m:'Nov',d:24,sl:95,qc:94},{m:'Dec',d:26,sl:96,qc:95}],trend:'stable-high',
-    actions:['Complete Amanda Wright onboarding (3/5 test docs)','Review duplicate filing prevention','Nominate Emily Chen as CRA mentor']},
-  {name:'PPD',key:'ppd',studies:['MRD-103-202'],cras:1,q4:31,sla:78,qc:81,rej:12,ai:0.86,rag:'amber',
-    issues:['Missing signatures (3 docs)','Wrong TMF section (2 docs)','Naming convention violations (2)','Late filings beyond 35-day SLA (4 docs)'],
-    cras_d:[{n:'Chris Martinez',s:'Onboarded',d:'2024-03-15',sites:'103-001/002/003',dq:31,qp:81}],
-    mo:[{m:'Oct',d:12,sl:75,qc:78},{m:'Nov',d:10,sl:77,qc:80},{m:'Dec',d:9,sl:82,qc:85}],trend:'improving-slow',
-    actions:['URGENT: Schedule corrective action meeting with PPD','Assign additional CRA to MRD-103-202','Implement weekly filing checkpoint calls','Targeted training on TMF section classification','Remediate 4 overdue documents']},
-  {name:'ICON',key:'icon',studies:['MRD-104-101'],cras:1,q4:22,sla:86,qc:85,rej:9,ai:0.88,rag:'green',
-    issues:['Wrong PDF version (1 doc)','Missing version number (1 doc)'],
-    cras_d:[{n:'Priya Nair',s:'Onboarded',d:'2024-07-20',sites:'104-001, 104-002',dq:22,qp:85}],
-    mo:[{m:'Oct',d:6,sl:83,qc:82},{m:'Nov',d:8,sl:87,qc:86},{m:'Dec',d:8,sl:89,qc:88}],trend:'improving',
-    actions:['Monitor SLA trend — approaching green threshold','Provide PDF formatting guide to Priya Nair','Review version numbering convention']},
-  {name:'Fortrea',key:'fortrea',studies:['All (Safety)'],cras:2,q4:56,sla:91,qc:90,rej:5,ai:0.92,rag:'green',
-    issues:['Late SAE initial report (2 docs)','Missing follow-up report (1)'],
-    cras_d:[{n:'Tom Nguyen',s:'Onboarded',d:'2024-02-01',sites:'All studies (Safety)',dq:30,qp:92},{n:'Maria Santos',s:'Onboarded',d:'2024-03-01',sites:'All studies (Safety)',dq:26,qp:88}],
-    mo:[{m:'Oct',d:17,sl:89,qc:88},{m:'Nov',d:19,sl:92,qc:91},{m:'Dec',d:20,sl:93,qc:92}],trend:'improving',
-    actions:['Review SAE reporting timelines with PV team','Track follow-up reports in SAE log','Schedule quarterly safety filing review']}
-];
-
-// EDL — Full milestone-triggered Expected Document List
-const EDL_STUDY = [
-  {milestone:'Study Startup',docs:[
-    {name:'TMF Plan',tmf:'01.01',required:true},
-    {name:'Protocol (final signed)',tmf:'01.02',required:true},
-    {name:'Investigator\'s Brochure (IB)',tmf:'01.03',required:true},
-    {name:'Statistical Analysis Plan (SAP)',tmf:'05.01',required:true},
-    {name:'Data Management Plan (DMP)',tmf:'05.02',required:true},
-    {name:'Safety Management Plan',tmf:'08.01',required:true},
-    {name:'Protocol Deviation Plan',tmf:'01.04',required:true},
-    {name:'Monitoring Plan',tmf:'04.01',required:true},
-    {name:'Communication Plan',tmf:'01.05',required:false},
-    {name:'CRO Oversight Plan',tmf:'04.02',required:true},
-    {name:'Master ICF',tmf:'02.01',required:true},
-    {name:'IRB/IEC Approval (Central)',tmf:'02.02',required:true},
-    {name:'CSR Template',tmf:'11.01',required:false},
-    {name:'Delegation of Authority Log (blank)',tmf:'03.01',required:true}
-  ]},
-  {milestone:'First Patient First Visit (FPFV)',docs:[
-    {name:'FPFV Confirmation Letter',tmf:'03.02',required:true},
-    {name:'Enrollment Log (initial)',tmf:'03.03',required:true},
-    {name:'Randomization Plan',tmf:'05.03',required:true},
-    {name:'IVRS/IWRS Manual',tmf:'05.04',required:false}
-  ]},
-  {milestone:'Database Lock',docs:[
-    {name:'Database Lock Memo',tmf:'05.05',required:true},
-    {name:'Query Resolution Summary',tmf:'05.06',required:true},
-    {name:'Data Review Committee Minutes',tmf:'05.07',required:true},
-    {name:'Statistical Analysis Report (draft)',tmf:'05.08',required:true}
-  ]},
-  {milestone:'Study Close',docs:[
-    {name:'Clinical Study Report (final)',tmf:'11.01',required:true},
-    {name:'Study Close-Out Letter',tmf:'11.02',required:true},
-    {name:'Final Monitoring Report',tmf:'04.03',required:true},
-    {name:'Archival Confirmation',tmf:'11.03',required:true}
-  ]}
-];
-
-const EDL_SITE = [
-  {milestone:'Site Activation',docs:[
-    {name:'Site-Specific ICF (signed)',tmf:'02.03',required:true},
-    {name:'Local IRB/EC Approval',tmf:'02.04',required:true},
-    {name:'Site Qualification Visit Report',tmf:'04.04',required:true},
-    {name:'Site Initiation Visit Report',tmf:'04.05',required:true},
-    {name:'Investigator CV + Medical License',tmf:'03.04',required:true},
-    {name:'Financial Disclosure (FDA 3455)',tmf:'03.05',required:true},
-    {name:'Clinical Trial Agreement (executed)',tmf:'03.06',required:true},
-    {name:'Lab Normal Ranges',tmf:'06.01',required:true},
-    {name:'Delegation of Authority Log',tmf:'03.01',required:true},
-    {name:'Site Staff Training Log',tmf:'03.07',required:true}
-  ]},
-  {milestone:'Ongoing Monitoring (Quarterly)',docs:[
-    {name:'Monitoring Visit Report',tmf:'04.06',required:true},
-    {name:'Subject Screening Log',tmf:'03.08',required:true},
-    {name:'Enrollment Log (update)',tmf:'03.03',required:true},
-    {name:'Drug Accountability Log',tmf:'07.01',required:true},
-    {name:'Protocol Deviation Log',tmf:'01.06',required:true},
-    {name:'SAE Reports (per event)',tmf:'08.02',required:true},
-    {name:'CIOMS/MedWatch Forms (per event)',tmf:'08.03',required:true}
-  ]},
-  {milestone:'Site Close-Out',docs:[
-    {name:'Site Close-Out Visit Report',tmf:'04.07',required:true},
-    {name:'Drug Return/Destruction Certificate',tmf:'07.02',required:true},
-    {name:'Final Site Monitoring Report',tmf:'04.08',required:true},
-    {name:'IP Reconciliation',tmf:'07.03',required:true},
-    {name:'Site Archival Confirmation',tmf:'11.04',required:true}
-  ]}
-];
-
-const EDL_LIVING = [
-  {name:'Investigator\'s Brochure (updates)',tmf:'01.03',freq:'Per amendment'},
-  {name:'Safety Reports (DSUR/PSUR)',tmf:'08.04',freq:'Annual'},
-  {name:'Protocol Amendments',tmf:'01.07',freq:'Per amendment'},
-  {name:'ICF Amendments',tmf:'02.05',freq:'Per amendment'},
-  {name:'Training Log Updates',tmf:'03.07',freq:'Quarterly'}
-];
-
-// Simulated EDL status per study
-const EDL_STATUS = {
-  'MRD-101-301':{startup:14,startup_t:14,fpfv:4,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:48,site_act_t:50,monitor:89,monitor_t:105,site_close:0,site_close_t:25},
-  'MRD-102-201':{startup:14,startup_t:14,fpfv:4,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:30,site_act_t:30,monitor:56,monitor_t:63,site_close:0,site_close_t:15},
-  'MRD-103-202':{startup:12,startup_t:14,fpfv:3,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:27,site_act_t:30,monitor:38,monitor_t:63,site_close:0,site_close_t:15},
-  'MRD-104-101':{startup:13,startup_t:14,fpfv:2,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:18,site_act_t:20,monitor:12,monitor_t:42,site_close:0,site_close_t:10},
-  'MRD-105-102':{startup:14,startup_t:14,fpfv:4,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:39,site_act_t:40,monitor:78,monitor_t:84,site_close:0,site_close_t:20}
+// ===================================================================
+// DATA LAYER — All application data in one place
+// ===================================================================
+const DATA = {
+  studies: [
+    {id:'XEN-301',program:'XmAb13676-06',phase:'Phase 3',indication:'Non-Hodgkin Lymphoma',sites:5,enrolled:36,cro:'Parexel',filed:198,expected:245,status:'Active'},
+    {id:'XEN-541',program:'XmAb541-01',phase:'Phase 2',indication:'Inflammatory Bowel Disease',sites:3,enrolled:43,cro:'Kapadi/Alimentiv',filed:172,expected:189,status:'Active'},
+    {id:'XEN-717',program:'XmAb717-06',phase:'Phase 2',indication:'Systemic Lupus Erythematosus',sites:3,enrolled:16,cro:'PPD',filed:121,expected:156,status:'Active'},
+    {id:'XEN-819',program:'XmAb819-01',phase:'Phase 1',indication:'Solid Tumors',sites:2,enrolled:7,cro:'ICON',filed:82,expected:98,status:'Active'},
+    {id:'XEN-942',program:'XmAb942-01',phase:'Phase 1',indication:'Advanced Malignancies',sites:4,enrolled:43,cro:'Kapadi/Alimentiv',filed:195,expected:210,status:'Active'}
+  ],
+  cros: [
+    {
+      name:'Parexel',key:'parexel',studies:['XEN-301'],cras:2,q4Docs:48,sla:92,qcPass:88,reject:4,aiConf:0.91,rag:'green',
+      topIssues:['Missing PI signature (2 docs)','Late monitoring visit report (1 doc)'],
+      cras_detail:[
+        {name:'Jennifer Adams',status:'Onboarded',date:'2024-02-15',sites:'301-001, 301-002',docsQ4:26,qcPass:92},
+        {name:'David Park',status:'Onboarded',date:'2024-03-01',sites:'301-003, 301-004, 301-005',docsQ4:22,qcPass:84}
+      ],
+      monthly:[{m:'Oct',docs:14,sla:90,qc:86},{m:'Nov',docs:16,sla:93,qc:88},{m:'Dec',docs:18,sla:94,qc:91}],
+      trend:'improving',
+      actions:['Follow up on 2 unsigned PI documents from Site 301-004','Schedule QC refresher training for David Park (84% pass rate)','Review monitoring visit report SLA compliance']
+    },
+    {
+      name:'Kapadi/Alimentiv',key:'kapadi',studies:['XEN-541','XEN-942'],cras:3,q4Docs:72,sla:95,qcPass:93,reject:2,aiConf:0.94,rag:'green',
+      topIssues:['Duplicate filing (1 doc)'],
+      cras_detail:[
+        {name:'Emily Chen',status:'Onboarded',date:'2023-09-01',sites:'541-001/002, 942-001/002',docsQ4:32,qcPass:96},
+        {name:'Robert Liu',status:'Onboarded',date:'2023-09-15',sites:'541-003, 942-003/004',docsQ4:28,qcPass:93},
+        {name:'Amanda Wright',status:'In Training',date:'—',sites:'Pending assignment',docsQ4:12,qcPass:87}
+      ],
+      monthly:[{m:'Oct',docs:22,sla:94,qc:91},{m:'Nov',docs:24,sla:95,qc:94},{m:'Dec',docs:26,sla:96,qc:95}],
+      trend:'stable-high',
+      actions:['Complete Amanda Wright onboarding validation (3/5 test docs submitted)','Review duplicate filing prevention with team','Nominate Emily Chen as CRA mentor for new onboards']
+    },
+    {
+      name:'PPD',key:'ppd',studies:['XEN-717'],cras:1,q4Docs:31,sla:78,qcPass:81,reject:12,aiConf:0.86,rag:'amber',
+      topIssues:['Missing signatures (3 docs)','Wrong TMF section classification (2 docs)','Naming convention violations (2 docs)','Late filings beyond 35-day SLA (4 docs)'],
+      cras_detail:[
+        {name:'Chris Martinez',status:'Onboarded',date:'2024-03-15',sites:'717-001, 717-002, 717-003',docsQ4:31,qcPass:81}
+      ],
+      monthly:[{m:'Oct',docs:12,sla:75,qc:78},{m:'Nov',docs:10,sla:77,qc:80},{m:'Dec',docs:9,sla:82,qc:85}],
+      trend:'improving-slowly',
+      actions:['URGENT: Schedule corrective action meeting with PPD TMF lead','Assign additional CRA to XEN-717 to reduce workload','Implement weekly filing checkpoint calls','Provide targeted training on TMF section classification','Review and remediate 4 overdue documents']
+    },
+    {
+      name:'ICON',key:'icon',studies:['XEN-819'],cras:1,q4Docs:22,sla:86,qcPass:85,reject:9,aiConf:0.88,rag:'green',
+      topIssues:['Format issue — wrong PDF version (1 doc)','Missing document version number (1 doc)'],
+      cras_detail:[
+        {name:'Priya Nair',status:'Onboarded',date:'2024-07-20',sites:'819-001, 819-002',docsQ4:22,qcPass:85}
+      ],
+      monthly:[{m:'Oct',docs:6,sla:83,qc:82},{m:'Nov',docs:8,sla:87,qc:86},{m:'Dec',docs:8,sla:89,qc:88}],
+      trend:'improving',
+      actions:['Monitor SLA trend — approaching green threshold','Provide PDF formatting guide to Priya Nair','Review version numbering convention with ICON']
+    },
+    {
+      name:'Fortrea',key:'fortrea',studies:['All (Safety)'],cras:2,q4Docs:56,sla:91,qcPass:90,reject:5,aiConf:0.92,rag:'green',
+      topIssues:['Late SAE initial report (2 docs)','Missing follow-up report (1 doc)'],
+      cras_detail:[
+        {name:'Tom Nguyen',status:'Onboarded',date:'2024-02-01',sites:'All studies (Safety)',docsQ4:30,qcPass:92},
+        {name:'Maria Santos',status:'Onboarded',date:'2024-03-01',sites:'All studies (Safety)',docsQ4:26,qcPass:88}
+      ],
+      monthly:[{m:'Oct',docs:17,sla:89,qc:88},{m:'Nov',docs:19,sla:92,qc:91},{m:'Dec',docs:20,sla:93,qc:92}],
+      trend:'improving',
+      actions:['Review SAE reporting timelines with pharmacovigilance team','Ensure follow-up reports tracked in SAE log','Schedule quarterly safety document filing review']
+    }
+  ],
+  tmfPlans: [
+    {file:'XmAb13676-06 TMF Plan v1.0',study:'XEN-301',ver:'v1.0'},
+    {file:'XmAb541-01 TMF Plan v1.0',study:'XEN-541',ver:'v1.0'},
+    {file:'XmAb541-01 TMF Plan v2.0',study:'XEN-541',ver:'v2.0'},
+    {file:'XmAb541-01 TMF Plan v3.0',study:'XEN-541',ver:'v3.0'},
+    {file:'XmAb717-06 TMF Plan v1.0',study:'XEN-717',ver:'v1.0'},
+    {file:'XmAb717-06 TMF Plan v2.0',study:'XEN-717',ver:'v2.0'},
+    {file:'XmAb819-01 TMF Plan v1.0',study:'XEN-819',ver:'v1.0'},
+    {file:'XmAb819-01 TMF Plan v2.0',study:'XEN-819',ver:'v2.0'},
+    {file:'XmAb942-01 TMF Plan v1.0',study:'XEN-942',ver:'v1.0'},
+    {file:'XmAb942-01 TMF Plan v2.0',study:'XEN-942',ver:'v2.0'},
+    {file:'XmAb942-01 TMF Plan v3.0',study:'XEN-942',ver:'v3.0'},
+    {file:'XmAb942-01 TMF Plan v4.0',study:'XEN-942',ver:'v4.0'}
+  ],
+  qcQueue: [
+    {doc:'XmAb717-06 TMF Plan v2.0',study:'XEN-717',conf:82,route:'QC Review',status:'Pending',cro:'PPD'},
+    {doc:'Monitoring Visit Report 301-004',study:'XEN-301',conf:78,route:'QC Review',status:'Pending',cro:'Parexel'},
+    {doc:'SAE Report XEN-942-015',study:'XEN-942',conf:85,route:'QC Review',status:'Pending',cro:'Kapadi/Alimentiv'},
+    {doc:'XmAb541-01 TMF Plan v3.0',study:'XEN-541',conf:96,route:'Auto-Approved',status:'Approved',cro:'Kapadi/Alimentiv'}
+  ]
 };
 
-const QC_QUEUE = [
-  {doc:'MRD-103 Protocol Deviation Plan v2.0',study:'MRD-103-202',conf:82,route:'QC Review',status:'Pending',cro:'PPD'},
-  {doc:'Monitoring Visit Report 101-004-Q4',study:'MRD-101-301',conf:78,route:'QC Review',status:'Pending',cro:'Parexel'},
-  {doc:'SAE Report MRD-105-015',study:'MRD-105-102',conf:85,route:'QC Review',status:'Pending',cro:'Kapadi/Alimentiv'},
-  {doc:'MRD-102 TMF Plan v3.0',study:'MRD-102-201',conf:96,route:'Auto-Approved',status:'Approved',cro:'Kapadi/Alimentiv'}
-];
-
 // Computed
-const tFiled=STUDIES.reduce((s,d)=>s+d.filed,0), tExp=STUDIES.reduce((s,d)=>s+d.expected,0);
-const comp=((tFiled/tExp)*100).toFixed(1), aS=(CROS.reduce((s,c)=>s+c.sla,0)/CROS.length).toFixed(1), aQ=(CROS.reduce((s,c)=>s+c.qc,0)/CROS.length).toFixed(1), tQ4=CROS.reduce((s,c)=>s+c.q4,0);
+const totalFiled = DATA.studies.reduce((s,d)=>s+d.filed,0);
+const totalExpected = DATA.studies.reduce((s,d)=>s+d.expected,0);
+const completeness = ((totalFiled/totalExpected)*100).toFixed(1);
+const avgSLA = (DATA.cros.reduce((s,c)=>s+c.sla,0)/DATA.cros.length).toFixed(1);
+const avgQC = (DATA.cros.reduce((s,c)=>s+c.qcPass,0)/DATA.cros.length).toFixed(1);
+const totalQ4 = DATA.cros.reduce((s,c)=>s+c.q4Docs,0);
 
-// ═══════════════════════════════════════════════════════════════
+// ===================================================================
 // HELPERS
-// ═══════════════════════════════════════════════════════════════
-const pc=p=>p>=90?'pg':p>=75?'pa':'pr';
-const bc=p=>p>=90?'bg':p>=75?'ba':'br';
-const rD=r=>`<span class="rag r${r[0]}"></span>`;
-const rB=r=>{const m={green:['bg','Green'],amber:['ba','Amber'],red:['br','Red']};return`<span class="b ${m[r][0]}">● ${m[r][1]}</span>`};
-const phB=p=>p.includes('3')?`<span class="b bb">${p}</span>`:p.includes('2')?`<span class="b bb">${p}</span>`:`<span class="b bp">${p}</span>`;
-const pBar=(pct,w)=>`<div class="pb" style="width:${w||90}px"><div class="pf ${pc(pct)}" style="width:${pct}%"></div></div> <span class="mono" style="font-size:11px">${pct}%</span>`;
-const chk='<svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" width="14" height="14" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>';
-const trI=t=>t.includes('improv')?'<span style="color:var(--green);font-size:11px;font-weight:600">↑ Improving</span>':t.includes('stable')?'<span style="color:var(--green);font-size:11px;font-weight:600">→ Stable High</span>':'<span style="color:var(--text3);font-size:11px;font-weight:600">→ Flat</span>';
-const edlPct=(f,t)=>t===0?'—':pBar(Math.round((f/t)*100),70);
+// ===================================================================
+function pclass(pct){return pct>=90?'p-green':pct>=75?'p-amber':'p-red'}
+function bclass(pct){return pct>=90?'b-green':pct>=75?'b-amber':'b-red'}
+function ragDot(r){return `<span class="rag rag-${r[0]}"></span>`}
+function ragBadge(r){const m={green:['b-green','Green'],amber:['b-amber','Amber'],red:['b-red','Red']};return `<span class="badge ${m[r][0]}">● ${m[r][1]}</span>`}
+function phaseBadge(p){return p.includes('3')?`<span class="badge b-blue">${p}</span>`:p.includes('2')?`<span class="badge b-blue">${p}</span>`:`<span class="badge b-purple">${p}</span>`}
+function progressBar(pct,w){return `<div class="pbar" style="width:${w||100}px;display:inline-block"><div class="pfill ${pclass(pct)}" style="width:${pct}%"></div></div> ${pct}%`}
+function checkSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" width="15" height="15" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>'}
+function trendIcon(t){if(t.includes('improv'))return '<span class="up">↑ Improving</span>';if(t.includes('stable'))return '<span class="up">→ Stable (High)</span>';return '<span class="flat">→ Stable</span>'}
 
-// ═══════════════════════════════════════════════════════════════
-// VIEWS
-// ═══════════════════════════════════════════════════════════════
-const V={};
+// ===================================================================
+// VIEW RENDERERS
+// ===================================================================
+const VIEWS = {};
 
-V.dashboard=()=>`
-<div class="g g4 mb2">
-  <div class="c stat"><div class="sv">5</div><div class="sl">Active Studies</div><div class="ss" style="color:var(--green)">Meridian Biosciences</div></div>
-  <div class="c stat"><div class="sv">5</div><div class="sl">CRO Partners</div><div class="ss" style="color:var(--green)">4/5 Green RAG</div></div>
-  <div class="c stat"><div class="sv">${tFiled}</div><div class="sl">Documents Filed</div><div class="ss" style="color:var(--green)">↑ ${comp}% complete</div></div>
-  <div class="c stat"><div class="sv">${aS}%</div><div class="sl">Avg SLA Compliance</div><div class="ss" style="color:var(--green)">35-day target</div></div>
+// ---------- DASHBOARD ----------
+VIEWS.dashboard = ()=>`
+<div class="grid g4 mb20">
+  <div class="card stat"><div class="stat-val">5</div><div class="stat-label">Active Studies</div><div class="stat-sub up">All XmAb programs</div></div>
+  <div class="card stat"><div class="stat-val">5</div><div class="stat-label">CRO Partners</div><div class="stat-sub up">4/5 Green RAG</div></div>
+  <div class="card stat"><div class="stat-val">${totalFiled}</div><div class="stat-label">Documents Filed</div><div class="stat-sub up">↑ ${completeness}% complete</div></div>
+  <div class="card stat"><div class="stat-val">${avgSLA}%</div><div class="stat-label">Avg SLA Compliance</div><div class="stat-sub up">35-day target</div></div>
 </div>
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">📊</span> Study Completeness</div>
-  <table><thead><tr><th>Study</th><th>Phase</th><th>CRO</th><th>Filed</th><th>Expected</th><th>Complete</th></tr></thead><tbody>
-  ${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<tr><td><strong>${s.id}</strong><br><span style="font-size:10px;color:var(--text2)">${s.mol}</span></td><td>${phB(s.phase)}</td><td>${s.cro}</td><td>${s.filed}</td><td>${s.expected}</td><td>${pBar(parseFloat(p),90)}</td></tr>`}).join('')}
-  </tbody></table></div>
-  <div class="c"><div class="ct"><span class="ci">🏥</span> CRO Performance Summary</div>
-  <table><thead><tr><th>CRO</th><th>SLA %</th><th>QC Pass</th><th>Reject</th><th>AI Conf</th><th>RAG</th></tr></thead><tbody>
-  ${CROS.map(c=>`<tr><td><strong>${c.name}</strong></td><td><span class="b ${bc(c.sla)}">${c.sla}%</span></td><td>${c.qc}%</td><td>${c.rej}%</td><td class="mono">${c.ai}</td><td>${rD(c.rag)}</td></tr>`).join('')}
-  </tbody></table>
-  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--text3)">CRO names shown for illustration purposes only</div></div>
+<div class="grid g2 mb16">
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Study Completeness</div>
+    <table><thead><tr><th>Study</th><th>Phase</th><th>CRO</th><th>Filed</th><th>Expected</th><th>Completeness</th></tr></thead><tbody>
+    ${DATA.studies.map(s=>{const pct=((s.filed/s.expected)*100).toFixed(1);return `<tr><td><strong>${s.program}</strong></td><td>${phaseBadge(s.phase)}</td><td>${s.cro}</td><td>${s.filed}</td><td>${s.expected}</td><td>${progressBar(parseFloat(pct),100)}</td></tr>`}).join('')}
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🏥</span> CRO Performance Summary</div>
+    <table><thead><tr><th>CRO</th><th>SLA %</th><th>QC Pass</th><th>Reject %</th><th>AI Conf</th><th>RAG</th></tr></thead><tbody>
+    ${DATA.cros.map(c=>`<tr><td><strong>${c.name}</strong></td><td>${c.sla}%</td><td>${c.qcPass}%</td><td>${c.reject}%</td><td class="mono">${c.aiConf}</td><td>${ragDot(c.rag)}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
 </div>
-<div class="c"><div class="ct"><span class="ci">📦</span> Pipeline — 6-Stage Document Flow</div>
-<div style="display:flex;gap:6px;align-items:center;padding:8px 0;overflow-x:auto">
-${[['📥','01 Intake','CRO uploads','#EFF6FF','#DBEAFE','#93C5FD','#1E40AF'],['🤖','02 AI Classify','Box AI','#F5F3FF','#EDE9FE','#A78BFA','#5B21B6'],['🔍','03 QC Review','Human-in-loop','#FFFBEB','#FEF3C7','#FCD34D','#92400E'],['✅','04 Approved','TMF sections','#ECFDF5','#D1FAE5','#6EE7B7','#065F46'],['❌','05 Rejected','With comments','#FFF1F2','#FECDD3','#FDA4AF','#9F1239'],['📈','06 Analytics','Reports','#F0FDFA','#CCFBF1','#5EEAD4','#0F766E']].map((s,i,a)=>`<div style="flex:1;background:linear-gradient(135deg,${s[3]},${s[4]});border:2px solid ${s[5]};border-radius:10px;padding:12px;text-align:center;min-width:110px"><div style="font-size:16px">${s[0]}</div><div style="font-size:11px;font-weight:700;color:${s[6]};margin-top:2px">${s[1]}</div><div style="font-size:9.5px;color:var(--text2)">${s[2]}</div></div>${i<a.length-1?'<div style="font-size:16px;color:var(--text3)">→</div>':''}`).join('')}
-</div></div>`;
+<div class="card">
+  <div class="card-title"><span class="icon">📦</span> Pipeline — 6-Stage Document Flow (Live Box Folders)</div>
+  <div style="display:flex;gap:8px;align-items:center;padding:10px 0;overflow-x:auto">
+    ${[
+      ['📥','01 Intake','CRO uploads','#EFF6FF','#DBEAFE','#93C5FD','#1E40AF'],
+      ['🤖','02 AI Classify','Box AI Extract','#F5F3FF','#EDE9FE','#A78BFA','#5B21B6'],
+      ['🔍','03 QC Review','Human-in-loop','#FFFBEB','#FEF3C7','#FCD34D','#92400E'],
+      ['✅','04 Approved','TMF sections','#ECFDF5','#D1FAE5','#6EE7B7','#065F46'],
+      ['❌','05 Rejected','With comments','#FFF1F2','#FECDD3','#FDA4AF','#9F1239'],
+      ['📈','06 Analytics','AI reports','#F0FDFA','#CCFBF1','#5EEAD4','#0F766E']
+    ].map((s,i,a)=>`<div style="flex:1;background:linear-gradient(135deg,${s[3]},${s[4]});border:2px solid ${s[5]};border-radius:12px;padding:14px;text-align:center;min-width:120px"><div style="font-size:18px">${s[0]}</div><div style="font-size:11.5px;font-weight:700;color:${s[6]};margin-top:3px">${s[1]}</div><div style="font-size:10px;color:var(--text2)">${s[2]}</div></div>${i<a.length-1?'<div style="font-size:18px;color:var(--text3)">→</div>':''}`).join('')}
+  </div>
+</div>`;
 
-// ──── EDL ────
-V.edl=()=>{
-  let html=`<div class="tabs" id="edlTabs"><div class="tab active" data-edl="overview">Overview</div>${STUDIES.map(s=>`<div class="tab" data-edl="${s.id}">${s.id}</div>`).join('')}</div><div id="edlContent">${renderEDLOverview()}${STUDIES.map(s=>renderEDLStudy(s)).join('')}</div>`;
+// ---------- CRO DASHBOARDS ----------
+VIEWS.cro = ()=>{
+  let html = `<div class="tabs mb16" id="croTabs">
+    <div class="tab active" data-cro="all">All CROs</div>
+    ${DATA.cros.map(c=>`<div class="tab" data-cro="${c.key}">${c.name}</div>`).join('')}
+  </div>
+  <div id="croContent">
+    ${renderCROAll()}
+    ${DATA.cros.map(c=>renderCRODetail(c)).join('')}
+  </div>`;
   return html;
 };
 
-function renderEDLOverview(){
-  return`<div class="panel active" id="edl-overview">
-  <div class="g g5 mb">
-    ${STUDIES.map(s=>{const st=EDL_STATUS[s.id];const tot=st.startup+st.fpfv+st.site_act+st.monitor;const exp=st.startup_t+st.fpfv_t+st.site_act_t+st.monitor_t;const p=Math.round((tot/exp)*100);
-    return`<div class="c stat"><div class="sv" style="color:${p>=90?'var(--green)':p>=75?'var(--amber)':'var(--red)'}">${p}%</div><div class="sl">${s.id}</div><div class="ss">${tot}/${exp} docs</div></div>`}).join('')}
-  </div>
-  <div class="g g2 mb">
-    <div class="c"><div class="ct"><span class="ci">📋</span> Study-Level EDL Template (${EDL_STUDY.reduce((s,m)=>s+m.docs.length,0)} document types)</div>
-    ${EDL_STUDY.map(ms=>`<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:var(--surface);border-radius:6px">🎯 ${ms.milestone}</div>
-    ${ms.docs.map(d=>`<div class="ms-row"><span class="mono" style="font-size:10px;color:var(--text3);width:40px">${d.tmf}</span><span style="flex:1">${d.name}</span>${d.required?'<span class="b bg" style="font-size:9px">Required</span>':'<span class="b bx" style="font-size:9px">Optional</span>'}</div>`).join('')}
-    </div>`).join('')}
+function renderCROAll(){
+  return `<div class="cro-panel active" id="cro-all">
+    <div class="grid g5 mb16">
+      <div class="card stat"><div class="stat-val">${totalQ4}</div><div class="stat-label">Q4 Documents</div></div>
+      <div class="card stat"><div class="stat-val">${avgSLA}%</div><div class="stat-label">Avg SLA</div></div>
+      <div class="card stat"><div class="stat-val">${avgQC}%</div><div class="stat-label">Avg QC Pass</div></div>
+      <div class="card stat"><div class="stat-val" style="color:var(--green)">4/5</div><div class="stat-label">Green RAG</div></div>
+      <div class="card stat"><div class="stat-val" style="color:var(--amber)">1/5</div><div class="stat-label">Amber RAG</div></div>
     </div>
-    <div class="c"><div class="ct"><span class="ci">🏥</span> Site-Level EDL Template (${EDL_SITE.reduce((s,m)=>s+m.docs.length,0)} document types per site)</div>
-    ${EDL_SITE.map(ms=>`<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:var(--surface);border-radius:6px">🎯 ${ms.milestone}</div>
-    ${ms.docs.map(d=>`<div class="ms-row"><span class="mono" style="font-size:10px;color:var(--text3);width:40px">${d.tmf}</span><span style="flex:1">${d.name}</span>${d.required?'<span class="b bg" style="font-size:9px">Required</span>':'<span class="b bx" style="font-size:9px">Optional</span>'}</div>`).join('')}
-    </div>`).join('')}
-    <div style="margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:var(--surface);border-radius:6px">🔄 Living Documents (Recurring)</div>
-    ${EDL_LIVING.map(d=>`<div class="ms-row"><span class="mono" style="font-size:10px;color:var(--text3);width:40px">${d.tmf}</span><span style="flex:1">${d.name}</span><span class="b bp" style="font-size:9px">${d.freq}</span></div>`).join('')}
+    <div class="card mb16">
+      <div class="card-title"><span class="icon">📋</span> CRO Performance Matrix — Q4 2025</div>
+      <table><thead><tr><th>CRO</th><th>Studies</th><th>CRAs</th><th>Q4 Docs</th><th>SLA %</th><th>QC Pass</th><th>Reject %</th><th>AI Conf</th><th>RAG</th><th>Trend</th><th>Top Issues</th></tr></thead><tbody>
+      ${DATA.cros.map(c=>`<tr>
+        <td><strong>${c.name}</strong></td>
+        <td>${c.studies.join(', ')}</td>
+        <td>${c.cras}</td>
+        <td>${c.q4Docs}</td>
+        <td><span class="badge ${bclass(c.sla)}">${c.sla}%</span></td>
+        <td><span class="badge ${bclass(c.qcPass)}">${c.qcPass}%</span></td>
+        <td>${c.reject}%</td>
+        <td class="mono">${c.aiConf}</td>
+        <td>${ragBadge(c.rag)}</td>
+        <td>${trendIcon(c.trend)}</td>
+        <td style="font-size:11px;max-width:200px">${c.topIssues[0]||'—'}</td>
+      </tr>`).join('')}
+      </tbody></table>
     </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="card-title"><span class="icon">📈</span> SLA Compliance by CRO</div>
+        ${DATA.cros.map(c=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:100px;font-size:12px;font-weight:600;text-align:right">${c.name}</div>
+          <div class="pbar" style="flex:1"><div class="pfill ${pclass(c.sla)}" style="width:${c.sla}%"></div></div>
+          <div style="width:40px;font-size:12px;font-weight:600" class="mono">${c.sla}%</div>
+        </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔍</span> QC Pass Rate by CRO</div>
+        ${DATA.cros.map(c=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:100px;font-size:12px;font-weight:600;text-align:right">${c.name}</div>
+          <div class="pbar" style="flex:1"><div class="pfill ${pclass(c.qcPass)}" style="width:${c.qcPass}%"></div></div>
+          <div style="width:40px;font-size:12px;font-weight:600" class="mono">${c.qcPass}%</div>
+        </div>`).join('')}
+      </div>
     </div>
-  </div>
   </div>`;
 }
 
-function renderEDLStudy(s){
-  const st=EDL_STATUS[s.id];
-  const milestones=[
-    {name:'Study Startup',filed:st.startup,total:st.startup_t,level:'Study'},
-    {name:'FPFV',filed:st.fpfv,total:st.fpfv_t,level:'Study'},
-    {name:'Site Activation',filed:st.site_act,total:st.site_act_t,level:'Site (×'+s.sites+')'},
-    {name:'Ongoing Monitoring',filed:st.monitor,total:st.monitor_t,level:'Site (quarterly)'},
-    {name:'Database Lock',filed:st.dblock,total:st.dblock_t,level:'Study'},
-    {name:'Site Close-Out',filed:st.site_close,total:st.site_close_t,level:'Site'},
-    {name:'Study Close',filed:st.close,total:st.close_t,level:'Study'}
-  ];
-  const tF=milestones.reduce((a,m)=>a+m.filed,0), tT=milestones.reduce((a,m)=>a+m.total,0);
-  const overall=Math.round((tF/tT)*100);
-
-  return`<div class="panel" id="edl-${s.id}">
-  <div class="c mb" style="background:${overall>=90?'var(--gbg)':overall>=75?'var(--abg)':'var(--rbg)'};border-color:${overall>=90?'var(--green)':overall>=75?'var(--amber)':'var(--red)'}">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div><div style="font-size:16px;font-weight:700;color:var(--navy)">${s.id} — ${s.mol}</div>
-      <div style="font-size:12px;color:var(--text2)">${phB(s.phase)} ${s.ind} · ${s.cro} · ${s.sites} sites · ${s.enrolled} enrolled</div></div>
-      <div style="text-align:right"><div style="font-size:28px;font-weight:700;color:${overall>=90?'var(--gtx)':overall>=75?'var(--atx)':'var(--rtx)'}">${overall}%</div><div style="font-size:10px;color:var(--text2)">${tF} / ${tT} documents</div></div>
+function renderCRODetail(c){
+  const ragColors = {green:['var(--green)','var(--green-bg)','var(--green-text)'],amber:['var(--amber)','var(--amber-bg)','var(--amber-text)'],red:['var(--red)','var(--red-bg)','var(--red-text)']};
+  const rc = ragColors[c.rag];
+  return `<div class="cro-panel" id="cro-${c.key}">
+    <!-- Header banner -->
+    <div class="card mb16" style="background:${rc[1]};border-color:${rc[0]}">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:18px;font-weight:700;color:${rc[2]}">${c.name}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Studies: ${c.studies.join(', ')} · ${c.cras} CRAs · Box Folder ID: 368165046653</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          ${ragBadge(c.rag)}
+          <span style="font-size:12px;font-weight:600">${trendIcon(c.trend)}</span>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="c mb"><div class="ct"><span class="ci">📋</span> EDL Completeness by Milestone</div>
-  <table><thead><tr><th>Milestone</th><th>Level</th><th>Filed</th><th>Expected</th><th>Completeness</th><th>Status</th></tr></thead><tbody>
-  ${milestones.map(m=>{const p=m.total===0?0:Math.round((m.filed/m.total)*100);const triggered=m.filed>0||m.total>0&&(m.name==='Study Startup'||m.name==='FPFV'||m.name==='Site Activation'||m.name==='Ongoing Monitoring');
-  return`<tr><td><strong>${m.name}</strong></td><td><span class="b bx">${m.level}</span></td><td>${m.filed}</td><td>${m.total}</td>
-  <td>${m.total>0?pBar(p,80):'—'}</td>
-  <td>${!triggered?'<span class="b bx">Not Yet Triggered</span>':p===100?'<span class="b bg">✓ Complete</span>':p>=75?'<span class="b ba">In Progress</span>':'<span class="b br">Gaps Found</span>'}</td></tr>`}).join('')}
-  </tbody></table></div>
 
-  <div class="g g2">
-    <div class="c"><div class="ct"><span class="ci">⚠️</span> Missing Documents (Gaps)</div>
-    ${(()=>{
-      const gaps=[];
-      if(st.startup<st.startup_t) gaps.push({ms:'Study Startup',count:st.startup_t-st.startup,examples:['Communication Plan','CSR Template']});
-      if(st.fpfv<st.fpfv_t) gaps.push({ms:'FPFV',count:st.fpfv_t-st.fpfv,examples:['IVRS/IWRS Manual','Randomization Plan']});
-      if(st.site_act<st.site_act_t) gaps.push({ms:'Site Activation',count:st.site_act_t-st.site_act,examples:['Financial Disclosure','Training Log']});
-      if(st.monitor<st.monitor_t) gaps.push({ms:'Ongoing Monitoring',count:st.monitor_t-st.monitor,examples:['Drug Accountability Log','Protocol Deviation Log']});
-      if(gaps.length===0) return '<div style="font-size:12px;color:var(--green);padding:8px 0">✓ No gaps for triggered milestones</div>';
-      return gaps.map(g=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:6px"><span class="rag ra"></span><strong>${g.ms}</strong> — ${g.count} missing</div><div style="font-size:11px;color:var(--text2);margin-top:2px;padding-left:14px">e.g. ${g.examples.join(', ')}</div></div>`).join('');
-    })()}
+    <!-- KPIs -->
+    <div class="grid g5 mb16">
+      <div class="card stat"><div class="stat-val">${c.q4Docs}</div><div class="stat-label">Q4 Docs Submitted</div></div>
+      <div class="card stat"><div class="stat-val" style="color:${c.sla>=90?'var(--green)':c.sla>=75?'var(--amber)':'var(--red)'}">${c.sla}%</div><div class="stat-label">SLA Compliance</div><div class="stat-sub">${c.sla>=90?'<span class="up">Above target</span>':'<span class="down">Below 90% target</span>'}</div></div>
+      <div class="card stat"><div class="stat-val" style="color:${c.qcPass>=90?'var(--green)':c.qcPass>=75?'var(--amber)':'var(--red)'}">${c.qcPass}%</div><div class="stat-label">QC Pass Rate</div></div>
+      <div class="card stat"><div class="stat-val">${c.reject}%</div><div class="stat-label">Rejection Rate</div><div class="stat-sub">${c.reject<5?'<span class="up">Below 5% target</span>':'<span class="down">Above 5% target</span>'}</div></div>
+      <div class="card stat"><div class="stat-val mono">${c.aiConf}</div><div class="stat-label">AI Confidence</div></div>
     </div>
-    <div class="c"><div class="ct"><span class="ci">🎯</span> Next Expected Milestone</div>
-    <div style="background:var(--surface);border-radius:8px;padding:14px">
-      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px">${s.milestone==='FPFV'?'First Patient First Visit':'Ongoing Monitoring'}</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Current study milestone: <span class="b bb">${s.milestone}</span></div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:6px">Upcoming documents due:</div>
-      ${['Monitoring Visit Report (next quarter)','Enrollment Log update','Drug Accountability Log','Protocol Deviation Log update'].map(d=>`<div class="ms-row"><span class="ms-icon ms-pend">○</span>${d}</div>`).join('')}
-    </div></div>
-  </div>
+
+    <div class="grid g2 mb16">
+      <!-- Monthly Trend -->
+      <div class="card">
+        <div class="card-title"><span class="icon">📈</span> Monthly Trend — Q4 2025</div>
+        <table><thead><tr><th>Month</th><th>Docs</th><th>SLA %</th><th>QC Pass %</th></tr></thead><tbody>
+        ${c.monthly.map(m=>`<tr>
+          <td><strong>${m.m} 2025</strong></td>
+          <td>${m.docs}</td>
+          <td><span class="badge ${bclass(m.sla)}">${m.sla}%</span></td>
+          <td><span class="badge ${bclass(m.qc)}">${m.qc}%</span></td>
+        </tr>`).join('')}
+        </tbody></table>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px">SLA Trend</div>
+          <div style="display:flex;align-items:end;gap:6px;height:60px">
+            ${c.monthly.map(m=>{const h=Math.max(20,(m.sla/100)*60);return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="font-size:9px;font-weight:600;color:var(--text2)">${m.sla}%</div><div style="width:100%;height:${h}px;background:${m.sla>=90?'var(--green)':m.sla>=75?'var(--amber)':'var(--red)'};border-radius:4px 4px 0 0;opacity:.8"></div><div style="font-size:9px;color:var(--text3)">${m.m}</div></div>`}).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- CRA Detail -->
+      <div class="card">
+        <div class="card-title"><span class="icon">👤</span> CRA Performance</div>
+        <table><thead><tr><th>CRA</th><th>Status</th><th>Onboarded</th><th>Sites</th><th>Q4 Docs</th><th>QC Pass</th></tr></thead><tbody>
+        ${c.cras_detail.map(a=>`<tr>
+          <td><strong>${a.name}</strong></td>
+          <td><span class="badge ${a.status==='Onboarded'?'b-green':'b-amber'}">${a.status}</span></td>
+          <td class="mono" style="font-size:11px">${a.date}</td>
+          <td style="font-size:11px">${a.sites}</td>
+          <td>${a.docsQ4}</td>
+          <td><span class="badge ${bclass(a.qcPass)}">${a.qcPass}%</span></td>
+        </tr>`).join('')}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <!-- Issues -->
+      <div class="card">
+        <div class="card-title"><span class="icon">⚠️</span> Open Issues</div>
+        ${c.topIssues.length?c.topIssues.map(iss=>`<div class="issue-item"><span class="rag rag-${c.rag==='green'?'a':'r'}"></span> ${iss}</div>`).join(''):'<div style="font-size:12px;color:var(--text2);padding:8px 0">No open issues</div>'}
+      </div>
+
+      <!-- Action Items -->
+      <div class="card">
+        <div class="card-title"><span class="icon">✅</span> Recommended Actions</div>
+        ${c.actions.map((a,i)=>`<div class="action-item"><div class="action-num">${i+1}</div><div>${a}</div></div>`).join('')}
+      </div>
+    </div>
   </div>`;
 }
 
-// ──── CRO DASHBOARDS ────
-V.cro=()=>`<div class="tabs" id="croTabs"><div class="tab active" data-cro="all">All CROs</div>${CROS.map(c=>`<div class="tab" data-cro="${c.key}">${c.name}</div>`).join('')}</div><div id="croContent">${renderCAll()}${CROS.map(c=>renderCD(c)).join('')}</div>`;
-
-function renderCAll(){
-  return`<div class="panel active" id="cro-all">
-  <div class="g g5 mb"><div class="c stat"><div class="sv">${tQ4}</div><div class="sl">Q4 Documents</div></div><div class="c stat"><div class="sv">${aS}%</div><div class="sl">Avg SLA</div></div><div class="c stat"><div class="sv">${aQ}%</div><div class="sl">Avg QC Pass</div></div><div class="c stat"><div class="sv" style="color:var(--green)">4/5</div><div class="sl">Green RAG</div></div><div class="c stat"><div class="sv" style="color:var(--amber)">1/5</div><div class="sl">Amber RAG</div></div></div>
-  <div class="c mb"><div class="ct"><span class="ci">📋</span> CRO Performance Matrix — Q4 2025</div>
-  <table><thead><tr><th>CRO</th><th>Studies</th><th>CRAs</th><th>Q4 Docs</th><th>SLA %</th><th>QC Pass</th><th>Reject</th><th>AI Conf</th><th>RAG</th><th>Trend</th></tr></thead><tbody>
-  ${CROS.map(c=>`<tr><td><strong>${c.name}</strong></td><td style="font-size:11px">${c.studies.join(', ')}</td><td>${c.cras}</td><td>${c.q4}</td><td><span class="b ${bc(c.sla)}">${c.sla}%</span></td><td><span class="b ${bc(c.qc)}">${c.qc}%</span></td><td>${c.rej}%</td><td class="mono">${c.ai}</td><td>${rB(c.rag)}</td><td>${trI(c.trend)}</td></tr>`).join('')}
-  </tbody></table></div>
-  <div class="g g2">
-    <div class="c"><div class="ct"><span class="ci">📈</span> SLA Compliance by CRO</div>
-    ${CROS.map(c=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:90px;font-size:11px;font-weight:600;text-align:right">${c.name}</div><div class="pb" style="flex:1"><div class="pf ${pc(c.sla)}" style="width:${c.sla}%"></div></div><div style="width:36px;font-size:11px;font-weight:600" class="mono">${c.sla}%</div></div>`).join('')}</div>
-    <div class="c"><div class="ct"><span class="ci">🔍</span> QC Pass Rate by CRO</div>
-    ${CROS.map(c=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:90px;font-size:11px;font-weight:600;text-align:right">${c.name}</div><div class="pb" style="flex:1"><div class="pf ${pc(c.qc)}" style="width:${c.qc}%"></div></div><div style="width:36px;font-size:11px;font-weight:600" class="mono">${c.qc}%</div></div>`).join('')}</div>
-  </div>
-  <div style="margin-top:10px;font-size:10px;color:var(--text3);text-align:center">CRO names shown for illustration purposes only</div>
-  </div>`;
-}
-
-function renderCD(c){
-  const rc={green:['var(--green)','var(--gbg)','var(--gtx)'],amber:['var(--amber)','var(--abg)','var(--atx)'],red:['var(--red)','var(--rbg)','var(--rtx)']}[c.rag];
-  return`<div class="panel" id="cro-${c.key}">
-  <div class="c mb" style="background:${rc[1]};border-color:${rc[0]}">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div><div style="font-size:17px;font-weight:700;color:${rc[2]}">${c.name}</div><div style="font-size:11px;color:var(--text2);margin-top:1px">Studies: ${c.studies.join(', ')} · ${c.cras} CRAs</div></div>
-      <div style="display:flex;gap:8px;align-items:center">${rB(c.rag)} ${trI(c.trend)}</div>
+// ---------- ONBOARDING ----------
+VIEWS.onboarding = ()=>`
+<div class="grid g2 mb16">
+  <div class="card">
+    <div class="card-title"><span class="icon">🚀</span> CRO Onboarding Workflow (3 Weeks)</div>
+    <div class="stepper">
+      ${[
+        {n:'1',l:'Registration',t:'Week 1',s:'done'},
+        {n:'2',l:'CRA Training',t:'Weeks 1–2',s:'done'},
+        {n:'3',l:'Validation',t:'Weeks 2–3',s:'active'},
+        {n:'4',l:'Go-Live',t:'Week 3+',s:''}
+      ].map(s=>`<div class="step ${s.s}"><div class="step-line"></div><div class="step-dot">${s.s==='done'?'✓':s.n}</div><div class="step-label"><strong>${s.l}</strong><br><span style="font-size:9px">${s.t}</span></div></div>`).join('')}
+    </div>
+    <div style="margin-top:20px;font-size:13px">
+      ${[
+        {title:'Phase 1 — CRO Registration',items:['Create CRO profile','Box collaborator access','Submission requirements','Onboarding packet issued'],done:true},
+        {title:'Phase 2 — CRA Training',items:['SmartTMF orientation','TMF Ref Model 3.2 guide','Quality standards training','Filing conventions','Demo environment practice'],done:true},
+        {title:'Phase 3 — Validation',items:['5 test documents submitted','AI classification verified','QC reviewer validates','Go-live approval'],done:false,progress:1},
+        {title:'Phase 4 — Go-Live Monitoring',items:['Live submissions begin','30-day monitoring period','Weekly quality scorecards','Monthly CRO dashboard review'],done:false}
+      ].map(p=>`<p style="margin-bottom:10px"><strong>${p.title}</strong></p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+          ${p.items.map((it,i)=>{
+            if(p.done) return `<span class="badge b-green">✓ ${it}</span>`;
+            if(p.progress!==undefined && i<p.progress) return `<span class="badge b-blue">◉ ${it}</span>`;
+            return `<span class="badge b-gray">○ ${it}</span>`;
+          }).join('')}
+        </div>`).join('')}
     </div>
   </div>
-  <div class="g g5 mb">
-    <div class="c stat"><div class="sv">${c.q4}</div><div class="sl">Q4 Docs</div></div>
-    <div class="c stat"><div class="sv" style="color:${c.sla>=90?'var(--green)':'var(--amber)'}">${c.sla}%</div><div class="sl">SLA</div><div class="ss">${c.sla>=90?'<span style="color:var(--green)">Above target</span>':'<span style="color:var(--red)">Below 90%</span>'}</div></div>
-    <div class="c stat"><div class="sv" style="color:${c.qc>=90?'var(--green)':'var(--amber)'}">${c.qc}%</div><div class="sl">QC Pass</div></div>
-    <div class="c stat"><div class="sv">${c.rej}%</div><div class="sl">Rejection</div><div class="ss">${c.rej<5?'<span style="color:var(--green)">Below 5%</span>':'<span style="color:var(--red)">Above 5%</span>'}</div></div>
-    <div class="c stat"><div class="sv mono">${c.ai}</div><div class="sl">AI Conf</div></div>
-  </div>
-  <div class="g g2 mb">
-    <div class="c"><div class="ct"><span class="ci">📈</span> Monthly Trend — Q4 2025</div>
-    <table><thead><tr><th>Month</th><th>Docs</th><th>SLA</th><th>QC Pass</th></tr></thead><tbody>
-    ${c.mo.map(m=>`<tr><td><strong>${m.m} 2025</strong></td><td>${m.d}</td><td><span class="b ${bc(m.sl)}">${m.sl}%</span></td><td><span class="b ${bc(m.qc)}">${m.qc}%</span></td></tr>`).join('')}
+  <div class="card">
+    <div class="card-title"><span class="icon">👥</span> CRA Roster (${DATA.cros.reduce((s,c)=>s+c.cras_detail.length,0)} CRAs)</div>
+    <table><thead><tr><th>CRA</th><th>CRO</th><th>Status</th><th>Onboarded</th><th>Sites</th></tr></thead><tbody>
+    ${DATA.cros.flatMap(cr=>cr.cras_detail.map(a=>`<tr>
+      <td><strong>${a.name}</strong></td>
+      <td>${cr.name}</td>
+      <td><span class="badge ${a.status==='Onboarded'?'b-green':'b-amber'}">${a.status}</span></td>
+      <td class="mono" style="font-size:11px">${a.date}</td>
+      <td style="font-size:11px">${a.sites}</td>
+    </tr>`)).join('')}
     </tbody></table>
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:600;margin-bottom:6px">SLA Trend</div>
-    <div style="display:flex;align-items:end;gap:5px;height:50px">${c.mo.map(m=>{const h=Math.max(15,(m.sl/100)*50);return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px"><div style="font-size:8px;font-weight:600;color:var(--text2)">${m.sl}%</div><div style="width:100%;height:${h}px;background:${m.sl>=90?'var(--green)':m.sl>=75?'var(--amber)':'var(--red)'};border-radius:3px 3px 0 0;opacity:.75"></div><div style="font-size:8px;color:var(--text3)">${m.m}</div></div>`}).join('')}</div></div></div>
-    <div class="c"><div class="ct"><span class="ci">👤</span> CRA Performance</div>
-    <table><thead><tr><th>CRA</th><th>Status</th><th>Onboarded</th><th>Sites</th><th>Q4 Docs</th><th>QC Pass</th></tr></thead><tbody>
-    ${c.cras_d.map(a=>`<tr><td><strong>${a.n}</strong></td><td><span class="b ${a.s==='Onboarded'?'bg':'ba'}">${a.s}</span></td><td class="mono" style="font-size:10px">${a.d}</td><td style="font-size:10.5px">${a.sites}</td><td>${a.dq}</td><td><span class="b ${bc(a.qp)}">${a.qp}%</span></td></tr>`).join('')}
-    </tbody></table></div>
+    <div style="margin-top:14px"><button class="btn btn-p btn-sm" onclick="alert('Opens CRO onboarding wizard — creates Box folder, assigns permissions, generates onboarding packet')">+ Onboard New CRO/CRA</button></div>
   </div>
-  <div class="g g2">
-    <div class="c"><div class="ct"><span class="ci">⚠️</span> Open Issues (${c.issues.length})</div>
-    ${c.issues.map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="rag r${c.rag==='green'?'a':'r'}"></span>${i}</div>`).join('')}</div>
-    <div class="c"><div class="ct"><span class="ci">✅</span> Recommended Actions</div>
-    ${c.actions.map((a,i)=>`<div class="act-item"><div class="act-num">${i+1}</div><div>${a}</div></div>`).join('')}</div>
-  </div></div>`;
-}
-
-// ──── ONBOARDING ────
-V.onboarding=()=>`
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">🚀</span> CRO Onboarding Workflow (3 Weeks)</div>
-  <div class="stepper">${[{n:'1',l:'Registration',t:'Week 1',s:'done'},{n:'2',l:'CRA Training',t:'Weeks 1–2',s:'done'},{n:'3',l:'Validation',t:'Weeks 2–3',s:'active'},{n:'4',l:'Go-Live',t:'Week 3+',s:''}].map(s=>`<div class="step ${s.s}"><div class="step-line"></div><div class="step-dot">${s.s==='done'?'✓':s.n}</div><div class="step-label"><strong>${s.l}</strong><br><span style="font-size:9px">${s.t}</span></div></div>`).join('')}</div>
-  <div style="margin-top:16px;font-size:12px">
-  ${[{t:'Phase 1 — Registration',items:['Create CRO profile','Box collaborator access','Submission requirements','Onboarding packet'],done:true},{t:'Phase 2 — CRA Training',items:['SmartTMF orientation','TMF Ref Model 3.2','Quality standards','Filing conventions','Demo environment'],done:true},{t:'Phase 3 — Validation',items:['5 test documents','AI verification','QC validation','Go-live approval'],done:false,p:1},{t:'Phase 4 — Go-Live',items:['Live submissions','30-day monitoring','Weekly scorecards','Monthly dashboard'],done:false}].map(p=>`<p style="margin-bottom:8px"><strong>${p.t}</strong></p><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">${p.items.map((it,i)=>{if(p.done)return`<span class="b bg">✓ ${it}</span>`;if(p.p!==undefined&&i<p.p)return`<span class="b bb">◉ ${it}</span>`;return`<span class="b bx">○ ${it}</span>`}).join('')}</div>`).join('')}
-  </div></div>
-  <div class="c"><div class="ct"><span class="ci">👥</span> CRA Roster (${CROS.reduce((s,c)=>s+c.cras_d.length,0)} CRAs)</div>
-  <table><thead><tr><th>CRA</th><th>CRO</th><th>Status</th><th>Onboarded</th><th>Sites</th></tr></thead><tbody>
-  ${CROS.flatMap(cr=>cr.cras_d.map(a=>`<tr><td><strong>${a.n}</strong></td><td>${cr.name}</td><td><span class="b ${a.s==='Onboarded'?'bg':'ba'}">${a.s}</span></td><td class="mono" style="font-size:10px">${a.d}</td><td style="font-size:10.5px">${a.sites}</td></tr>`)).join('')}
-  </tbody></table>
-  <div style="margin-top:12px"><button class="btn bp1 bsm">+ Onboard New CRO/CRA</button></div></div>
 </div>`;
 
-// ──── DOCUMENTS ────
-V.documents=()=>`<div class="c"><div class="ct"><span class="ci">📄</span> TMF Documents in Pipeline</div>
-<table><thead><tr><th>File</th><th>Study</th><th>Type</th><th>Version</th><th>Stage</th></tr></thead><tbody>
-${STUDIES.flatMap(s=>[
-  {f:`${s.mol} TMF Plan`,study:s.id,type:'TMF Plan',v:'v1.0'},
-  {f:`${s.mol} Protocol`,study:s.id,type:'Protocol',v:'v1.0'},
-  {f:`${s.mol} IB`,study:s.id,type:"Investigator's Brochure",v:'v1.0'}
-]).map(d=>`<tr><td><strong>${d.f}</strong></td><td>${d.study}</td><td>${d.type}</td><td class="mono">${d.v}</td><td><span class="b bg">Approved</span></td></tr>`).join('')}
-</tbody></table></div>`;
-
-// ──── AI CLASSIFICATION ────
-V.classification=()=>`<div class="c mb"><div class="ct"><span class="ci">🤖</span> AI Classification Engine — Box AI Metadata Extraction</div>
-<p style="font-size:12px;color:var(--text2);margin-bottom:14px">Documents uploaded to 01_Intake are processed by Box AI to extract TMF metadata against Reference Model 3.2. Confidence score determines routing.</p>
-<div style="background:var(--surface);border-radius:8px;padding:14px"><div style="font-size:12px;font-weight:600;margin-bottom:8px">Example: MRD-105 TMF Plan v3.0</div>
-<table><thead><tr><th>Field</th><th>Extracted Value</th><th>Confidence</th></tr></thead><tbody>
-${[['Artifact Type','TMF Plan',97],['TMF Section','01 Trial Management',95],['Study Number','MRD-105-102',99],['CRO','Kapadi/Alimentiv',92],['Version','v3.0',98],['Document Date','2025-06-15',94]].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td><span class="b bg">${r[2]}%</span></td></tr>`).join('')}
-</tbody></table>
-<div style="margin-top:12px;text-align:center"><span class="b bg" style="font-size:12px;padding:5px 16px">Overall: 95.8% → Auto-Approve Route</span></div></div></div>`;
-
-// ──── QC ────
-V.qc=()=>`<div class="c"><div class="ct"><span class="ci">🔍</span> QC Review Queue</div>
-<table><thead><tr><th>Document</th><th>Study</th><th>CRO</th><th>AI Conf</th><th>Route</th><th>Status</th><th>Action</th></tr></thead><tbody>
-${QC_QUEUE.map(q=>`<tr><td><strong>${q.doc}</strong></td><td>${q.study}</td><td>${q.cro}</td><td><span class="b ${q.conf>=90?'bg':'ba'}">${q.conf}%</span></td><td>${q.route}</td><td><span class="b ${q.status==='Approved'?'bg':'ba'}">${q.status}</span></td><td>${q.status==='Pending'?'<button class="btn bp1 bxs">Review</button>':'<span style="color:var(--text3)">—</span>'}</td></tr>`).join('')}
-</tbody></table></div>`;
-
-// ──── ANALYTICS ────
-V.analytics=()=>{
-  const health=(parseFloat(comp)*0.4+parseFloat(aS)*0.3+parseFloat(aQ)*0.3).toFixed(1);
-  return`<div class="g g4 mb"><div class="c stat"><div class="sv" style="color:var(--green)">${comp}%</div><div class="sl">TMF Completeness</div></div><div class="c stat"><div class="sv" style="color:var(--teal)">${aS}%</div><div class="sl">SLA Compliance</div></div><div class="c stat"><div class="sv" style="color:var(--blue)">${aQ}%</div><div class="sl">QC Pass Rate</div></div><div class="c stat"><div class="sv" style="color:var(--navy)">${health}%</div><div class="sl">TMF Health Score</div></div></div>
-  <div class="g g2 mb">
-    <div class="c"><div class="ct"><span class="ci">📊</span> TMF Health by Study</div>
-    ${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:100px;font-size:11px;font-weight:600;text-align:right">${s.id}</div><div class="pb" style="flex:1"><div class="pf ${pc(parseFloat(p))}" style="width:${p}%"></div></div><div style="width:40px;font-size:11px;font-weight:600" class="mono">${p}%</div></div>`}).join('')}</div>
-    <div class="c"><div class="ct"><span class="ci">🏥</span> Inspection Readiness Index</div>
-    <table><thead><tr><th>Metric</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead><tbody>
-    <tr><td>Completeness</td><td><span class="b ${bc(parseFloat(comp))}">${comp}%</span></td><td>40%</td><td>${(parseFloat(comp)*0.4).toFixed(1)}%</td></tr>
-    <tr><td>Currency (SLA)</td><td><span class="b ${bc(parseFloat(aS))}">${aS}%</span></td><td>30%</td><td>${(parseFloat(aS)*0.3).toFixed(1)}%</td></tr>
-    <tr><td>Quality (QC)</td><td><span class="b ${bc(parseFloat(aQ))}">${aQ}%</span></td><td>30%</td><td>${(parseFloat(aQ)*0.3).toFixed(1)}%</td></tr>
-    <tr style="border-top:2px solid var(--border)"><td><strong>TMF Health</strong></td><td colspan="2"></td><td><strong>${health}%</strong></td></tr>
-    </tbody></table></div>
-  </div>`;
-};
-
-// ──── VEEVA ────
-V.veeva=()=>`
-<div class="c mb" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#A78BFA">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <div><div class="ct" style="margin-bottom:2px"><span class="ci">🔗</span> Veeva Vault eTMF Integration</div>
-    <div style="font-size:11px;color:var(--text2)">Vault URL: <a href="#" style="color:var(--teal);font-weight:600">[client-instance].veevavault.com</a></div></div>
-    <span class="b bp">Simulation Mode</span>
-  </div>
-  <p style="font-size:11px;color:var(--text2);margin-top:6px">Study/site data simulated in Box until Vault API connection is configured. Folder structure mirrors Veeva document type hierarchy.</p>
-</div>
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">⬇️</span> Veeva → SmartTMF</div>
-  ${['Study Metadata (ID, phase, status)','Site Info (PI name, country, activation)','Expected Document List (EDL)','Document Lifecycle States','Governing Docs (Protocol, IB, ICF)'].map(d=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--purple)">→</span>${d}</div>`).join('')}</div>
-  <div class="c"><div class="ct"><span class="ci">⬆️</span> SmartTMF → Veeva</div>
-  ${['AI Classification Metadata','QC Approval/Rejection Status','Filing Timeliness Metrics','Completeness Scoring per Study/Site'].map(d=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--teal)">→</span>${d}</div>`).join('')}</div>
-</div>
-<div class="c"><div class="ct"><span class="ci">🗂</span> Simulated Study Data</div>
-<table><thead><tr><th>Study</th><th>Molecule</th><th>Phase</th><th>Indication</th><th>Sites</th><th>Enrolled</th><th>CRO</th><th>Complete</th></tr></thead><tbody>
-${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<tr><td><strong>${s.id}</strong></td><td class="mono" style="font-size:10.5px">${s.mol}</td><td>${phB(s.phase)}</td><td>${s.ind}</td><td>${s.sites}</td><td>${s.enrolled}</td><td>${s.cro}</td><td>${pBar(parseFloat(p),70)}</td></tr>`}).join('')}
-</tbody></table></div>`;
-
-// ──── QUALITY ────
-V.quality=()=>`
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">🛡</span> TMF Quality Framework</div>
-  <p style="font-size:11px;color:var(--text2);margin-bottom:10px">TMF Reference Model 3.2 · ICH E6(R2) GCP · 21 CFR Part 11 · EU CTR 536/2014</p>
-  <table><thead><tr><th>#</th><th>Quality Check</th><th>Method</th><th>Status</th></tr></thead><tbody>
-  ${[['1','Legibility Check','AI + Rule'],['2','Orientation Check','AI Vision'],['3','Duplicate Detection','Hash + AI'],['4','Signature Verification','AI Extract'],['5','Business Rules Validation','Config Rules'],['6','Filing Timeliness (35-day SLA)','Date Calc']].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td><span class="b bg">Active</span></td></tr>`).join('')}
+// ---------- DOCUMENTS ----------
+VIEWS.documents = ()=>`
+<div class="card">
+  <div class="card-title"><span class="icon">📄</span> TMF Plans in Box Pipeline (${DATA.tmfPlans.length} documents)</div>
+  <table><thead><tr><th>File Name</th><th>Study</th><th>Version</th><th>Stage</th></tr></thead><tbody>
+  ${DATA.tmfPlans.map(d=>`<tr><td><strong>${d.file}</strong></td><td>${d.study}</td><td class="mono">${d.ver}</td><td><span class="badge b-green">Approved</span></td></tr>`).join('')}
   </tbody></table>
-  <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text2)">These 6 checks run on <strong>every document</strong> entering the pipeline, regardless of type. They validate <em>how</em> documents are filed (quality). The EDL separately tracks <em>what</em> documents should exist (completeness).</div></div>
-  <div class="c"><div class="ct"><span class="ci">📊</span> TMF Health Score</div>
-  <div style="display:flex;gap:6px;margin-bottom:14px">
-  ${[['40%','Completeness','Expected vs actual','var(--gbg)','var(--gtx)'],['30%','Currency','Within 35-day SLA','var(--abg)','var(--atx)'],['30%','Quality','QC pass 1st attempt','var(--bbg)','var(--btx)']].map(w=>`<div style="flex:1;background:${w[3]};border-radius:7px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:${w[4]}">${w[0]}</div><div style="font-size:10px;font-weight:600;color:${w[4]}">${w[1]}</div><div style="font-size:9px;color:var(--text2)">${w[2]}</div></div>`).join('')}
+</div>`;
+
+// ---------- AI CLASSIFICATION ----------
+VIEWS.classification = ()=>`
+<div class="card mb16">
+  <div class="card-title"><span class="icon">🤖</span> AI Classification Engine — Box AI Metadata Extraction</div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Documents uploaded to 01_Intake are processed by Box AI to extract TMF metadata against Reference Model 3.2. Confidence score determines routing.</p>
+  <div style="background:var(--surface);border-radius:8px;padding:16px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Example: XmAb942-01 TMF Plan v3.0</div>
+    <table><thead><tr><th>Field</th><th>Extracted Value</th><th>Confidence</th></tr></thead><tbody>
+    ${[
+      ['Artifact Type','TMF Plan',97],['TMF Section','01 Trial Management',95],
+      ['Study Number','XmAb942-01',99],['CRO','Kapadi/Alimentiv',92],
+      ['Version','v3.0',98],['Document Date','2025-06-15',94]
+    ].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td><span class="badge b-green">${r[2]}%</span></td></tr>`).join('')}
+    </tbody></table>
+    <div style="margin-top:14px;text-align:center"><span class="badge b-green" style="font-size:13px;padding:6px 18px">Overall: 95.8% → Auto-Approve Route</span></div>
   </div>
-  <div style="font-size:11px;font-weight:600;margin-bottom:6px">RAG Thresholds</div>
-  <div style="display:flex;gap:5px">
-  ${[['Green','>90% SLA, <5% reject','var(--gbg)','var(--gtx)'],['Amber','75–90% SLA, 5–15%','var(--abg)','var(--atx)'],['Red','<75% SLA, >15%','var(--rbg)','var(--rtx)']].map(r=>`<div style="flex:1;background:${r[2]};border-radius:7px;padding:8px;text-align:center;font-size:11px"><strong style="color:${r[3]}">${r[0]}</strong><br><span style="font-size:10px">${r[1]}</span></div>`).join('')}
-  </div></div>
-</div>
-<div class="c"><div class="ct"><span class="ci">📋</span> AI Confidence Routing</div>
-<div style="display:flex;gap:10px;padding:6px 0">
-${[['≥ 90%','Auto-Approve','→ 04_Approved','var(--gbg)','var(--green)','var(--gtx)'],['75–89%','QC Review','→ 03_QC_Review','var(--abg)','var(--amber)','var(--atx)'],['< 75%','Manual Review','Flag for coordinator','var(--rbg)','var(--red)','var(--rtx)']].map(r=>`<div style="flex:1;background:${r[3]};border:2px solid ${r[4]};border-radius:9px;padding:16px;text-align:center"><div style="font-size:20px;font-weight:700;color:${r[5]}">${r[0]}</div><div style="font-size:11px;font-weight:600;color:${r[5]}">${r[1]}</div><div style="font-size:10px;color:var(--text2);margin-top:2px">${r[2]}</div></div>`).join('')}
-</div></div>`;
+</div>`;
 
-// ──── PRICING ────
-V.pricing=()=>`
-<div style="text-align:center;margin-bottom:20px"><div style="font-size:20px;font-weight:700;color:var(--navy)">SmartTMF Pricing</div><div style="font-size:12px;color:var(--text2);margin-top:3px">Scale from startup to enterprise</div></div>
-<div class="g g3 mb2">
-${[{n:'Starter',p:'$15,000',pd:'/mo · Up to 3 studies',bg:'linear-gradient(135deg,#F8FAFC,#E2E8F0)',c:'var(--navy)',feat:['AI Classification (Box AI)','QC Workflow + Audit Trail','Dashboard + Metrics','Monthly Reports','1 CRO Onboarding','Email Support'],setup:'$25K (2–3 wks)',f:false},
-{n:'Professional',p:'$28,000',pd:'/mo · Up to 10 studies',bg:'linear-gradient(135deg,var(--teal),var(--sky))',c:'#fff',feat:['Everything in Starter, plus:','CRO Performance Dashboards','Veeva Vault Integration','Automated Document Routing','CRO/CRA Onboarding Program','Inspection Readiness Scoring','Full EDL Milestone Tracking','Weekly Analytics · 8hr SLA'],setup:'$50K (4–6 wks)',f:true,rec:true},
-{n:'Enterprise',p:'$45,000',pd:'/mo · Unlimited studies',bg:'linear-gradient(135deg,var(--dark),var(--navy))',c:'#fff',feat:['Everything in Professional, plus:','Multi-Client Tenants','Custom Metadata Templates','Predictive Inspection AI','Bi-directional Veeva Sync','Cross-Study Portfolio View','Dedicated Success Mgr · 4hr SLA'],setup:'$85K (8–12 wks)',f:false}
-].map(t=>`<div class="c pc${t.f?' feat':''}"><div class="ph" style="background:${t.bg}">${t.rec?'<div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:3px">Recommended</div>':''}<div class="pn" style="color:${t.c}">${t.n}</div><div class="pp" style="color:${t.c}">${t.p}</div><div class="ppd" style="color:${t.c==='#fff'?'rgba(255,255,255,.7)':'var(--text2)'}">${t.pd}</div></div><div class="pfl">${t.feat.map(f=>`<div class="pfi">${chk}${f.startsWith('Everything')?`<strong>${f}</strong>`:f}</div>`).join('')}</div><div class="pcta"><div style="font-size:10px;color:var(--text2);margin-bottom:6px">Setup: ${t.setup}</div><button class="btn ${t.f?'bp1':'bo1'}" style="width:100%">${t.f?'Get Started':'Contact Sales'}</button></div></div>`).join('')}
-</div>
-<div class="g g2"><div class="c"><div class="ct"><span class="ci">💰</span> Add-Ons & Discounts</div>
-<table><thead><tr><th>Item</th><th>Price</th></tr></thead><tbody>
-<tr><td>Veeva Vault Integration</td><td><strong>$35,000</strong></td></tr>
-<tr><td>12-month commitment</td><td><strong style="color:var(--green)">10% off</strong></td></tr>
-<tr><td>24-month commitment</td><td><strong style="color:var(--green)">15% off</strong></td></tr>
-<tr><td>Multi-client bundle</td><td><strong style="color:var(--green)">20% off</strong></td></tr>
-</tbody></table></div>
-<div class="c"><div class="ct"><span class="ci">📋</span> Sample Package (Professional)</div>
-<div style="background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-radius:7px;padding:12px;margin-bottom:10px"><div style="font-size:14px;font-weight:700;color:#0F766E">Professional + Veeva Integration</div><div style="font-size:11px;color:var(--text2);margin-top:2px">5 studies · 5 CROs · Full EDL + Dashboard</div></div>
-<table style="font-size:11.5px"><tbody>
-<tr><td>Monthly recurring</td><td style="text-align:right"><strong>$28,000</strong></td></tr>
-<tr><td>Setup (one-time)</td><td style="text-align:right">$50,000</td></tr>
-<tr><td>Veeva integration</td><td style="text-align:right">$35,000</td></tr>
-<tr><td>12-month discount</td><td style="text-align:right;color:var(--green)">−10%</td></tr>
-<tr style="border-top:2px solid var(--border)"><td><strong>Year 1 Total</strong></td><td style="text-align:right"><strong style="font-size:14px;color:var(--navy)">$387,200</strong></td></tr>
-</tbody></table></div></div>`;
+// ---------- QC WORKFLOW ----------
+VIEWS.qc = ()=>`
+<div class="card">
+  <div class="card-title"><span class="icon">🔍</span> QC Review Queue</div>
+  <table><thead><tr><th>Document</th><th>Study</th><th>CRO</th><th>AI Confidence</th><th>Route</th><th>Status</th><th>Action</th></tr></thead><tbody>
+  ${DATA.qcQueue.map(q=>`<tr>
+    <td><strong>${q.doc}</strong></td>
+    <td>${q.study}</td>
+    <td>${q.cro}</td>
+    <td><span class="badge ${q.conf>=90?'b-green':'b-amber'}">${q.conf}%</span></td>
+    <td>${q.route}</td>
+    <td><span class="badge ${q.status==='Approved'?'b-green':'b-amber'}">${q.status}</span></td>
+    <td>${q.status==='Pending'?'<button class="btn btn-p btn-xs">Review</button>':'<span style="color:var(--text3)">—</span>'}</td>
+  </tr>`).join('')}
+  </tbody></table>
+</div>`;
 
-// ──── SCALING ────
-V.scaling=()=>`
-<div class="c mb" style="background:linear-gradient(135deg,#0D1B2A,#1F3864);color:#fff;border:none">
-<div style="font-size:17px;font-weight:700;margin-bottom:4px">Multi-Client Architecture</div>
-<div style="font-size:11px;color:rgba(255,255,255,.6)">Each client gets an isolated SmartTMF instance — separate Box workspace, client-specific configs, zero cross-client data leakage.</div></div>
-<div class="g g3 mb">
-${[{n:'Client 1: Meridian Bio',b:'bg',s:'Live',bc:'var(--green)',info:'5 studies · 5 CROs · 17 sites<br>Tier: Professional'},{n:'Client 2: [Next Client]',b:'ba',s:'Onboarding',bc:'var(--amber)',info:'Setup: 2–3 wks (Starter)<br>or 4–6 wks (Professional)',o:.8},{n:'Client 3+: Template',b:'bx',s:'Available',bc:'var(--border)',info:'Repeatable deployment<br>SmartTMF template cloning',o:.6}].map(c=>`<div class="c" style="border-left:4px solid ${c.bc};${c.o?'opacity:'+c.o:''}"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px">${c.n}</div><span class="b ${c.b}">${c.s}</span><div style="font-size:10.5px;color:var(--text2);margin-top:6px;line-height:1.5">${c.info}</div></div>`).join('')}
+// ---------- ANALYTICS ----------
+VIEWS.analytics = ()=>`
+<div class="grid g3 mb16">
+  <div class="card stat"><div class="stat-val" style="color:var(--green)">${completeness}%</div><div class="stat-label">Overall TMF Completeness</div></div>
+  <div class="card stat"><div class="stat-val" style="color:var(--teal)">${avgSLA}%</div><div class="stat-label">Average SLA Compliance</div></div>
+  <div class="card stat"><div class="stat-val" style="color:var(--blue)">${avgQC}%</div><div class="stat-label">Average QC Pass Rate</div></div>
 </div>
-<div class="g g2 mb">
-<div class="c"><div class="ct"><span class="ci">🔄</span> Changes Per Client</div>
-${['Box folder structure','smarttmf_config.json','Veeva Vault connection','CRO definitions & onboarding','Quality thresholds & SLAs','EDL templates per study'].map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="b bb">Config</span>${i}</div>`).join('')}</div>
-<div class="c"><div class="ct"><span class="ci">✅</span> Stays the Same</div>
-${['SmartTMF app (React + Box AI + Anthropic)','6-stage pipeline','AI classification engine','QC workflow + analytics','CRO onboarding process','EDL framework & milestone logic'].map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="b bg">Platform</span>${i}</div>`).join('')}</div>
+<div class="grid g2 mb16">
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> TMF Health Score by Study</div>
+    ${DATA.studies.map(s=>{const pct=((s.filed/s.expected)*100).toFixed(1);return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:110px;font-size:12px;font-weight:600;text-align:right">${s.id}</div>
+      <div class="pbar" style="flex:1"><div class="pfill ${pclass(parseFloat(pct))}" style="width:${pct}%"></div></div>
+      <div style="width:45px;font-size:12px;font-weight:600" class="mono">${pct}%</div>
+    </div>`}).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🏥</span> Inspection Readiness Index</div>
+    <table><thead><tr><th>Metric</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead><tbody>
+    <tr><td>Completeness Index</td><td><span class="badge ${bclass(parseFloat(completeness))}">${completeness}%</span></td><td>40%</td><td>${(parseFloat(completeness)*0.4).toFixed(1)}%</td></tr>
+    <tr><td>Currency Index (SLA)</td><td><span class="badge ${bclass(parseFloat(avgSLA))}">${avgSLA}%</span></td><td>30%</td><td>${(parseFloat(avgSLA)*0.3).toFixed(1)}%</td></tr>
+    <tr><td>Quality Index (QC)</td><td><span class="badge ${bclass(parseFloat(avgQC))}">${avgQC}%</span></td><td>30%</td><td>${(parseFloat(avgQC)*0.3).toFixed(1)}%</td></tr>
+    <tr style="border-top:2px solid var(--border)"><td><strong>Overall TMF Health</strong></td><td colspan="2"></td><td><strong>${(parseFloat(completeness)*0.4+parseFloat(avgSLA)*0.3+parseFloat(avgQC)*0.3).toFixed(1)}%</strong></td></tr>
+    </tbody></table>
+  </div>
 </div>
-<div class="c"><div class="ct"><span class="ci">👥</span> Operations Scaling</div>
-<div class="g g3">${[['1–3','Clients','1 SmartTMF Admin + TMF coordinators'],['4–8','Clients','2 Admins + team leads per client'],['9+','Clients','Dedicated Ops team + success managers']].map(t=>`<div style="background:var(--surface);border-radius:7px;padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--teal)">${t[0]}</div><div style="font-size:11px;font-weight:600">${t[1]}</div><div style="font-size:10px;color:var(--text2);margin-top:3px">${t[2]}</div></div>`).join('')}</div></div>`;
+<div class="card">
+  <div class="card-title"><span class="icon">🔬</span> Run Full TMF Analysis</div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Execute a comprehensive TMF health assessment across all studies using Box AI — generates risk assessments, gap analysis, and recommendations.</p>
+  <button class="btn btn-p" onclick="alert('Running TMF Analysis via Box AI...\\n\\nThis would call Box AI across all study folders to:\\n• Identify missing documents per EDL\\n• Flag overdue filings\\n• Score inspection readiness\\n• Generate remediation recommendations')">Run TMF Analysis</button>
+</div>`;
 
-// ═══════════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════════
-const VM={
-  dashboard:['Dashboard',`SmartTMF Pipeline — ${CLIENT} · 5 Studies · 5 CROs`],
-  documents:['Documents','TMF Plans & Workspace Files'],
-  edl:['Expected Document List','Full Milestone-Triggered EDL · Study + Site Level'],
+// ---------- VEEVA ----------
+VIEWS.veeva = ()=>`
+<div class="card mb16" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#A78BFA">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div class="card-title" style="margin-bottom:4px"><span class="icon">🔗</span> Veeva Vault eTMF Integration</div>
+      <div style="font-size:12px;color:var(--text2)">Vault URL: <a href="https://partnersi-usdm-etmf.veevavault.com" target="_blank" style="color:var(--teal);font-weight:600">partnersi-usdm-etmf.veevavault.com</a></div>
+    </div>
+    <span class="badge b-purple">Simulation Mode</span>
+  </div>
+  <p style="font-size:12px;color:var(--text2);margin-top:8px">Study/site data simulated in Box (veeva_study_data.json) until Vault API connection is configured. Folder structure mirrors Veeva document type hierarchy.</p>
+</div>
+<div class="grid g2 mb16">
+  <div class="card">
+    <div class="card-title"><span class="icon">⬇️</span> Veeva → SmartTMF</div>
+    <div class="flow-row">
+      <div class="flow-box" style="background:#EDE9FE;color:#5B21B6;border:2px solid #A78BFA">Veeva Vault</div>
+      <div class="flow-arrow">→</div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+        ${['Study Metadata (ID, phase, status)','Site Info (PI name, country, activation)','Expected Document List (EDL)','Document Lifecycle States','Governing Docs (Protocol, IB, ICF)'].map(d=>`<div class="flow-box" style="background:#DBEAFE;color:#1E40AF;border:1px solid #93C5FD;text-align:left">${d}</div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">⬆️</span> SmartTMF → Veeva</div>
+    <div class="flow-row">
+      <div class="flow-box" style="background:#ECFDF5;color:#065F46;border:2px solid #6EE7B7">SmartTMF AI</div>
+      <div class="flow-arrow">→</div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+        ${['AI Classification Metadata','QC Approval/Rejection Status','Filing Timeliness Metrics','Completeness Scoring per Study/Site'].map(d=>`<div class="flow-box" style="background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;text-align:left">${d}</div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title"><span class="icon">🗂</span> Simulated Study Data (veeva_study_data.json → Box file 2147763002321)</div>
+  <table><thead><tr><th>Study</th><th>Program</th><th>Phase</th><th>Indication</th><th>Sites</th><th>Enrolled</th><th>CRO</th><th>Completeness</th></tr></thead><tbody>
+  ${DATA.studies.map(s=>{const pct=((s.filed/s.expected)*100).toFixed(1);return `<tr><td><strong>${s.id}</strong></td><td class="mono" style="font-size:11px">${s.program}</td><td>${phaseBadge(s.phase)}</td><td>${s.indication}</td><td>${s.sites}</td><td>${s.enrolled}</td><td>${s.cro}</td><td>${progressBar(parseFloat(pct),80)}</td></tr>`}).join('')}
+  </tbody></table>
+</div>`;
+
+// ---------- QUALITY ----------
+VIEWS.quality = ()=>`
+<div class="grid g2 mb16">
+  <div class="card">
+    <div class="card-title"><span class="icon">🛡</span> TMF Quality Framework</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Based on TMF Reference Model 3.2 · ICH E6(R2) GCP · 21 CFR Part 11 · EU CTR 536/2014</p>
+    <table><thead><tr><th>#</th><th>Quality Check</th><th>Method</th><th>Status</th></tr></thead><tbody>
+    ${[
+      ['1','Legibility Check','AI + Rule'],['2','Orientation Check','AI Vision'],
+      ['3','Duplicate Detection','Hash + AI'],['4','Signature Verification','AI Extract'],
+      ['5','Business Rules Validation','Config Rules'],['6','Filing Timeliness (35-day SLA)','Date Calc']
+    ].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td><span class="badge b-green">Active</span></td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> TMF Health Score Methodology</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      ${[['40%','Completeness','Expected vs actual','var(--green-bg)','var(--green-text)'],['30%','Currency','Within 35-day SLA','var(--amber-bg)','var(--amber-text)'],['30%','Quality','QC pass first attempt','var(--blue-bg)','var(--blue-text)']].map(w=>`<div style="flex:1;background:${w[3]};border-radius:8px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:${w[4]}">${w[0]}</div><div style="font-size:11px;font-weight:600;color:${w[4]}">${w[1]} Index</div><div style="font-size:10px;color:var(--text2)">${w[2]}</div></div>`).join('')}
+    </div>
+    <div style="font-size:12px;font-weight:600;margin-bottom:8px">RAG Thresholds</div>
+    <div style="display:flex;gap:6px">
+      ${[['Green','>90% SLA, <5% reject','var(--green-bg)','var(--green-text)'],['Amber','75–90% SLA, 5–15% reject','var(--amber-bg)','var(--amber-text)'],['Red','<75% SLA, >15% reject','var(--red-bg)','var(--red-text)']].map(r=>`<div style="flex:1;background:${r[2]};border-radius:8px;padding:10px;text-align:center"><strong style="color:${r[3]}">${r[0]}</strong><br><span style="font-size:10.5px">${r[1]}</span></div>`).join('')}
+    </div>
+  </div>
+</div>
+<div class="grid g3 mb16">
+  ${[['Option A: Veeva Vault Feed','EDL templates, milestone definitions, document type hierarchies auto-sync via Vault API','Target State','b-purple','var(--purple-bg)','var(--purple-text)'],
+     ['Option B: Box Simulation','Study/site data in veeva_study_data.json, EDL spreadsheets in SmartTMF config folder','Active Now','b-green','var(--green-bg)','var(--green-text)'],
+     ['Option C: Manual Config','Artifact types, TMF sections, quality rules in smarttmf_config.json','Available','b-blue','var(--blue-bg)','var(--blue-text)']
+  ].map(o=>`<div class="card" style="background:${o[4]}"><div style="font-size:13px;font-weight:700;color:${o[5]};margin-bottom:6px">${o[0]}</div><div style="font-size:12px;color:var(--text2);margin-bottom:8px">${o[1]}</div><span class="badge ${o[3]}">${o[2]}</span></div>`).join('')}
+</div>
+<div class="card">
+  <div class="card-title"><span class="icon">📋</span> AI Classification Confidence Routing</div>
+  <div style="display:flex;gap:12px;padding:8px 0">
+    ${[['≥ 90%','Auto-Approve','Route to 04_Approved','var(--green-bg)','var(--green)','var(--green-text)'],['75–89%','QC Review','Route to 03_QC_Review','var(--amber-bg)','var(--amber)','var(--amber-text)'],['< 75%','Manual Review','Flag for coordinator','var(--red-bg)','var(--red)','var(--red-text)']].map(r=>`<div style="flex:1;background:${r[3]};border:2px solid ${r[4]};border-radius:10px;padding:18px;text-align:center"><div style="font-size:22px;font-weight:700;color:${r[5]}">${r[0]}</div><div style="font-size:12px;font-weight:600;color:${r[5]}">${r[1]}</div><div style="font-size:10.5px;color:var(--text2);margin-top:3px">${r[2]}</div></div>`).join('')}
+  </div>
+</div>`;
+
+// ---------- PRICING ----------
+VIEWS.pricing = ()=>`
+<div style="text-align:center;margin-bottom:24px">
+  <div style="font-size:22px;font-weight:700;color:var(--navy)">SmartTMF Pricing</div>
+  <div style="font-size:13px;color:var(--text2);margin-top:4px">Scale from startup to enterprise with flexible tiers</div>
+</div>
+<div class="grid g3 mb20">
+  ${[
+    {name:'Starter',price:'$15,000',period:'/month · Up to 3 studies',bg:'linear-gradient(135deg,#F8FAFC,#E2E8F0)',color:'var(--navy)',features:['AI Classification Engine (Box AI)','QC Workflow + Audit Trail','Live Dashboard + Metrics','Monthly Analytics Reports','1 CRO Onboarding Included','Email Support'],setup:'$25,000 (2–3 weeks)',featured:false,btn:'btn-o'},
+    {name:'Professional',price:'$28,000',period:'/month · Up to 10 studies',bg:'linear-gradient(135deg,var(--teal),var(--sky))',color:'#fff',features:['Everything in Starter, plus:','CRO Performance Dashboards (RAG)','Veeva Vault eTMF Integration','Automated Document Routing','CRO/CRA Onboarding Program','Inspection Readiness Scoring','Weekly Analytics · 8hr SLA'],setup:'$50,000 (4–6 weeks)',featured:true,btn:'btn-p',rec:true},
+    {name:'Enterprise',price:'$45,000',period:'/month · Unlimited studies',bg:'linear-gradient(135deg,var(--dark),var(--navy))',color:'#fff',features:['Everything in Professional, plus:','Multi-Client Tenants (Isolated)','Custom Metadata Templates','Predictive Inspection AI','Bi-directional Veeva Sync','Cross-Study Portfolio View','Dedicated Success Manager · 4hr SLA'],setup:'$85,000 (8–12 weeks)',featured:false,btn:'btn-o'}
+  ].map(t=>`<div class="card pricing-card${t.featured?' featured':''}">
+    <div class="pricing-header" style="background:${t.bg}">
+      ${t.rec?'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px">Recommended</div>':''}
+      <div class="pricing-name" style="color:${t.color}">${t.name}</div>
+      <div class="pricing-price" style="color:${t.color}">${t.price}</div>
+      <div class="pricing-period" style="color:${t.color==='#fff'?'rgba(255,255,255,.7)':'var(--text2)'}">${t.period}</div>
+    </div>
+    <div class="pricing-features">${t.features.map(f=>`<div class="pricing-feature">${checkSvg()}${f.startsWith('Everything')?`<strong>${f}</strong>`:f}</div>`).join('')}</div>
+    <div class="pricing-cta">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Setup: ${t.setup}</div>
+      <button class="${'btn '+t.btn}" style="width:100%">${t.featured?'Get Started':'Contact Sales'}</button>
+    </div>
+  </div>`).join('')}
+</div>
+<div class="grid g2">
+  <div class="card">
+    <div class="card-title"><span class="icon">💰</span> Add-Ons & Discounts</div>
+    <table><thead><tr><th>Item</th><th>Price</th></tr></thead><tbody>
+    <tr><td>Veeva Vault Integration (one-time)</td><td><strong>$35,000</strong></td></tr>
+    <tr><td>12-month commitment</td><td><strong class="up">10% off</strong></td></tr>
+    <tr><td>24-month commitment</td><td><strong class="up">15% off</strong></td></tr>
+    <tr><td>Multi-client bundle (per additional)</td><td><strong class="up">20% off</strong></td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Xencor Recommended Package</div>
+    <div style="background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="font-size:15px;font-weight:700;color:#0F766E">Professional Tier + Veeva Integration</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px">5 studies · 5 CROs · Full dashboard suite</div>
+    </div>
+    <table style="font-size:12px"><tbody>
+    <tr><td>Monthly recurring</td><td style="text-align:right"><strong>$28,000</strong></td></tr>
+    <tr><td>Setup (one-time)</td><td style="text-align:right">$50,000</td></tr>
+    <tr><td>Veeva integration (one-time)</td><td style="text-align:right">$35,000</td></tr>
+    <tr><td>12-month commitment discount</td><td style="text-align:right;color:var(--green)">−10%</td></tr>
+    <tr style="border-top:2px solid var(--border)"><td><strong>Year 1 Total</strong></td><td style="text-align:right"><strong style="font-size:16px;color:var(--navy)">$387,200</strong></td></tr>
+    </tbody></table>
+  </div>
+</div>`;
+
+// ---------- SCALING ----------
+VIEWS.scaling = ()=>`
+<div class="card mb16" style="background:linear-gradient(135deg,#0D1B2A,#1F3864);color:#fff;border:none">
+  <div style="font-size:18px;font-weight:700;margin-bottom:6px">Multi-Client Architecture</div>
+  <div style="font-size:12px;color:rgba(255,255,255,.65)">Each client gets an isolated SmartTMF instance — separate Box workspace, client-specific configs, zero cross-client data leakage.</div>
+</div>
+<div class="grid g3 mb16">
+  ${[
+    {name:'Client 1: Xencor',badge:'b-green',status:'Live',border:'var(--green)',info:'6 studies · 5 CROs · 17 sites<br>Box: 368160762511<br>Tier: Professional'},
+    {name:'Client 2: [Next Client]',badge:'b-amber',status:'Onboarding',border:'var(--amber)',info:'Setup: 2–3 wks (Starter)<br>or 4–6 wks (Professional)<br>Clone template structure',opacity:.8},
+    {name:'Client 3+: Template',badge:'b-gray',status:'Available',border:'var(--border)',info:'Repeatable deployment<br>SmartTMF template cloning<br>Standardized onboarding',opacity:.6}
+  ].map(c=>`<div class="card" style="border-left:4px solid ${c.border};${c.opacity?'opacity:'+c.opacity:''}">
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px">${c.name}</div>
+    <span class="badge ${c.badge}">${c.status}</span>
+    <div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.6">${c.info}</div>
+  </div>`).join('')}
+</div>
+<div class="grid g2 mb16">
+  <div class="card">
+    <div class="card-title"><span class="icon">🔄</span> What Changes Per Client</div>
+    ${['Box folder structure (cloned from template)','smarttmf_config.json (client-specific rules)','Veeva Vault connection (client instance)','CRO partner definitions & onboarding','Quality thresholds & SLA targets'].map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span class="badge b-blue">Config</span> ${i}</div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">✅</span> What Stays the Same</div>
+    ${['SmartTMF app (React + Box AI + Anthropic)','6-stage pipeline architecture','AI classification engine','QC workflow + analytics engine','CRO onboarding process'].map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span class="badge b-green">Platform</span> ${i}</div>`).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="card-title"><span class="icon">👥</span> Operations Team Scaling</div>
+  <div class="grid g3">
+    ${[['1–3','Clients','1 SmartTMF Admin + existing TMF coordinators'],['4–8','Clients','2 SmartTMF Admins + team leads per client'],['9+','Clients','Dedicated SmartTMF Ops team + client success managers']].map(t=>`<div style="background:var(--surface);border-radius:8px;padding:16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--teal)">${t[0]}</div><div style="font-size:12px;font-weight:600">${t[1]}</div><div style="font-size:11px;color:var(--text2);margin-top:4px">${t[2]}</div></div>`).join('')}
+  </div>
+</div>`;
+
+// ===================================================================
+// NAVIGATION & RENDERING
+// ===================================================================
+const viewMeta = {
+  dashboard:['Dashboard','SmartTMF Pipeline Overview — 5 Studies · 5 CROs · Live on Box'],
+  documents:['Documents','TMF Plans & Workspace Files in Box'],
   classification:['AI Classification','Box AI Metadata Extraction Engine'],
   qc:['QC Workflow','Human-in-the-Loop Quality Control'],
   analytics:['Analytics','TMF Health Monitoring & Inspection Readiness'],
   cro:['CRO Dashboards','Performance Tracking by CRO Partner'],
   onboarding:['CRO & CRA Onboarding','4-Phase Structured Onboarding Workflow'],
-  veeva:['Veeva Vault Integration','eTMF Data Feed Simulation'],
+  veeva:['Veeva Vault Integration','eTMF Data Feed — partnersi-usdm-etmf.veevavault.com'],
   quality:['Quality Standards','TMF Reference Model 3.2 · ICH-GCP · 21 CFR Part 11'],
   pricing:['Pricing','SmartTMF Platform Tiers & Implementation Costs'],
-  scaling:['Multi-Client Scaling','Isolated Tenant Architecture']
+  scaling:['Multi-Client Scaling','Isolated Tenant Architecture for Multiple Sponsors']
 };
 
-function nav(id){
-  const el=document.getElementById('content');
-  el.innerHTML=V[id]();
-  document.getElementById('hT').textContent=VM[id][0];
-  document.getElementById('hS').textContent=VM[id][1];
+let currentView = 'dashboard';
+
+function navigate(viewId){
+  currentView = viewId;
+  const content = document.getElementById('content');
+  content.innerHTML = VIEWS[viewId]();
+  document.getElementById('hTitle').textContent = viewMeta[viewId][0];
+  document.getElementById('hSub').textContent = viewMeta[viewId][1];
+  
+  // Update nav
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`.nav-item[data-v="${id}"]`)?.classList.add('active');
-  el.scrollTop=0;
-  if(id==='cro') bindTabs('croTabs','cro-');
-  if(id==='edl') bindTabs('edlTabs','edl-');
+  document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active');
+  
+  // Scroll to top
+  content.scrollTop = 0;
+  
+  // Post-render hooks
+  if(viewId==='cro') initCROTabs();
 }
 
-function bindTabs(tabsId,prefix){
-  document.querySelectorAll(`#${tabsId} .tab`).forEach(tab=>{
+function initCROTabs(){
+  document.querySelectorAll('#croTabs .tab').forEach(tab=>{
     tab.addEventListener('click',function(){
-      document.querySelectorAll(`#${tabsId} .tab`).forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('#croTabs .tab').forEach(t=>t.classList.remove('active'));
       this.classList.add('active');
-      const key=this.dataset.cro||this.dataset.edl;
-      document.querySelectorAll(`#${tabsId}+div .panel`).forEach(p=>p.classList.remove('active'));
-      const target=document.getElementById(prefix+key);
-      if(target) target.classList.add('active');
+      const cro = this.dataset.cro;
+      document.querySelectorAll('.cro-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('cro-'+cro)?.classList.add('active');
     });
   });
 }
 
-document.querySelectorAll('.nav-item[data-v]').forEach(item=>{
-  item.addEventListener('click',()=>nav(item.dataset.v));
+// Bind nav clicks
+document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
+  item.addEventListener('click',()=>navigate(item.dataset.view));
 });
 
-nav('dashboard');
+// Initial render
+navigate('dashboard');
 </script>
-
-<script>
-(function(){
-  let liveHealth = null;
-
-  function formatStatus(status){
-    if(!status) return 'UNKNOWN';
-    return String(status).replace(/_/g,' ').toUpperCase();
-  }
-
-  function formatUpdatedAt(ts){
-    if(!ts) return 'Awaiting refresh';
-    try {
-      const d = new Date(ts);
-      return 'Updated ' + d.toLocaleString();
-    } catch (e) {
-      return String(ts);
-    }
-  }
-
-  function get(obj, path, fallback='—'){
-    try {
-      const value = path.split('.').reduce((acc, key) => acc?.[key], obj);
-      return value ?? fallback;
-    } catch (e) {
-      return fallback;
-    }
-  }
-
-  function patchDashboard(){
-    const cards = document.querySelectorAll('#content .g.g4.mb2 .c.stat');
-    if (!cards || cards.length < 4 || !liveHealth) return;
-
-    const docsIndexed = get(liveHealth, 'datasources.documents.indexed', '—');
-    const docsName = get(liveHealth, 'datasources.documents.name', 'vaultetmfv2documents');
-    const objectsIndexed = get(liveHealth, 'datasources.objects.indexed', '—');
-    const objectsName = get(liveHealth, 'datasources.objects.name', 'vaultetmfv2objects');
-    const usersDiscovered = get(liveHealth, 'datasources.security.usersDiscovered', '—');
-    const securityName = get(liveHealth, 'datasources.security.name', 'vaultetmfv2security');
-    const status = formatStatus(get(liveHealth, 'status', 'unknown'));
-    const updatedAt = formatUpdatedAt(get(liveHealth, 'updatedAt', null));
-
-    const replacements = [
-      { value: docsIndexed, label: 'Documents Indexed', sub: docsName },
-      { value: objectsIndexed, label: 'Objects Indexed', sub: objectsName },
-      { value: usersDiscovered, label: 'Users Discovered', sub: securityName },
-      { value: status, label: 'Environment Status', sub: updatedAt }
-    ];
-
-    cards.forEach((card, i) => {
-      const val = card.querySelector('.sv');
-      const label = card.querySelector('.sl');
-      const sub = card.querySelector('.ss');
-      const r = replacements[i];
-      if (val) val.textContent = r.value;
-      if (label) label.textContent = r.label;
-      if (sub) {
-        sub.textContent = r.sub;
-        sub.style.color = 'var(--teal)';
-      }
-    });
-
-    let banner = document.querySelector('#content .live-health-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.className = 'c mb live-health-banner';
-      banner.style.marginBottom = '12px';
-      banner.innerHTML = '<div class="ct"><span class="ci">⚡</span> Live Environment Layer</div><div class="small-copy" style="font-size:12px;color:var(--text2);line-height:1.6"></div>';
-      const firstBlock = document.querySelector('#content .g.g4.mb2');
-      if (firstBlock && firstBlock.parentNode) {
-        firstBlock.parentNode.insertBefore(banner, firstBlock);
-      }
-    }
-    const msg = banner.querySelector('.small-copy');
-    if (msg) {
-      msg.textContent = 'Dashboard metrics are being refreshed from /api/health for the ABC BioPharma Vault eTMF v2 environment.';
-    }
-  }
-
-  async function loadHealth(){
-    try {
-      const res = await fetch('/api/health', { cache: 'no-store' });
-      if (!res.ok) throw new Error('Health endpoint returned ' + res.status);
-      liveHealth = await res.json();
-      patchDashboard();
-    } catch (err) {
-      console.error('Live health load failed:', err);
-    }
-  }
-
-  const originalNav = window.nav;
-  if (typeof originalNav === 'function') {
-    window.nav = function(id){
-      originalNav(id);
-      if (id === 'dashboard') {
-        setTimeout(patchDashboard, 0);
-      }
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    loadHealth();
-    setInterval(loadHealth, 60000);
-    setTimeout(patchDashboard, 0);
-  });
-})();
-</script>
-
 </body>
 </html>
