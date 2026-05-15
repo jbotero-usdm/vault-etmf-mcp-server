@@ -3,278 +3,295 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ABC BioPharma SmartTMF Dashboard</title>
+  <title>ABC BioPharma Vault eTMF v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg:#0b1220;
-      --panel:#111a2e;
-      --panel-2:#17233d;
-      --text:#e7eefc;
-      --muted:#9fb0d1;
-      --line:#24365e;
-      --accent:#5aa9ff;
-      --good:#34d399;
-      --warn:#fbbf24;
-      --bad:#f87171;
-      --violet:#a78bfa;
-      --cyan:#22d3ee;
+    :root{
+      --navy:#183153;
+      --teal:#0c8a8f;
+      --sky:#e8f7f8;
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --text:#10233a;
+      --muted:#617186;
+      --border:#dfe6ee;
+      --green:#1d8f5a;
+      --amber:#b7791f;
+      --red:#c53030;
+      --shadow:0 10px 30px rgba(16,35,58,.08);
+      --radius:18px;
     }
-    * { box-sizing:border-box; }
-    body {
+    *{box-sizing:border-box}
+    body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background:linear-gradient(180deg,#09101c 0%, #0b1220 100%);
+      font-family:"DM Sans",system-ui,-apple-system,sans-serif;
+      background:linear-gradient(180deg,#f6f8fb 0%,#eef4f8 100%);
       color:var(--text);
     }
-    .wrap { max-width:1400px; margin:0 auto; padding:24px; }
-    .hero {
-      background:linear-gradient(135deg,#12203b 0%, #0f1830 45%, #1b2f57 100%);
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:24px;
-      box-shadow:0 12px 40px rgba(0,0,0,.25);
-      margin-bottom:20px;
+    .shell{max-width:1280px;margin:0 auto;padding:32px 20px 64px}
+    .hero{
+      background:linear-gradient(135deg,var(--navy),#244974 55%,var(--teal));
+      color:#fff;
+      border-radius:28px;
+      padding:32px;
+      box-shadow:var(--shadow);
+      margin-bottom:24px;
     }
-    .hero-top { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
-    h1 { margin:0 0 8px; font-size:32px; }
-    .sub { color:var(--muted); max-width:900px; line-height:1.5; }
-    .badge-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
-    .badge {
-      padding:8px 12px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.02em;
-      border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text);
+    .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin-bottom:10px}
+    h1{margin:0 0 12px;font-size:36px;line-height:1.05}
+    .hero p{max-width:820px;margin:0 0 16px;color:rgba(255,255,255,.88);font-size:16px;line-height:1.55}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+    .pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:13px}
+    .section{margin-top:28px}
+    .section-header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:14px}
+    .section-header h2{margin:0;font-size:26px}
+    .section-subtitle{margin:6px 0 0;color:var(--muted);font-size:15px;line-height:1.5;max-width:860px}
+    .grid{display:grid;gap:16px}
+    .grid.metrics{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .grid.cards{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
     }
-    .badge.good { background:rgba(52,211,153,.12); color:#9ef0cb; border-color:rgba(52,211,153,.32); }
-    .badge.warn { background:rgba(251,191,36,.12); color:#fde68a; border-color:rgba(251,191,36,.28); }
-    .badge.bad { background:rgba(248,113,113,.12); color:#fecaca; border-color:rgba(248,113,113,.28); }
-    .grid { display:grid; gap:16px; }
-    .kpis { grid-template-columns:repeat(6,minmax(0,1fr)); margin-bottom:20px; }
-    .two { grid-template-columns:1.3fr .9fr; margin-bottom:20px; }
-    .three { grid-template-columns:1fr 1fr 1fr; margin-bottom:20px; }
-    .panel {
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      box-shadow:0 8px 26px rgba(0,0,0,.2);
+    .metric-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+    .metric-value{font-size:30px;font-weight:700;line-height:1.1}
+    .metric-sub{margin-top:8px;color:var(--muted);font-size:14px}
+    .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:13px;font-weight:600}
+    .status.green{background:#e9f8f0;color:var(--green)}
+    .status.amber{background:#fff4df;color:var(--amber)}
+    .status.red{background:#fdecec;color:var(--red)}
+    .datasource-name{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;background:var(--bg);padding:4px 8px;border-radius:8px;display:inline-block;margin-top:6px}
+    .bullets{margin:12px 0 0;padding-left:18px;color:var(--text)}
+    .bullets li{margin:8px 0;line-height:1.45}
+    .banner{
+      background:#fff;
+      border:1px solid var(--border);
+      border-left:6px solid var(--teal);
+      border-radius:16px;
+      padding:18px 20px;
+      box-shadow:var(--shadow);
     }
-    .panel h2, .panel h3 { margin:0 0 12px; }
-    .eyebrow { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
-    .kpi .value { font-size:30px; font-weight:800; margin:6px 0; }
-    .kpi .meta { color:var(--muted); font-size:13px; }
-    .bar-stack { display:flex; height:14px; border-radius:999px; overflow:hidden; background:#0b1428; border:1px solid var(--line); margin:14px 0 10px; }
-    .seg-low { background:var(--good); }
-    .seg-med { background:var(--warn); }
-    .seg-high { background:var(--bad); }
-    .seg-active { background:var(--good); }
-    .seg-hold { background:var(--warn); }
-    .seg-audit { background:var(--bad); }
-    .legend { display:flex; flex-wrap:wrap; gap:12px; color:var(--muted); font-size:13px; }
-    .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
-    table { width:100%; border-collapse:collapse; font-size:14px; }
-    th, td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
-    th { color:#b8c8e8; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
-    tr:hover td { background:rgba(255,255,255,.02); }
-    .pill { padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700; display:inline-block; }
-    .pill.low { background:rgba(52,211,153,.12); color:#9ef0cb; }
-    .pill.med { background:rgba(251,191,36,.12); color:#fde68a; }
-    .pill.high { background:rgba(248,113,113,.12); color:#fecaca; }
-    .status-good { color:#9ef0cb; font-weight:700; }
-    .status-warn { color:#fde68a; font-weight:700; }
-    .status-bad { color:#fecaca; font-weight:700; }
-    .source-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-    .source {
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-    }
-    .source .name { font-weight:700; margin-bottom:6px; }
-    .tiny { color:var(--muted); font-size:12px; }
-    .foot { color:var(--muted); font-size:12px; margin-top:18px; line-height:1.5; }
-    @media (max-width: 1200px) {
-      .kpis { grid-template-columns:repeat(3,minmax(0,1fr)); }
-      .two, .three { grid-template-columns:1fr; }
-    }
-    @media (max-width: 720px) {
-      .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .source-grid { grid-template-columns:1fr; }
-    }
+    .split{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    .admin{border-top:2px dashed #cfd8e3;padding-top:18px}
+    .small{font-size:13px;color:var(--muted)}
+    .footer-note{margin-top:24px;color:var(--muted);font-size:14px;line-height:1.5}
+    @media (max-width:960px){.split{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="shell">
     <section class="hero">
-      <div class="hero-top">
+      <div class="eyebrow">ABC BioPharma</div>
+      <h1>Vault eTMF v2 Dashboard</h1>
+      <p>
+        Operational view of TMF indexing health, intake readiness, filing-agent status,
+        datasource readiness, and admin-only maintenance actions for the current environment.
+      </p>
+      <div class="hero-meta">
+        <div class="pill">Datasources live</div>
+        <div class="pill">Agent cloned</div>
+        <div class="pill">Dashboard in progress</div>
+        <div class="pill">Admin ops evolving</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="banner">
+        <strong>Status:</strong> This environment is intentionally being built in visible phases.
+        Datasources, filing support, dashboard views, and admin endpoints are available now, while deeper automation and troubleshooting controls are still being refined.
+      </div>
+    </section>
+
+    <section class="section" id="overview">
+      <div class="section-header">
         <div>
-          <div class="eyebrow">ABC BioPharma · SmartTMF Environment Dashboard</div>
-          <h1>ABC BioPharma TMF & Intake Health</h1>
-          <div class="sub">
-            Environment-focused dashboard built from the indexed ABC BioPharma intake sources in Box plus the current mirror/indexing status. This version emphasizes intake readiness, site risk, enrollment pressure, and the sources currently available to support downstream TMF indexing and review.
-          </div>
-          <div class="badge-row">
-            <span class="badge good">Box intake indexed</span>
-            <span class="badge warn">Vault eTMF mirror not indexed yet</span>
-            <span class="badge">Reference layout: SmartTMF v2 production</span>
-            <span class="badge">Study: APG101-301</span>
-          </div>
+          <h2>Overview</h2>
+          <p class="section-subtitle">High-level operational status for indexing, intake, agent readiness, and environment health.</p>
         </div>
-        <div class="tiny">Generated from current environment evidence<br/>Last visible source updates: 2026-04-28 to 2026-05-13</div>
+        <div id="overallStatus" class="status amber">Checking health...</div>
       </div>
-    </section>
-
-    <section class="grid kpis">
-      <div class="panel kpi"><div class="eyebrow">Sites in scope</div><div class="value">6</div><div class="meta">4 active · 1 on hold · 1 for-cause audit</div></div>
-      <div class="panel kpi"><div class="eyebrow">Enrollment</div><div class="value">101 / 125</div><div class="meta">80.8% of target across indexed sites</div></div>
-      <div class="panel kpi"><div class="eyebrow">Open queries</div><div class="value">85</div><div class="meta">Largest backlog at site 012 and site 007</div></div>
-      <div class="panel kpi"><div class="eyebrow">Open deviations</div><div class="value">28</div><div class="meta">Concentrated in high-risk sites</div></div>
-      <div class="panel kpi"><div class="eyebrow">High-risk sites</div><div class="value">2</div><div class="meta">007 On Hold · 012 For-Cause Audit</div></div>
-      <div class="panel kpi"><div class="eyebrow">Indexed intake sources</div><div class="value">10</div><div class="meta">Study, site, milestone, participant, EDC, eCOA</div></div>
-    </section>
-
-    <section class="grid two">
-      <div class="panel">
-        <h2>Portfolio risk distribution</h2>
-        <div class="tiny">Risk tiers from the indexed study-site dimension</div>
-        <div class="bar-stack" aria-label="Risk distribution">
-          <div class="seg-low" style="width:50%"></div>
-          <div class="seg-med" style="width:16.67%"></div>
-          <div class="seg-high" style="width:33.33%"></div>
+      <div class="grid metrics">
+        <div class="card">
+          <div class="metric-label">Documents indexed</div>
+          <div class="metric-value" id="documentsIndexed">59</div>
+          <div class="metric-sub">Current known document index count</div>
         </div>
-        <div class="legend">
-          <span><span class="dot" style="background:var(--good)"></span>Low risk: 3</span>
-          <span><span class="dot" style="background:var(--warn)"></span>Medium risk: 1</span>
-          <span><span class="dot" style="background:var(--bad)"></span>High risk: 2</span>
+        <div class="card">
+          <div class="metric-label">Objects indexed</div>
+          <div class="metric-value" id="objectsIndexed">22</div>
+          <div class="metric-sub">Studies, countries, and sites</div>
         </div>
-      </div>
-      <div class="panel">
-        <h2>Operational status mix</h2>
-        <div class="tiny">Current site status across indexed intake records</div>
-        <div class="bar-stack" aria-label="Status distribution">
-          <div class="seg-active" style="width:66.67%"></div>
-          <div class="seg-hold" style="width:16.67%"></div>
-          <div class="seg-audit" style="width:16.67%"></div>
+        <div class="card">
+          <div class="metric-label">Users discovered</div>
+          <div class="metric-value" id="usersSynced">20</div>
+          <div class="metric-sub">Security readiness snapshot</div>
         </div>
-        <div class="legend">
-          <span><span class="dot" style="background:var(--good)"></span>Active: 4</span>
-          <span><span class="dot" style="background:var(--warn)"></span>On Hold: 1</span>
-          <span><span class="dot" style="background:var(--bad)"></span>For-Cause Audit: 1</span>
+        <div class="card">
+          <div class="metric-label">Last health check</div>
+          <div class="metric-value" id="lastHealthCheck">Pending</div>
+          <div class="metric-sub">Updated by /api/health when available</div>
         </div>
       </div>
     </section>
 
-    <section class="grid three">
-      <div class="panel">
-        <h3>Indexing health</h3>
-        <table>
-          <thead><tr><th>Source</th><th>Status</th><th>Signal</th></tr></thead>
-          <tbody>
-            <tr><td>ABC intake Box folder</td><td class="status-good">Healthy</td><td>Multiple indexed CSV sources available</td></tr>
-            <tr><td>Vault eTMF mirror</td><td class="status-warn">Blocked</td><td>Folder visible but not indexed yet</td></tr>
-            <tr><td>RIM mirror / agent config folders</td><td class="status-warn">Blocked</td><td>Visible, no indexed content currently available</td></tr>
-          </tbody>
-        </table>
+    <section class="section" id="datasources">
+      <div class="section-header">
+        <div>
+          <h2>Datasources</h2>
+          <p class="section-subtitle">The current environment uses three custom datasources for documents, objects, and security readiness.</p>
+        </div>
       </div>
-      <div class="panel">
-        <h3>Pressure points</h3>
-        <table>
-          <thead><tr><th>Site</th><th>Queries</th><th>Deviations</th></tr></thead>
-          <tbody>
-            <tr><td>012</td><td class="status-bad">31</td><td class="status-bad">12</td></tr>
-            <tr><td>007</td><td class="status-bad">23</td><td class="status-bad">9</td></tr>
-            <tr><td>089</td><td class="status-warn">12</td><td class="status-warn">3</td></tr>
-            <tr><td>031</td><td>9</td><td>1</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="panel">
-        <h3>Enrollment gap</h3>
-        <table>
-          <thead><tr><th>Site</th><th>Actual / Target</th><th>Gap</th></tr></thead>
-          <tbody>
-            <tr><td>042</td><td>22 / 25</td><td>3</td></tr>
-            <tr><td>067</td><td>19 / 22</td><td>3</td></tr>
-            <tr><td>031</td><td>16 / 20</td><td>4</td></tr>
-            <tr><td>089</td><td>14 / 18</td><td>4</td></tr>
-            <tr><td>007</td><td>18 / 22</td><td>4</td></tr>
-            <tr><td>012</td><td>12 / 18</td><td class="status-bad">6</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel" style="margin-bottom:20px;">
-      <h2>Site-level operating view</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Site</th>
-            <th>Status</th>
-            <th>Risk</th>
-            <th>Enrollment</th>
-            <th>Screen fail rate</th>
-            <th>Open queries</th>
-            <th>Open deviations</th>
-            <th>Latest monitoring</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>042 · Memorial Cancer Institute</td><td>Active</td><td><span class="pill low">Low</span></td><td>22 / 25</td><td>0.18</td><td>4</td><td>1</td><td>2026-04-08</td></tr>
-          <tr><td>067 · Pacific Liver Center</td><td>Active</td><td><span class="pill low">Low</span></td><td>19 / 22</td><td>0.21</td><td>6</td><td>2</td><td>2026-04-15</td></tr>
-          <tr><td>031 · Barcelona Oncology Hospital</td><td>Active</td><td><span class="pill low">Low</span></td><td>16 / 20</td><td>0.25</td><td>9</td><td>1</td><td>2026-04-02</td></tr>
-          <tr><td>089 · Sydney Hepatology Centre</td><td>Active</td><td><span class="pill med">Medium</span></td><td>14 / 18</td><td>0.30</td><td>12</td><td>3</td><td>2026-03-20</td></tr>
-          <tr><td>007 · Riverside Liver &amp; GI Associates</td><td class="status-warn">On Hold</td><td><span class="pill high">High</span></td><td>18 / 22</td><td>0.41</td><td class="status-bad">23</td><td class="status-bad">9</td><td>2026-02-14</td></tr>
-          <tr><td>012 · Bayside Clinical Research</td><td class="status-bad">For-Cause Audit</td><td><span class="pill high">High</span></td><td>12 / 18</td><td>0.55</td><td class="status-bad">31</td><td class="status-bad">12</td><td>2026-01-30</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="grid two">
-      <div class="panel">
-        <h2>Low-compliance eCOA watchlist</h2>
-        <table>
-          <thead><tr><th>Site</th><th>Subject</th><th>Instrument</th><th>Compliance</th></tr></thead>
-          <tbody>
-            <tr><td>012</td><td>APG-012-001</td><td>FACT-Hep</td><td class="status-bad">33.3%</td></tr>
-            <tr><td>007</td><td>APG-007-008</td><td>FACT-Hep</td><td class="status-bad">40.0%</td></tr>
-            <tr><td>012</td><td>APG-012-005</td><td>FACT-Hep</td><td class="status-bad">45.2%</td></tr>
-            <tr><td>007</td><td>APG-007-005</td><td>Pain Diary VAS</td><td class="status-bad">47.5%</td></tr>
-            <tr><td>007</td><td>APG-007-001</td><td>PRO-CTCAE Symptom</td><td class="status-bad">60.9%</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="panel">
-        <h2>Indexed intake sources</h2>
-        <div class="source-grid">
-          <div class="source"><div class="name">Study / site dimension</div><div class="tiny">Study-site roster, risk tier, target enrollment, operational status</div></div>
-          <div class="source"><div class="name">Site complete metrics</div><div class="tiny">Enrollment, monitoring, query backlog, open deviations</div></div>
-          <div class="source"><div class="name">Participant metrics</div><div class="tiny">Screen fail, randomization, dosing, on-study counts</div></div>
-          <div class="source"><div class="name">Participant enrollment summary</div><div class="tiny">Subject lifecycle, failures, discontinuations, recent visits</div></div>
-          <div class="source"><div class="name">EDC summary metrics</div><div class="tiny">CRF completion, SDV, aging queries, missing data</div></div>
-          <div class="source"><div class="name">eCOA compliance</div><div class="tiny">FACT-Hep, EQ-5D-5L, pain diary, PRO-CTCAE adherence</div></div>
-          <div class="source"><div class="name">eCOA responses</div><div class="tiny">Longitudinal PRO response feed</div></div>
-          <div class="source"><div class="name">Site milestones</div><div class="tiny">Baseline vs actual milestone timing and variance</div></div>
-          <div class="source"><div class="name">Milestone baselines</div><div class="tiny">Planned baseline dates by site and milestone</div></div>
-          <div class="source"><div class="name">Country mapping</div><div class="tiny">US, ES, AU region support</div></div>
+      <div class="grid cards">
+        <div class="card">
+          <h3>Documents</h3>
+          <div class="datasource-name">vaultetmfv2documents</div>
+          <ul class="bullets">
+            <li>TMF document content and metadata indexing</li>
+            <li>Supports retrieval, filing context, and indexing health</li>
+            <li>Feeds document-level search and filing workflows</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Objects</h3>
+          <div class="datasource-name">vaultetmfv2objects</div>
+          <ul class="bullets">
+            <li>Study, study country, and site object records</li>
+            <li>Supports filing context and operational visibility</li>
+            <li>Indexed as documents in this environment</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Security</h3>
+          <div class="datasource-name">vaultetmfv2security</div>
+          <ul class="bullets">
+            <li>User, group, and membership readiness snapshot</li>
+            <li>Operational and permissions context</li>
+            <li>Not presented as a business-facing searchable corpus</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <section class="panel">
-      <h2>What this version is optimized for</h2>
-      <table>
-        <thead><tr><th>Question</th><th>Answer path in this dashboard</th></tr></thead>
-        <tbody>
-          <tr><td>Is the ABC intake environment actually connected?</td><td>Yes — indexed Box intake sources are present and surfaced.</td></tr>
-          <tr><td>Where is operational risk concentrated?</td><td>Sites 007 and 012 drive most of the query and deviation burden.</td></tr>
-          <tr><td>Which sources are ready to support TMF/indexing workflows?</td><td>Site, participant, milestone, EDC, and eCOA feeds are visible; Vault mirror remains unindexed.</td></tr>
-          <tr><td>Where should TMF / clinical follow-up focus first?</td><td>For-Cause Audit site 012, On Hold site 007, then medium-risk site 089.</td></tr>
-        </tbody>
-      </table>
-
-      <div class="foot">
-        This is an environment-based first pass intended to replace the placeholder/non-ABC content. If you want, the next refinement should be to wire in your actual Vault/Glean indexing counters and convert the top row from static KPIs into live pipeline cards using the same visual system.
+    <section class="section" id="security-oversight">
+      <div class="section-header">
+        <div>
+          <h2>Security and Oversight</h2>
+          <p class="section-subtitle">This environment is intended to support controlled use of AI-assisted TMF operations while preserving human accountability and traceability.</p>
+        </div>
+      </div>
+      <div class="grid metrics">
+        <div class="card"><div class="metric-label">Access</div><div class="metric-value" style="font-size:20px">Authenticated</div></div>
+        <div class="card"><div class="metric-label">Permissions</div><div class="metric-value" style="font-size:20px">Role-based</div></div>
+        <div class="card"><div class="metric-label">Audit</div><div class="metric-value" style="font-size:20px">Traceable</div></div>
+        <div class="card"><div class="metric-label">Write-back</div><div class="metric-value" style="font-size:20px">Human acknowledgement</div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Human oversight model</h3>
+        <p>
+          AI acts as a delegate to the user, not as an autonomous final decision-maker. Where outputs affect regulated workflows,
+          a qualified human remains responsible for review, acceptance, rejection, or escalation.
+        </p>
       </div>
     </section>
+
+    <section class="section" id="agent-usage">
+      <div class="section-header">
+        <div>
+          <h2>Agent Usage</h2>
+          <p class="section-subtitle">The ABC BioPharma TMF Filer Agent is currently configured as a gather-only filing assistant.</p>
+        </div>
+      </div>
+      <div class="split">
+        <div class="card">
+          <h3>Current behavior</h3>
+          <ul class="bullets">
+            <li>Identify the relevant Box file</li>
+            <li>Resolve Vault classification</li>
+            <li>Resolve study, country, and site identifiers</li>
+            <li>Prepare filing inputs for downstream review</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Current boundary</h3>
+          <p>
+            The current agent does not perform the final autonomous filing step.
+            It remains intentionally separate from admin crawl, reindex, and troubleshooting operations.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section admin" id="admin-ops">
+      <div class="section-header">
+        <div>
+          <h2>Admin Ops</h2>
+          <p class="section-subtitle">Administrator-only maintenance and diagnostics for indexing and environment operations.</p>
+        </div>
+      </div>
+      <div class="split">
+        <div class="card">
+          <h3>Admin-only actions</h3>
+          <ul class="bullets">
+            <li>Full Crawl</li>
+            <li>Reindex</li>
+            <li>Smoke Test</li>
+            <li>Detailed Troubleshooting</li>
+            <li>Run History and Diagnostics</li>
+          </ul>
+          <p class="small">These capabilities should be restricted to designated environment administrators.</p>
+        </div>
+        <div class="card">
+          <h3>Environment health metrics</h3>
+          <ul class="bullets">
+            <li>Last full crawl</li>
+            <li>Last incremental sync</li>
+            <li>Records processed</li>
+            <li>Failures and retries</li>
+            <li>Watermark timestamp</li>
+            <li>Datasource health by type</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Current datasource family: <strong>vaultetmfv2documents</strong>, <strong>vaultetmfv2objects</strong>, and <strong>vaultetmfv2security</strong>.
+      This dashboard is intended to make progress visible early while leaving room for additional automation and hosted MCP capabilities later.
+    </div>
   </div>
+
+  <script>
+    async function loadHealth() {
+      try {
+        const res = await fetch('/api/health', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Health endpoint unavailable');
+        const data = await res.json();
+
+        const state = (data.status || 'ok').toLowerCase();
+        const statusEl = document.getElementById('overallStatus');
+        statusEl.className = 'status ' + (state === 'ok' ? 'green' : state === 'warning' ? 'amber' : 'red');
+        statusEl.textContent = state === 'ok' ? 'Environment healthy' : state;
+
+        if (data.metrics) {
+          if (data.metrics.documentsIndexed != null) document.getElementById('documentsIndexed').textContent = data.metrics.documentsIndexed;
+          if (data.metrics.objectsIndexed != null) document.getElementById('objectsIndexed').textContent = data.metrics.objectsIndexed;
+          if (data.metrics.usersSynced != null) document.getElementById('usersSynced').textContent = data.metrics.usersSynced;
+        }
+
+        if (data.checkedAt) {
+          document.getElementById('lastHealthCheck').textContent = new Date(data.checkedAt).toLocaleString();
+        } else {
+          document.getElementById('lastHealthCheck').textContent = 'Available';
+        }
+      } catch (e) {
+        document.getElementById('overallStatus').className = 'status amber';
+        document.getElementById('overallStatus').textContent = 'Using fallback metrics';
+      }
+    }
+    loadHealth();
+  </script>
 </body>
 </html>

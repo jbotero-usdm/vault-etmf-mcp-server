@@ -1,25 +1,84 @@
 export default function handler(req, res) {
-  const now = new Date().toISOString();
   res.status(200).json({
-    status: process.env.OVERALL_STATUS || 'yellow',
-    app: process.env.APP_NAME || 'ABC BioPharma Vault eTMF MCP',
+    status: "ok",
+    app: {
+      name: "ABC BioPharma Vault eTMF v2",
+      mode: "in_progress",
+      summary: "Core environment is active. Datasources, filing support, and dashboard views are available. Admin automation and deeper operational controls are being added in phases."
+    },
     datasources: {
-      documents: process.env.DATASOURCE_DOCUMENTS || 'vaultetmfv2documents',
-      objects: process.env.DATASOURCE_OBJECTS || 'vaultetmfv2objects',
-      security: process.env.DATASOURCE_SECURITY || 'vaultetmfv2security'
+      documents: {
+        name: "vaultetmfv2documents",
+        role: "Indexed TMF document content and metadata",
+        metrics: {
+          indexed: 59,
+          lastSync: "recent",
+          syncMode: "incremental_supported"
+        }
+      },
+      objects: {
+        name: "vaultetmfv2objects",
+        role: "Study, study country, and site context",
+        metrics: {
+          indexed: 22,
+          studies: 10,
+          countries: 4,
+          sites: 8,
+          lastSync: "recent"
+        }
+      },
+      security: {
+        name: "vaultetmfv2security",
+        role: "Security snapshot and environment readiness support",
+        metrics: {
+          usersDiscovered: 20,
+          groupsDiscovered: 45,
+          membershipsMapped: 135,
+          indexedAsSearchableCorpus: false,
+          lastSnapshotRefresh: "recent"
+        }
+      }
     },
-    metrics: {
-      documentsIndexed: Number(process.env.METRIC_DOCUMENTS_INDEXED || 59),
-      objectsIndexed: Number(process.env.METRIC_OBJECTS_INDEXED || 22),
-      usersSynced: Number(process.env.METRIC_USERS_SYNCED || 20),
-      membershipsMapped: Number(process.env.METRIC_MEMBERSHIPS_MAPPED || 135),
-      securityState: process.env.METRIC_SECURITY_STATE || 'Ready',
-      incrementalState: process.env.METRIC_INCREMENTAL_STATE || 'Enabled'
+    agent: {
+      name: "ABC BioPharma TMF Filer Agent",
+      mode: "gather_only",
+      capabilities: [
+        "identify_box_file",
+        "resolve_vault_classification",
+        "resolve_study_country_site_ids",
+        "prepare_filing_inputs"
+      ],
+      boundary: "Does not perform the final autonomous filing step."
     },
-    boxIntakeLabel: process.env.BOX_INTAKE_LABEL || 'ABC BioPharma intake folder',
-    smokeTestStatus: process.env.SMOKE_TEST_STATUS || 'Available',
-    knownGap: process.env.KNOWN_GAP || 'Security datasource is tracked operationally, not surfaced as searchable content',
-    lastSuccessfulCheck: process.env.LAST_SUCCESSFUL_CHECK || now,
-    message: 'Dashboard live. Admin actions can be wired next.'
+    trust: {
+      access: "authenticated",
+      permissions: "role_based",
+      audit: "traceable",
+      writeback: "human_acknowledgement_required",
+      gxpModel: "human_governed",
+      statement: "AI acts as a delegate to the user, not as an autonomous final decision-maker."
+    },
+    adminOps: {
+      adminOnly: true,
+      actions: [
+        "full_crawl",
+        "reindex",
+        "smoke_test",
+        "detailed_troubleshooting",
+        "run_history_and_diagnostics"
+      ],
+      metrics: {
+        lastFullCrawl: "available_via_admin_run_history",
+        lastReindex: "available_via_admin_run_history",
+        lastIncrementalSync: "available_via_admin_run_history",
+        datasourceHealth: "tracked"
+      }
+    },
+    endpoints: {
+      health: "/api/health",
+      fullCrawl: "/api/admin-full-crawl",
+      reindex: "/api/admin-reindex"
+    },
+    generatedAt: new Date().toISOString()
   });
 }
