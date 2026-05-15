@@ -1,0 +1,82 @@
+name: full-crawl
+
+on:
+  workflow_dispatch:
+    inputs:
+      requested_by:
+        description: Requesting user email
+        required: false
+        type: string
+      reason:
+        description: Reason for running full crawl
+        required: false
+        type: string
+      acknowledgement:
+        description: Human acknowledgement captured
+        required: false
+        type: string
+
+concurrency:
+  group: vault-etmf-full-crawl
+  cancel-in-progress: false
+
+jobs:
+  full-crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      VAULT_URL: ${{ secrets.VAULT_URL }}
+      VAULT_USERNAME: ${{ secrets.VAULT_USERNAME }}
+      VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
+      GLEAN_API_URL: ${{ secrets.GLEAN_API_URL }}
+      GLEAN_INDEXING_API_TOKEN: ${{ secrets.GLEAN_INDEXING_API_TOKEN }}
+      DATASOURCE_DOCUMENTS: ${{ secrets.DATASOURCE_DOCUMENTS }}
+      DATASOURCE_OBJECTS: ${{ secrets.DATASOURCE_OBJECTS }}
+      DATASOURCE_SECURITY: ${{ secrets.DATASOURCE_SECURITY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          pip install requests
+
+      - name: Prepare runtime folders
+        run: |
+          mkdir -p logs output
+
+      - name: Log request context
+        run: |
+          echo "requested_by=${{ github.event.inputs.requested_by }}"
+          echo "reason=${{ github.event.inputs.reason }}"
+          echo "acknowledgement=${{ github.event.inputs.acknowledgement }}"
+
+      - name: Create datasources
+        run: python3 scripts/01_create_datasources.py
+
+      - name: Sync security
+        run: python3 scripts/02_extract_and_index_security.py
+
+      - name: Full document indexing
+        run: python3 scripts/03_extract_and_index_documents_auditable.py
+
+      - name: Object indexing
+        run: python3 scripts/04_extract_and_index_objects_auditable.py
+
+      - name: Upload logs and outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-crawl-artifacts
+          path: |
+            logs/**
+            output/**
+          if-no-files-found: ignore
