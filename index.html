@@ -141,7 +141,8 @@ tbody tr:hover td{background:rgba(0,131,143,.015)}
 <div class="nav-item" data-v="veeva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Veeva Vault</div>
 <div class="nav-item" data-v="quality"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Quality Standards</div>
 <div class="nav-section">Business</div>
-<div class="nav-item" data-v="pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</div>
+
+
 </div>
 <div class="sidebar-footer">SmartTMF v2.0 · Production<br>CRO names shown for illustration only<br>© 2026 USDM Life Sciences</div>
 </nav>
@@ -537,9 +538,9 @@ V.veeva=()=>`
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div><div class="ct" style="margin-bottom:2px"><span class="ci">🔗</span> Veeva Vault eTMF Integration</div>
     <div style="font-size:11px;color:var(--text2)">Vault URL: <a href="#" style="color:var(--teal);font-weight:600">[client-instance].veevavault.com</a></div></div>
-    <span class="b bg">Connected via Glean</span>
+    <span class="b bp">Simulation Mode</span>
   </div>
-  <p style="font-size:11px;color:var(--text2);margin-top:6px">Vault context is available through Glean. Box remains the intake and work queue, while Vault is treated as the source of record for filed TMF content.</p>
+  <p style="font-size:11px;color:var(--text2);margin-top:6px">Study/site data simulated in Box until Vault API connection is configured. Folder structure mirrors Veeva document type hierarchy.</p>
 </div>
 <div class="g g2 mb">
   <div class="c"><div class="ct"><span class="ci">⬇️</span> Veeva → SmartTMF</div>
@@ -547,7 +548,7 @@ V.veeva=()=>`
   <div class="c"><div class="ct"><span class="ci">⬆️</span> SmartTMF → Veeva</div>
   ${['AI Classification Metadata','QC Approval/Rejection Status','Filing Timeliness Metrics','Completeness Scoring per Study/Site'].map(d=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--teal)">→</span>${d}</div>`).join('')}</div>
 </div>
-<div class="c"><div class="ct"><span class="ci">🗂</span> Study Data</div>
+<div class="c"><div class="ct"><span class="ci">🗂</span> Simulated Study Data</div>
 <table><thead><tr><th>Study</th><th>Molecule</th><th>Phase</th><th>Indication</th><th>Sites</th><th>Enrolled</th><th>CRO</th><th>Complete</th></tr></thead><tbody>
 ${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<tr><td><strong>${s.id}</strong></td><td class="mono" style="font-size:10.5px">${s.mol}</td><td>${phB(s.phase)}</td><td>${s.ind}</td><td>${s.sites}</td><td>${s.enrolled}</td><td>${s.cro}</td><td>${pBar(parseFloat(p),70)}</td></tr>`}).join('')}
 </tbody></table></div>`;
@@ -581,7 +582,7 @@ V.pricing=()=>`
 <div class="g g3 mb2">
 ${[{n:'Starter',p:'$15,000',pd:'/mo · Up to 3 studies',bg:'linear-gradient(135deg,#F8FAFC,#E2E8F0)',c:'var(--navy)',feat:['AI Classification (Box AI)','QC Workflow + Audit Trail','Dashboard + Metrics','Monthly Reports','1 CRO Onboarding','Email Support'],setup:'$25K (2–3 wks)',f:false},
 {n:'Professional',p:'$28,000',pd:'/mo · Up to 10 studies',bg:'linear-gradient(135deg,var(--teal),var(--sky))',c:'#fff',feat:['Everything in Starter, plus:','CRO Performance Dashboards','Veeva Vault Integration','Automated Document Routing','CRO/CRA Onboarding Program','Inspection Readiness Scoring','Full EDL Milestone Tracking','Weekly Analytics · 8hr SLA'],setup:'$50K (4–6 wks)',f:true,rec:true},
-{n:'Enterprise',p:'$45,000',pd:'/mo · Unlimited studies',bg:'linear-gradient(135deg,var(--dark),var(--navy))',c:'#fff',feat:['Everything in Professional, plus:','Advanced Tenant Controls','Custom Metadata Templates','Predictive Inspection AI','Bi-directional Veeva Sync','Cross-Study Portfolio View','Dedicated Success Mgr · 4hr SLA'],setup:'$85K (8–12 wks)',f:false}
+{n:'Enterprise',p:'$45,000',pd:'/mo · Unlimited studies',bg:'linear-gradient(135deg,var(--dark),var(--navy))',c:'#fff',feat:['Everything in Professional, plus:','Multi-Client Tenants','Custom Metadata Templates','Predictive Inspection AI','Bi-directional Veeva Sync','Cross-Study Portfolio View','Dedicated Success Mgr · 4hr SLA'],setup:'$85K (8–12 wks)',f:false}
 ].map(t=>`<div class="c pc${t.f?' feat':''}"><div class="ph" style="background:${t.bg}">${t.rec?'<div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:3px">Recommended</div>':''}<div class="pn" style="color:${t.c}">${t.n}</div><div class="pp" style="color:${t.c}">${t.p}</div><div class="ppd" style="color:${t.c==='#fff'?'rgba(255,255,255,.7)':'var(--text2)'}">${t.pd}</div></div><div class="pfl">${t.feat.map(f=>`<div class="pfi">${chk}${f.startsWith('Everything')?`<strong>${f}</strong>`:f}</div>`).join('')}</div><div class="pcta"><div style="font-size:10px;color:var(--text2);margin-bottom:6px">Setup: ${t.setup}</div><button class="btn ${t.f?'bp1':'bo1'}" style="width:100%">${t.f?'Get Started':'Contact Sales'}</button></div></div>`).join('')}
 </div>
 <div class="g g2"><div class="c"><div class="ct"><span class="ci">💰</span> Add-Ons & Discounts</div>
@@ -601,6 +602,23 @@ ${[{n:'Starter',p:'$15,000',pd:'/mo · Up to 3 studies',bg:'linear-gradient(135d
 <tr style="border-top:2px solid var(--border)"><td><strong>Year 1 Total</strong></td><td style="text-align:right"><strong style="font-size:14px;color:var(--navy)">$387,200</strong></td></tr>
 </tbody></table></div></div>`;
 
+// ──── SCALING ────
+V.scaling=()=>`
+<div class="c mb" style="background:linear-gradient(135deg,#0D1B2A,#1F3864);color:#fff;border:none">
+<div style="font-size:17px;font-weight:700;margin-bottom:4px">Multi-Client Architecture</div>
+<div style="font-size:11px;color:rgba(255,255,255,.6)">Each client gets an isolated SmartTMF instance — separate Box workspace, client-specific configs, zero cross-client data leakage.</div></div>
+<div class="g g3 mb">
+${[{n:'Client 1: Meridian Bio',b:'bg',s:'Live',bc:'var(--green)',info:'5 studies · 5 CROs · 17 sites<br>Tier: Professional'},{n:'Client 2: [Next Client]',b:'ba',s:'Onboarding',bc:'var(--amber)',info:'Setup: 2–3 wks (Starter)<br>or 4–6 wks (Professional)',o:.8},{n:'Client 3+: Template',b:'bx',s:'Available',bc:'var(--border)',info:'Repeatable deployment<br>SmartTMF template cloning',o:.6}].map(c=>`<div class="c" style="border-left:4px solid ${c.bc};${c.o?'opacity:'+c.o:''}"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px">${c.n}</div><span class="b ${c.b}">${c.s}</span><div style="font-size:10.5px;color:var(--text2);margin-top:6px;line-height:1.5">${c.info}</div></div>`).join('')}
+</div>
+<div class="g g2 mb">
+<div class="c"><div class="ct"><span class="ci">🔄</span> Changes Per Client</div>
+${['Box folder structure','smarttmf_config.json','Veeva Vault connection','CRO definitions & onboarding','Quality thresholds & SLAs','EDL templates per study'].map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="b bb">Config</span>${i}</div>`).join('')}</div>
+<div class="c"><div class="ct"><span class="ci">✅</span> Stays the Same</div>
+${['SmartTMF app (React + Box AI + Anthropic)','6-stage pipeline','AI classification engine','QC workflow + analytics','CRO onboarding process','EDL framework & milestone logic'].map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="b bg">Platform</span>${i}</div>`).join('')}</div>
+</div>
+<div class="c"><div class="ct"><span class="ci">👥</span> Operations Scaling</div>
+<div class="g g3">${[['1–3','Clients','1 SmartTMF Admin + TMF coordinators'],['4–8','Clients','2 Admins + team leads per client'],['9+','Clients','Dedicated Ops team + success managers']].map(t=>`<div style="background:var(--surface);border-radius:7px;padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--teal)">${t[0]}</div><div style="font-size:11px;font-weight:600">${t[1]}</div><div style="font-size:10px;color:var(--text2);margin-top:3px">${t[2]}</div></div>`).join('')}</div></div>`;
+
 // ═══════════════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════════
@@ -613,9 +631,10 @@ const VM={
   analytics:['Analytics','TMF Health Monitoring & Inspection Readiness'],
   cro:['CRO Dashboards','Performance Tracking by CRO Partner'],
   onboarding:['CRO & CRA Onboarding','4-Phase Structured Onboarding Workflow'],
-  veeva:['Veeva Vault Integration','Connected via Glean'],
+  veeva:['Veeva Vault Integration','eTMF Data Feed Simulation'],
   quality:['Quality Standards','TMF Reference Model 3.2 · ICH-GCP · 21 CFR Part 11'],
-  pricing:['Pricing','SmartTMF Platform Tiers & Implementation Costs']
+  pricing:['Pricing','SmartTMF Platform Tiers & Implementation Costs'],
+  scaling:['Multi-Client Scaling','Isolated Tenant Architecture']
 };
 
 function nav(id){
@@ -649,5 +668,270 @@ document.querySelectorAll('.nav-item[data-v]').forEach(item=>{
 
 nav('dashboard');
 </script>
+
+<style id="smarttmf-live-vault-box-style">
+.card-click{cursor:pointer;transition:transform .16s ease, box-shadow .16s ease}
+.card-click:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(15,23,42,.08)}
+.live-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid var(--border)}
+.live-chip.ok{background:#ECFDF5;color:#065F46;border-color:#A7F3D0}
+.live-chip.warn{background:#FEFCE8;color:#854D0E;border-color:#FDE68A}
+.live-chip.err{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
+.kicker{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);font-weight:700}
+.subtle{font-size:11px;color:var(--text2)}
+.section-note{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--text2)}
+.file-pill{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:#F8FAFC;border:1px solid var(--border);font-size:10px;font-weight:700;color:var(--navy)}
+.list-link{color:var(--teal);font-weight:700;cursor:pointer;text-decoration:none}
+.list-link:hover{text-decoration:underline}
+</style>
+<script id="smarttmf-live-vault-box-script">
+(function(){
+  const STATE={health:null,intake:null,vault:null,lastLoaded:null};
+  const HEALTH_URL='/api/health';
+  const INTAKE_URL='/api/intake';
+  const VAULT_URL='/api/vault-summary';
+
+  async function j(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok) throw new Error(url+' '+r.status);return r.json();}
+  function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function n(v,fallback='—'){return (v===undefined||v===null||v==='')?fallback:v;}
+  function fmtDate(v){if(!v) return '—'; try{return new Date(v).toLocaleString();}catch(e){return v;}}
+  function statusChip(s){s=String(s||'warning').toLowerCase(); const cls=s==='ok'?'ok':(s==='error'?'err':'warn'); const label=s==='ok'?'Green':(s==='error'?'Red':'Amber'); return `<span class="live-chip ${cls}">${label}</span>`;}
+  function currentNav(){return document.querySelector('.nav-item.active[data-v]')?.dataset.v||'dashboard';}
+
+  function docsRows(files){
+    if(!files || !files.length) return `<tr><td colspan="6">No live documents available yet.</td></tr>`;
+    return files.map((f)=>`<tr>
+      <td><strong>${esc(f.name||'Untitled')}</strong><br><span class="subtle">${esc(f.id||'')}</span></td>
+      <td>${esc(f.study||'Unassigned')}</td>
+      <td>${esc(f.type||f.artifactType||'—')}</td>
+      <td><span class="file-pill">${esc(f.stage||'Vault')}</span></td>
+      <td>${fmtDate(f.updated||f.modified_at||f.version_modified_date__v)}</td>
+      <td>${esc(f.source||'Vault')}</td>
+    </tr>`).join('');
+  }
+
+  function studyRows(){
+    const rows=STATE.vault?.byStudy||[];
+    if(!rows.length) return `<tr><td colspan="5">No study-level Vault summary available yet.</td></tr>`;
+    return rows.map(s=>`<tr>
+      <td><a class="list-link" onclick="nav('documents')">${esc(s.study||s.name||'Unknown')}</a></td>
+      <td>${n(s.documents,0)}</td>
+      <td>${n(s.sites,0)}</td>
+      <td>${n(s.countries,0)}</td>
+      <td>${n(s.types,0)}</td>
+    </tr>`).join('');
+  }
+
+  function recentIntakeRows(){
+    const files=STATE.intake?.intake?.recentFiles||[];
+    if(!files.length) return `<tr><td colspan="4">No recent intake files available yet.</td></tr>`;
+    return files.map(f=>`<tr>
+      <td><a class="list-link" onclick="nav('documents')">${esc(f.name||'Untitled')}</a></td>
+      <td>${esc(f.study||'Unassigned')}</td>
+      <td>${esc(f.stage||'Intake')}</td>
+      <td>${fmtDate(f.modified_at||f.created_at)}</td>
+    </tr>`).join('');
+  }
+
+  function croRows(){
+    const cros=STATE.intake?.intake?.cros||[];
+    if(!cros.length) return `<tr><td colspan="4">No CRO grouping available yet.</td></tr>`;
+    return cros.map(c=>`<tr><td><strong>${esc(c.name||'Unknown')}</strong></td><td>${n(c.files,0)}</td><td>${n(c.studies,0)}</td><td>${n(c.inQc,0)}</td></tr>`).join('');
+  }
+
+  function applyChrome(){
+    const veevaNav=document.querySelector('.nav-item[data-v="veeva"]');
+    if(veevaNav) veevaNav.innerHTML=veevaNav.innerHTML.replace('Veeva Vault','Vault via Glean');
+    const hPills=document.querySelectorAll('.header-right .pill');
+    if(hPills[1]) hPills[1].textContent='Vault Connected via Glean';
+  }
+
+  function renderDashboard(){
+    const o=STATE.vault?.overview||{};
+    const i=STATE.intake?.intake||{};
+    return `
+    <div class="g g4 mb2">
+      <div class="c stat card-click" onclick="nav('veeva')"><div class="sv">${n(o.activeStudies,0)}</div><div class="sl">Active Studies</div><div class="ss" style="color:var(--green)">Vault grouped by study</div></div>
+      <div class="c stat card-click" onclick="nav('cro')"><div class="sv">${n(i.croCount,0)}</div><div class="sl">CRO Partners</div><div class="ss" style="color:var(--blue)">Box intake onboarding</div></div>
+      <div class="c stat card-click" onclick="nav('documents')"><div class="sv">${n(o.documentsFiled,0)}</div><div class="sl">Documents Filed</div><div class="ss" style="color:var(--green)">Vault source of record</div></div>
+      <div class="c stat card-click" onclick="nav('veeva')"><div class="sv">${n(o.sitesActive,0)}</div><div class="sl">Sites Active</div><div class="ss" style="color:var(--blue)">Vault site context</div></div>
+    </div>
+    <div class="g g2 mb">
+      <div class="c"><div class="ct"><span class="ci">📥</span> Box Intake Workflow</div>
+        <div class="section-note" style="margin-bottom:10px">CROs upload messy files into Box intake. AI and human oversight prepare them for final filing into Vault.</div>
+        <div class="g g4" style="margin-bottom:10px">
+          <div class="c stat card-click" onclick="nav('documents')"><div class="sv">${n(i.newItems,0)}</div><div class="sl">New Intake</div></div>
+          <div class="c stat card-click" onclick="nav('classification')"><div class="sv">${n(i.readyForClassification,0)}</div><div class="sl">Needs Classification</div></div>
+          <div class="c stat card-click" onclick="nav('qc')"><div class="sv">${n(i.inQcReview,0)}</div><div class="sl">In QC Review</div></div>
+          <div class="c stat card-click" onclick="nav('documents')"><div class="sv">${n(i.approvedCount,0)}</div><div class="sl">Approved / Filed</div></div>
+        </div>
+        <table><thead><tr><th>File</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${recentIntakeRows()}</tbody></table>
+      </div>
+      <div class="c"><div class="ct"><span class="ci">🟢</span> Live Indexing Health</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+          <div>${statusChip(STATE.health?.status)}</div>
+          <button class="btn bo1 bsm" onclick="nav('analytics')">View details</button>
+        </div>
+        <div class="section-note">Main page shows only overall health. Detailed document, object, and environment numbers are available in Analytics.</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text2)">Vault is connected via Glean. Box remains the intake/work queue.</div>
+      </div>
+    </div>
+    <div class="c"><div class="ct"><span class="ci">🏗️</span> SmartTMF Operating Model</div>
+      <div style="display:flex;gap:8px;align-items:center;overflow-x:auto;padding:8px 0 2px 0">
+        ${[['📥','Box Intake','CROs upload documents'],['🤖','AI Classification','Metadata proposed'],['🔍','QC Review','Human oversight'],['🗂️','Vault Filing','System of record'],['💬','Glean','Search, agent, oversight']].map((s,i,a)=>`<div style="flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center"><div style="font-size:18px">${s[0]}</div><div style="font-size:12px;font-weight:800;margin-top:4px;color:var(--navy)">${s[1]}</div><div class="subtle" style="margin-top:4px">${s[2]}</div></div>${i<a.length-1?'<div style="font-size:18px;color:var(--text3)">→</div>':''}`).join('')}
+      </div>
+    </div>`;
+  }
+
+  function renderDocuments(){
+    const docs=STATE.vault?.recentDocuments||[];
+    return `
+    <div class="c mb"><div class="ct"><span class="ci">📄</span> Vault Document Worklist</div>
+      <div class="section-note">Clinical users can review documents by study and open this worklist from the homepage cards. Box intake details feed QC and classification; Vault remains the source of record.</div>
+    </div>
+    <div class="g g2 mb">
+      <div class="c"><div class="ct"><span class="ci">🧪</span> Documents by Study</div>
+        <table><thead><tr><th>Study</th><th>Documents</th><th>Sites</th><th>Countries</th><th>Types</th></tr></thead><tbody>${studyRows()}</tbody></table>
+      </div>
+      <div class="c"><div class="ct"><span class="ci">🕒</span> Recent Vault Documents</div>
+        <table><thead><tr><th>File</th><th>Study</th><th>Type</th><th>Stage</th><th>Updated</th><th>Source</th></tr></thead><tbody>${docsRows(docs)}</tbody></table>
+      </div>
+    </div>`;
+  }
+
+  function renderClassification(){
+    const i=STATE.intake?.intake||{};
+    return `
+    <div class="c"><div class="ct"><span class="ci">🤖</span> AI Classification</div>
+      <div class="section-note" style="margin-bottom:12px">AI classification supports metadata extraction and filing preparation. Lower-confidence items route to QC for human oversight.</div>
+      <table><thead><tr><th>Metric</th><th>Value</th><th>Meaning</th></tr></thead><tbody>
+        <tr><td>Needs Classification</td><td><strong>${n(i.readyForClassification,0)}</strong></td><td>Box intake items awaiting metadata extraction</td></tr>
+        <tr><td>In QC Review</td><td><strong>${n(i.inQcReview,0)}</strong></td><td>Items requiring human review</td></tr>
+        <tr><td>Approved / Filed</td><td><strong>${n(i.approvedCount,0)}</strong></td><td>Items ready for or completed in Vault filing</td></tr>
+        <tr><td>Rejected</td><td><strong>${n(i.rejectedCount,0)}</strong></td><td>Items requiring correction and resubmission</td></tr>
+      </tbody></table>
+    </div>`;
+  }
+
+  function renderQc(){
+    const files=(STATE.intake?.intake?.recentFiles||[]).filter(f=>String(f.stage||'').toLowerCase().includes('qc')).slice(0,25);
+    return `
+    <div class="c"><div class="ct"><span class="ci">🔍</span> QC Workflow</div>
+      <table><thead><tr><th>Document</th><th>Study</th><th>Stage</th><th>Updated</th><th>Action</th></tr></thead><tbody>
+      ${files.length?files.map(f=>`<tr><td><strong>${esc(f.name||'Untitled')}</strong></td><td>${esc(f.study||'Unassigned')}</td><td>${esc(f.stage||'QC Review')}</td><td>${fmtDate(f.modified_at||f.created_at)}</td><td><button class="btn bp1 bxs">Review</button></td></tr>`).join(''):`<tr><td colspan="5">No files currently in QC review.</td></tr>`}
+      </tbody></table>
+    </div>`;
+  }
+
+  function renderAnalytics(){
+    const h=STATE.health||{}; const ds=h.datasources||{}; const v=STATE.vault||{};
+    return `
+    <div class="g g4 mb">
+      <div class="c stat"><div class="sv">${statusChip(h.status)}</div><div class="sl">Live Indexing Health</div></div>
+      <div class="c stat"><div class="sv">${n(v.documentsFiled,0)}</div><div class="sl">Documents Filed</div><div class="ss">${esc(ds.documents?.name||'vaultetmfv2documents')}</div></div>
+      <div class="c stat"><div class="sv">${n(v.objectCounts?.studies,0)}</div><div class="sl">Studies Indexed</div><div class="ss">${esc(ds.objects?.name||'vaultetmfv2objects')}</div></div>
+      <div class="c stat"><div class="sv">${n(v.objectCounts?.sites,0)}</div><div class="sl">Sites Indexed</div><div class="ss">Vault object summary</div></div>
+    </div>
+    <div class="g g2 mb">
+      <div class="c"><div class="ct"><span class="ci">🛠️</span> Admin Health Detail</div>
+        <table><thead><tr><th>Area</th><th>Status</th><th>Detail</th></tr></thead><tbody>
+          <tr><td>Documents</td><td>${esc(ds.documents?.status||'—')}</td><td>${n(v.documentsFiled,0)} filed / grouped from Vault</td></tr>
+          <tr><td>Objects</td><td>${esc(ds.objects?.status||'—')}</td><td>${n(v.objectCounts?.studies,0)} studies • ${n(v.objectCounts?.sites,0)} sites</td></tr>
+          <tr><td>Security</td><td>${esc(ds.security?.status||'—')}</td><td>${esc(ds.security?.name||'vaultetmfv2security')}</td></tr>
+        </tbody></table>
+      </div>
+      <div class="c"><div class="ct"><span class="ci">📊</span> Documents by Type</div>
+        <table><thead><tr><th>Type</th><th>Count</th></tr></thead><tbody>
+          ${(v.byType||[]).length?(v.byType||[]).map(t=>`<tr><td>${esc(t.type||'Unspecified')}</td><td>${n(t.count,0)}</td></tr>`).join(''):'<tr><td colspan="2">No type breakdown available yet.</td></tr>'}
+        </tbody></table>
+      </div>
+    </div>`;
+  }
+
+  function renderCro(){
+    return `
+    <div class="c"><div class="ct"><span class="ci">🤝</span> CRO Intake Overview</div>
+      <div class="section-note" style="margin-bottom:12px">CRO counts are driven from Box intake and onboarding context rather than hardcoded examples.</div>
+      <table><thead><tr><th>CRO</th><th>Files</th><th>Studies</th><th>In QC</th></tr></thead><tbody>${croRows()}</tbody></table>
+    </div>`;
+  }
+
+  function renderOnboarding(){
+    const i=STATE.intake?.intake||{};
+    return `
+    <div class="c"><div class="ct"><span class="ci">🚀</span> Onboarding and Intake Setup</div>
+      <div class="section-note" style="margin-bottom:12px">Use this view to track Box intake readiness across CROs and studies. Box is the intake workspace; Vault is the final filing destination.</div>
+      <div class="g g4">
+        <div class="c stat"><div class="sv">${n(i.croCount,0)}</div><div class="sl">CROs</div></div>
+        <div class="c stat"><div class="sv">${n((i.studies||[]).length,0)}</div><div class="sl">Studies in Intake</div></div>
+        <div class="c stat"><div class="sv">${n(i.newItems,0)}</div><div class="sl">Current Intake</div></div>
+        <div class="c stat"><div class="sv">${n(i.agingItems,0)}</div><div class="sl">Aging Items</div></div>
+      </div>
+    </div>`;
+  }
+
+  function renderVaultViaGlean(){
+    const v=STATE.vault||{};
+    return `
+    <div class="c mb" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#A78BFA">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div><div class="ct" style="margin-bottom:2px"><span class="ci">🔗</span> Vault via Glean</div>
+        <div style="font-size:11px;color:var(--text2)">Vault is the source of record. Glean provides connection, search, and workflow support.</div></div>
+        <span class="b bp">Connected via Glean</span>
+      </div>
+    </div>
+    <div class="g g2 mb">
+      <div class="c"><div class="ct"><span class="ci">⬇️</span> Box → Vault Filing Flow</div>
+        <div class="section-note">Files arrive in Box intake, are classified and reviewed, then land in Vault as the system of record.</div>
+      </div>
+      <div class="c"><div class="ct"><span class="ci">🗂️</span> Vault Summary</div>
+        <table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>
+          <tr><td>Studies</td><td>${n(v.objectCounts?.studies,0)}</td></tr>
+          <tr><td>Sites</td><td>${n(v.objectCounts?.sites,0)}</td></tr>
+          <tr><td>Countries</td><td>${n(v.objectCounts?.countries,0)}</td></tr>
+          <tr><td>Documents Filed</td><td>${n(v.documentsFiled,0)}</td></tr>
+        </tbody></table>
+      </div>
+    </div>`;
+  }
+
+  async function loadLive(){
+    try{
+      const [health,intake,vault]=await Promise.all([
+        j(HEALTH_URL).catch(()=>({status:'warning'})),
+        j(INTAKE_URL).catch(()=>({intake:{newItems:0,recentFiles:[],studies:[],cros:[]}})),
+        j(VAULT_URL).catch(()=>({overview:{},objectCounts:{},byStudy:[],recentDocuments:[],byType:[]}))
+      ]);
+      STATE.health=health; STATE.intake=intake; STATE.vault=vault; STATE.lastLoaded=Date.now();
+      applyChrome();
+      // override view renderers
+      V.dashboard=renderDashboard;
+      V.documents=renderDocuments;
+      V.classification=renderClassification;
+      V.qc=renderQc;
+      V.analytics=renderAnalytics;
+      V.cro=renderCro;
+      V.onboarding=renderOnboarding;
+      V.veeva=renderVaultViaGlean;
+      VM.dashboard=['Dashboard',`SmartTMF Pipeline — Box Intake to Vault via Glean`];
+      VM.documents=['Documents','Live Vault document worklist'];
+      VM.classification=['AI Classification','Live intake classification workflow'];
+      VM.qc=['QC Workflow','Human oversight queue'];
+      VM.analytics=['Analytics','Admin health, studies, and document detail'];
+      VM.cro=['CRO Dashboards','Live CRO intake overview'];
+      VM.onboarding=['Onboarding','CRO and study intake readiness'];
+      VM.veeva=['Vault via Glean','Vault source of record, connected via Glean'];
+      const active=currentNav();
+      nav(active);
+    }catch(e){console.error('SmartTMF live load failed',e);}
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    applyChrome();
+    loadLive();
+    setInterval(loadLive,60000);
+  });
+})();
+</script>
+
 </body>
 </html>
