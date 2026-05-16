@@ -1,7 +1,7 @@
-{
-  "studies": 5,
-  "cros": 4,
-  "documentsFiled": 198,
-  "sites": 17,
-  "health": "green"
+export default async function handler(req, res) {
+  res.status(200).json({
+    status: 'ok',
+    generatedAt: new Date().toISOString(),
+    note: 'Use /api/intake, /api/vault-summary, and /api/health for live data; this route is reserved for future aggregated cards.'
+  });
 }
