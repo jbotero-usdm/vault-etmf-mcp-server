@@ -3,935 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USDM SmartTMF v2 — AI-Powered TMF Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>USDM SmartTMF — Box to Vault via Glean</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1F3864;--teal:#00838F;--sky:#0097A7;--dark:#0D1B2A;--surface:#F8FAFC;--card:#FFFFFF;--border:#E2E8F0;--text:#1E293B;--text2:#64748B;--text3:#94A3B8;--green:#10B981;--gbg:#ECFDF5;--gtx:#065F46;--amber:#F59E0B;--abg:#FFFBEB;--atx:#92400E;--red:#EF4444;--rbg:#FEF2F2;--rtx:#991B1B;--blue:#3B82F6;--bbg:#EFF6FF;--btx:#1E40AF;--purple:#8B5CF6;--pbg:#F5F3FF;--ptx:#5B21B6;--r:10px;--sh:0 1px 3px rgba(0,0,0,.08)}
+:root{--navy:#1F3864;--teal:#00838F;--sky:#0097A7;--dark:#0D1B2A;--surface:#F8FAFC;--card:#FFFFFF;--border:#E2E8F0;--text:#1E293B;--text2:#64748B;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--blue:#3B82F6;--r:10px;--sh:0 1px 3px rgba(0,0,0,.08)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--surface);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.mono{font-family:'JetBrains Mono',monospace}
-.app{display:flex;height:100vh;overflow:hidden}
-
-/* SIDEBAR */
-.sidebar{width:230px;background:linear-gradient(180deg,var(--dark) 0%,#162544 50%,var(--navy) 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.logo-text span:first-child{font-size:15px;font-weight:700;letter-spacing:-.2px}
-.logo-text span:last-child{display:block;font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--sky);margin-top:-1px}
-.sidebar-nav{flex:1;padding:6px 8px;overflow-y:auto}
-.nav-section{margin:14px 0 5px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25)}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);transition:all .12s;margin:1px 0;position:relative}
-.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
-.nav-item.active{background:rgba(0,151,167,.18);color:#fff;font-weight:600}
-.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--sky)}
-.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.7}.nav-item.active svg{opacity:1}
-.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
-.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:9.5px;color:rgba(255,255,255,.25);line-height:1.6}
-
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.header{height:52px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0}
-.header-title{font-size:15px;font-weight:700;color:var(--navy);white-space:nowrap}
-.header-sub{font-size:11.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0}
-.pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;white-space:nowrap}
-.pill::before{content:'';width:5px;height:5px;border-radius:50%}
-.pill-g{background:var(--gbg);color:var(--gtx)}.pill-g::before{background:var(--green)}
-.pill-p{background:var(--pbg);color:var(--ptx)}.pill-p::before{background:var(--purple)}
-.content{flex:1;overflow-y:auto;padding:20px 24px 40px}
-
-/* GRID */
-.g{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
-.mb{margin-bottom:14px}.mb2{margin-bottom:20px}
-
-/* CARD */
-.c{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
-.ct{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.ci{font-size:14px}
-.stat{text-align:center;padding:12px 10px}
-.sv{font-size:24px;font-weight:700;color:var(--navy);letter-spacing:-.4px}
-.sl{font-size:10.5px;color:var(--text2);margin-top:2px;font-weight:500}
-.ss{font-size:10px;margin-top:4px;font-weight:600}
-
-/* TABLE */
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{text-align:left;padding:8px 10px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:2px solid var(--border);background:var(--surface)}
-td{padding:8px 10px;border-bottom:1px solid var(--border)}
-tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:rgba(0,131,143,.015)}
-
-/* BADGE */
-.b{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
-.bg{background:var(--gbg);color:var(--gtx)}.ba{background:var(--abg);color:var(--atx)}.br{background:var(--rbg);color:var(--rtx)}.bb{background:var(--bbg);color:var(--btx)}.bp{background:var(--pbg);color:var(--ptx)}.bx{background:#F1F5F9;color:#475569}
-.rag{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
-.rg{background:var(--green)}.ra{background:var(--amber)}.rr{background:var(--red)}
-
-/* BTN */
-.btn{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:inherit}
-.bp1{background:var(--teal);color:#fff}.bp1:hover{background:var(--navy)}
-.bo1{background:transparent;border:1px solid var(--border);color:var(--text)}.bo1:hover{background:var(--surface)}
-.bsm{padding:4px 9px;font-size:11px}.bxs{padding:3px 7px;font-size:10px;border-radius:5px}
-
-/* PROGRESS */
-.pb{height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden;display:inline-block}
-.pf{height:100%;border-radius:3px;transition:width .4s}
-.pg{background:linear-gradient(90deg,var(--green),#34D399)}.pa{background:linear-gradient(90deg,var(--amber),#FBBF24)}.pr{background:linear-gradient(90deg,var(--red),#F87171)}.pt{background:linear-gradient(90deg,var(--teal),var(--sky))}
-
-/* TABS */
-.tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:9px;border:1px solid var(--border);flex-wrap:wrap;margin-bottom:14px}
-.tab{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .12s;user-select:none}
-.tab:hover{color:var(--text);background:rgba(0,0,0,.03)}
-.tab.active{background:var(--card);color:var(--navy);font-weight:700;box-shadow:var(--sh)}
-
-/* STEPPER */
-.stepper{display:flex;margin:14px 0}
-.step{flex:1;text-align:center;position:relative}
-.step-dot{width:28px;height:28px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;position:relative;z-index:1}
-.step.done .step-dot{background:var(--green);color:#fff}.step.active .step-dot{background:var(--teal);color:#fff;box-shadow:0 0 0 3px rgba(0,131,143,.15)}
-.step-label{font-size:10px;color:var(--text2);line-height:1.3}
-.step-line{position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
-.step:last-child .step-line{display:none}.step.done .step-line{background:var(--green)}
-
-/* PRICING */
-.pc{border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.ph{padding:20px;text-align:center}
-.pn{font-size:16px;font-weight:700}
-.pp{font-size:32px;font-weight:700;margin:8px 0 2px;letter-spacing:-.5px}
-.ppd{font-size:11.5px}
-.pfl{padding:0 18px 18px;flex:1}
-.pfi{display:flex;align-items:start;gap:6px;padding:4px 0;font-size:12px}
-.pfi svg{width:14px;height:14px;color:var(--green);flex-shrink:0;margin-top:2px}
-.pcta{padding:10px 18px 18px;text-align:center}
-.pc.feat{border:2px solid var(--teal);box-shadow:0 4px 12px rgba(0,0,0,.08)}
-
-/* PANELS */
-.panel{display:none;animation:fu .2s ease}.panel.active{display:block}
-.view{display:none;animation:fu .2s ease}.view.active{display:block}
-@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-/* MILESTONE */
-.ms-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.ms-row:last-child{border-bottom:none}
-.ms-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.ms-done{background:var(--gbg);color:var(--gtx)}.ms-miss{background:var(--rbg);color:var(--rtx)}.ms-pend{background:var(--abg);color:var(--atx)}.ms-na{background:#F1F5F9;color:var(--text3)}
-.act-item{display:flex;align-items:start;gap:7px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
-.act-item:last-child{border-bottom:none}
-.act-num{width:20px;height:20px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px}
-
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--surface);color:var(--text);font-size:14px;line-height:1.5}
+.app{display:flex;height:100vh;overflow:hidden}.sidebar{width:230px;background:linear-gradient(180deg,var(--dark) 0%,#162544 50%,var(--navy) 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0}.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}.logo-text span:first-child{font-size:15px;font-weight:700}.logo-text span:last-child{display:block;font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--sky)}.sidebar-nav{flex:1;padding:6px 8px;overflow-y:auto}.nav-section{margin:14px 0 5px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25)}.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);transition:all .12s;margin:1px 0;position:relative}.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}.nav-item.active{background:rgba(0,151,167,.18);color:#fff;font-weight:600}.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--sky)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}.header{height:52px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0}.header-title{font-size:15px;font-weight:700;color:var(--navy)}.header-sub{font-size:11.5px;color:var(--text2)}.header-right{margin-left:auto;display:flex;align-items:center;gap:6px}.pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;white-space:nowrap}.pill::before{content:'';width:5px;height:5px;border-radius:50%}.pill-g{background:#ECFDF5;color:#065F46}.pill-g::before{background:var(--green)}.pill-b{background:#EFF6FF;color:#1E40AF}.pill-b::before{background:var(--blue)}.content{flex:1;overflow-y:auto;padding:20px 24px 40px}
+.g{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}.mb{margin-bottom:14px}.mb2{margin-bottom:20px}.c{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}.ct{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px}.stat{text-align:center;padding:12px 10px;cursor:pointer}.sv{font-size:24px;font-weight:700;color:var(--navy)}.sl{font-size:10.5px;color:var(--text2);margin-top:2px;font-weight:500}.ss{font-size:10px;margin-top:4px;font-weight:600}.ok{color:var(--green)}.warn{color:var(--amber)}.err{color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th{text-align:left;padding:8px 10px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:2px solid var(--border);background:var(--surface)}td{padding:8px 10px;border-bottom:1px solid var(--border)}tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(0,131,143,.015)}
+.b{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}.bg{background:#ECFDF5;color:#065F46}.ba{background:#FFFBEB;color:#92400E}.br{background:#FEF2F2;color:#991B1B}.bb{background:#EFF6FF;color:#1E40AF}.bx{background:#F1F5F9;color:#475569}.btn{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px;font-family:inherit}.bp1{background:var(--teal);color:#fff}.bo1{background:transparent;border:1px solid var(--border);color:var(--text)}
+.panel{display:none}.panel.active{display:block}.hint{font-size:11px;color:var(--text2)}
 </style>
 </head>
 <body>
 <div class="app">
 <nav class="sidebar">
-<div class="sidebar-logo">
-<div class="logo-text"><span>SmartTMF</span><span>USDM Life Sciences</span></div>
-</div>
-<div class="sidebar-nav">
-<div class="nav-section">Core</div>
-<div class="nav-item active" data-v="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
-<div class="nav-item" data-v="documents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>Documents</div>
-<div class="nav-item" data-v="edl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>Expected Document List</div>
-<div class="nav-item" data-v="classification"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>AI Classification</div>
-<div class="nav-item" data-v="qc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>QC Workflow <span class="nav-badge">3</span></div>
-<div class="nav-item" data-v="analytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</div>
-<div class="nav-section">CRO Management</div>
-<div class="nav-item" data-v="cro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>CRO Dashboards</div>
-<div class="nav-item" data-v="onboarding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Onboarding</div>
-<div class="nav-section">Integration</div>
-<div class="nav-item" data-v="veeva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Veeva Vault</div>
-<div class="nav-item" data-v="quality"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Quality Standards</div>
-<div class="nav-section">Business</div>
-
-
-</div>
-<div class="sidebar-footer">SmartTMF v2.0 · Production<br>CRO names shown for illustration only<br>© 2026 USDM Life Sciences</div>
+  <div class="sidebar-logo"><div class="logo-text"><span>SmartTMF</span><span>USDM Life Sciences</span></div></div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Core</div>
+    <div class="nav-item active" data-v="dashboard">Dashboard</div>
+    <div class="nav-item" data-v="documents">Documents</div>
+    <div class="nav-item" data-v="qc">QC Workflow</div>
+    <div class="nav-item" data-v="analytics">Analytics</div>
+    <div class="nav-section">Operations</div>
+    <div class="nav-item" data-v="cro">CRO View</div>
+    <div class="nav-item" data-v="onboarding">Onboarding</div>
+    <div class="nav-item" data-v="vault">Vault via Glean</div>
+    <div class="nav-item" data-v="agent">Agent</div>
+    <div class="nav-item" data-v="admin">Admin Health</div>
+  </div>
 </nav>
-
 <main class="main">
-<header class="header">
-<div style="min-width:0"><div class="header-title" id="hT">Dashboard</div><div class="header-sub" id="hS">SmartTMF Pipeline Overview</div></div>
-<div class="header-right"><div class="pill pill-g">Box Connected</div><div class="pill pill-p">Vault Connected via Glean</div></div>
-</header>
-<div class="content" id="content"></div>
+  <header class="header">
+    <div><div class="header-title" id="hT">Dashboard</div><div class="header-sub" id="hS">Live Box intake and Vault filing oversight</div></div>
+    <div class="header-right"><div class="pill pill-g">Box Connected</div><div class="pill pill-b">Vault Connected via Glean</div></div>
+  </header>
+  <div class="content" id="content"></div>
 </main>
 </div>
-
 <script>
-// ═══════════════════════════════════════════════════════════════
-// DATA LAYER
-// ═══════════════════════════════════════════════════════════════
-const CLIENT = 'Meridian Biosciences';
-
-const STUDIES = [
-  {id:'MRD-101-301',mol:'MRD-101',phase:'Phase 3',ind:'Diffuse Large B-Cell Lymphoma',sites:5,enrolled:36,cro:'Parexel',filed:198,expected:245,status:'Active',milestone:'Ongoing Monitoring'},
-  {id:'MRD-102-201',mol:'MRD-102',phase:'Phase 2',ind:'Ulcerative Colitis',sites:3,enrolled:43,cro:'Kapadi/Alimentiv',filed:172,expected:189,status:'Active',milestone:'Ongoing Monitoring'},
-  {id:'MRD-103-202',mol:'MRD-103',phase:'Phase 2',ind:'Systemic Lupus Erythematosus',sites:3,enrolled:16,cro:'PPD',filed:121,expected:156,status:'Active',milestone:'Ongoing Monitoring'},
-  {id:'MRD-104-101',mol:'MRD-104',phase:'Phase 1',ind:'Solid Tumors',sites:2,enrolled:7,cro:'ICON',filed:82,expected:98,status:'Active',milestone:'FPFV'},
-  {id:'MRD-105-102',mol:'MRD-105',phase:'Phase 1',ind:'Advanced Malignancies',sites:4,enrolled:43,cro:'Kapadi/Alimentiv',filed:195,expected:210,status:'Active',milestone:'Ongoing Monitoring'}
-];
-
-const CROS = [
-  {name:'Parexel',key:'parexel',studies:['MRD-101-301'],cras:2,q4:48,sla:92,qc:88,rej:4,ai:0.91,rag:'green',
-    issues:['Missing PI signature (2 docs)','Late monitoring visit report (1)'],
-    cras_d:[{n:'Jennifer Adams',s:'Onboarded',d:'2024-02-15',sites:'101-001, 101-002',dq:26,qp:92},{n:'David Park',s:'Onboarded',d:'2024-03-01',sites:'101-003/004/005',dq:22,qp:84}],
-    mo:[{m:'Oct',d:14,sl:90,qc:86},{m:'Nov',d:16,sl:93,qc:88},{m:'Dec',d:18,sl:94,qc:91}],trend:'improving',
-    actions:['Follow up on 2 unsigned PI documents from Site 101-004','Schedule QC refresher for David Park (84% pass)','Review monitoring visit report SLA']},
-  {name:'Kapadi/Alimentiv',key:'kapadi',studies:['MRD-102-201','MRD-105-102'],cras:3,q4:72,sla:95,qc:93,rej:2,ai:0.94,rag:'green',
-    issues:['Duplicate filing (1 doc)'],
-    cras_d:[{n:'Emily Chen',s:'Onboarded',d:'2023-09-01',sites:'102-001/002, 105-001/002',dq:32,qp:96},{n:'Robert Liu',s:'Onboarded',d:'2023-09-15',sites:'102-003, 105-003/004',dq:28,qp:93},{n:'Amanda Wright',s:'In Training',d:'—',sites:'Pending',dq:12,qp:87}],
-    mo:[{m:'Oct',d:22,sl:94,qc:91},{m:'Nov',d:24,sl:95,qc:94},{m:'Dec',d:26,sl:96,qc:95}],trend:'stable-high',
-    actions:['Complete Amanda Wright onboarding (3/5 test docs)','Review duplicate filing prevention','Nominate Emily Chen as CRA mentor']},
-  {name:'PPD',key:'ppd',studies:['MRD-103-202'],cras:1,q4:31,sla:78,qc:81,rej:12,ai:0.86,rag:'amber',
-    issues:['Missing signatures (3 docs)','Wrong TMF section (2 docs)','Naming convention violations (2)','Late filings beyond 35-day SLA (4 docs)'],
-    cras_d:[{n:'Chris Martinez',s:'Onboarded',d:'2024-03-15',sites:'103-001/002/003',dq:31,qp:81}],
-    mo:[{m:'Oct',d:12,sl:75,qc:78},{m:'Nov',d:10,sl:77,qc:80},{m:'Dec',d:9,sl:82,qc:85}],trend:'improving-slow',
-    actions:['URGENT: Schedule corrective action meeting with PPD','Assign additional CRA to MRD-103-202','Implement weekly filing checkpoint calls','Targeted training on TMF section classification','Remediate 4 overdue documents']},
-  {name:'ICON',key:'icon',studies:['MRD-104-101'],cras:1,q4:22,sla:86,qc:85,rej:9,ai:0.88,rag:'green',
-    issues:['Wrong PDF version (1 doc)','Missing version number (1 doc)'],
-    cras_d:[{n:'Priya Nair',s:'Onboarded',d:'2024-07-20',sites:'104-001, 104-002',dq:22,qp:85}],
-    mo:[{m:'Oct',d:6,sl:83,qc:82},{m:'Nov',d:8,sl:87,qc:86},{m:'Dec',d:8,sl:89,qc:88}],trend:'improving',
-    actions:['Monitor SLA trend — approaching green threshold','Provide PDF formatting guide to Priya Nair','Review version numbering convention']},
-  {name:'Fortrea',key:'fortrea',studies:['All (Safety)'],cras:2,q4:56,sla:91,qc:90,rej:5,ai:0.92,rag:'green',
-    issues:['Late SAE initial report (2 docs)','Missing follow-up report (1)'],
-    cras_d:[{n:'Tom Nguyen',s:'Onboarded',d:'2024-02-01',sites:'All studies (Safety)',dq:30,qp:92},{n:'Maria Santos',s:'Onboarded',d:'2024-03-01',sites:'All studies (Safety)',dq:26,qp:88}],
-    mo:[{m:'Oct',d:17,sl:89,qc:88},{m:'Nov',d:19,sl:92,qc:91},{m:'Dec',d:20,sl:93,qc:92}],trend:'improving',
-    actions:['Review SAE reporting timelines with PV team','Track follow-up reports in SAE log','Schedule quarterly safety filing review']}
-];
-
-// EDL — Full milestone-triggered Expected Document List
-const EDL_STUDY = [
-  {milestone:'Study Startup',docs:[
-    {name:'TMF Plan',tmf:'01.01',required:true},
-    {name:'Protocol (final signed)',tmf:'01.02',required:true},
-    {name:'Investigator\'s Brochure (IB)',tmf:'01.03',required:true},
-    {name:'Statistical Analysis Plan (SAP)',tmf:'05.01',required:true},
-    {name:'Data Management Plan (DMP)',tmf:'05.02',required:true},
-    {name:'Safety Management Plan',tmf:'08.01',required:true},
-    {name:'Protocol Deviation Plan',tmf:'01.04',required:true},
-    {name:'Monitoring Plan',tmf:'04.01',required:true},
-    {name:'Communication Plan',tmf:'01.05',required:false},
-    {name:'CRO Oversight Plan',tmf:'04.02',required:true},
-    {name:'Master ICF',tmf:'02.01',required:true},
-    {name:'IRB/IEC Approval (Central)',tmf:'02.02',required:true},
-    {name:'CSR Template',tmf:'11.01',required:false},
-    {name:'Delegation of Authority Log (blank)',tmf:'03.01',required:true}
-  ]},
-  {milestone:'First Patient First Visit (FPFV)',docs:[
-    {name:'FPFV Confirmation Letter',tmf:'03.02',required:true},
-    {name:'Enrollment Log (initial)',tmf:'03.03',required:true},
-    {name:'Randomization Plan',tmf:'05.03',required:true},
-    {name:'IVRS/IWRS Manual',tmf:'05.04',required:false}
-  ]},
-  {milestone:'Database Lock',docs:[
-    {name:'Database Lock Memo',tmf:'05.05',required:true},
-    {name:'Query Resolution Summary',tmf:'05.06',required:true},
-    {name:'Data Review Committee Minutes',tmf:'05.07',required:true},
-    {name:'Statistical Analysis Report (draft)',tmf:'05.08',required:true}
-  ]},
-  {milestone:'Study Close',docs:[
-    {name:'Clinical Study Report (final)',tmf:'11.01',required:true},
-    {name:'Study Close-Out Letter',tmf:'11.02',required:true},
-    {name:'Final Monitoring Report',tmf:'04.03',required:true},
-    {name:'Archival Confirmation',tmf:'11.03',required:true}
-  ]}
-];
-
-const EDL_SITE = [
-  {milestone:'Site Activation',docs:[
-    {name:'Site-Specific ICF (signed)',tmf:'02.03',required:true},
-    {name:'Local IRB/EC Approval',tmf:'02.04',required:true},
-    {name:'Site Qualification Visit Report',tmf:'04.04',required:true},
-    {name:'Site Initiation Visit Report',tmf:'04.05',required:true},
-    {name:'Investigator CV + Medical License',tmf:'03.04',required:true},
-    {name:'Financial Disclosure (FDA 3455)',tmf:'03.05',required:true},
-    {name:'Clinical Trial Agreement (executed)',tmf:'03.06',required:true},
-    {name:'Lab Normal Ranges',tmf:'06.01',required:true},
-    {name:'Delegation of Authority Log',tmf:'03.01',required:true},
-    {name:'Site Staff Training Log',tmf:'03.07',required:true}
-  ]},
-  {milestone:'Ongoing Monitoring (Quarterly)',docs:[
-    {name:'Monitoring Visit Report',tmf:'04.06',required:true},
-    {name:'Subject Screening Log',tmf:'03.08',required:true},
-    {name:'Enrollment Log (update)',tmf:'03.03',required:true},
-    {name:'Drug Accountability Log',tmf:'07.01',required:true},
-    {name:'Protocol Deviation Log',tmf:'01.06',required:true},
-    {name:'SAE Reports (per event)',tmf:'08.02',required:true},
-    {name:'CIOMS/MedWatch Forms (per event)',tmf:'08.03',required:true}
-  ]},
-  {milestone:'Site Close-Out',docs:[
-    {name:'Site Close-Out Visit Report',tmf:'04.07',required:true},
-    {name:'Drug Return/Destruction Certificate',tmf:'07.02',required:true},
-    {name:'Final Site Monitoring Report',tmf:'04.08',required:true},
-    {name:'IP Reconciliation',tmf:'07.03',required:true},
-    {name:'Site Archival Confirmation',tmf:'11.04',required:true}
-  ]}
-];
-
-const EDL_LIVING = [
-  {name:'Investigator\'s Brochure (updates)',tmf:'01.03',freq:'Per amendment'},
-  {name:'Safety Reports (DSUR/PSUR)',tmf:'08.04',freq:'Annual'},
-  {name:'Protocol Amendments',tmf:'01.07',freq:'Per amendment'},
-  {name:'ICF Amendments',tmf:'02.05',freq:'Per amendment'},
-  {name:'Training Log Updates',tmf:'03.07',freq:'Quarterly'}
-];
-
-// Simulated EDL status per study
-const EDL_STATUS = {
-  'MRD-101-301':{startup:14,startup_t:14,fpfv:4,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:48,site_act_t:50,monitor:89,monitor_t:105,site_close:0,site_close_t:25},
-  'MRD-102-201':{startup:14,startup_t:14,fpfv:4,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:30,site_act_t:30,monitor:56,monitor_t:63,site_close:0,site_close_t:15},
-  'MRD-103-202':{startup:12,startup_t:14,fpfv:3,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:27,site_act_t:30,monitor:38,monitor_t:63,site_close:0,site_close_t:15},
-  'MRD-104-101':{startup:13,startup_t:14,fpfv:2,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:18,site_act_t:20,monitor:12,monitor_t:42,site_close:0,site_close_t:10},
-  'MRD-105-102':{startup:14,startup_t:14,fpfv:4,fpfv_t:4,dblock:0,dblock_t:4,close:0,close_t:4,site_act:39,site_act_t:40,monitor:78,monitor_t:84,site_close:0,site_close_t:20}
-};
-
-const QC_QUEUE = [
-  {doc:'MRD-103 Protocol Deviation Plan v2.0',study:'MRD-103-202',conf:82,route:'QC Review',status:'Pending',cro:'PPD'},
-  {doc:'Monitoring Visit Report 101-004-Q4',study:'MRD-101-301',conf:78,route:'QC Review',status:'Pending',cro:'Parexel'},
-  {doc:'SAE Report MRD-105-015',study:'MRD-105-102',conf:85,route:'QC Review',status:'Pending',cro:'Kapadi/Alimentiv'},
-  {doc:'MRD-102 TMF Plan v3.0',study:'MRD-102-201',conf:96,route:'Auto-Approved',status:'Approved',cro:'Kapadi/Alimentiv'}
-];
-
-// Computed
-const tFiled=STUDIES.reduce((s,d)=>s+d.filed,0), tExp=STUDIES.reduce((s,d)=>s+d.expected,0);
-const comp=((tFiled/tExp)*100).toFixed(1), aS=(CROS.reduce((s,c)=>s+c.sla,0)/CROS.length).toFixed(1), aQ=(CROS.reduce((s,c)=>s+c.qc,0)/CROS.length).toFixed(1), tQ4=CROS.reduce((s,c)=>s+c.q4,0);
-
-// ═══════════════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════════════
-const pc=p=>p>=90?'pg':p>=75?'pa':'pr';
-const bc=p=>p>=90?'bg':p>=75?'ba':'br';
-const rD=r=>`<span class="rag r${r[0]}"></span>`;
-const rB=r=>{const m={green:['bg','Green'],amber:['ba','Amber'],red:['br','Red']};return`<span class="b ${m[r][0]}">● ${m[r][1]}</span>`};
-const phB=p=>p.includes('3')?`<span class="b bb">${p}</span>`:p.includes('2')?`<span class="b bb">${p}</span>`:`<span class="b bp">${p}</span>`;
-const pBar=(pct,w)=>`<div class="pb" style="width:${w||90}px"><div class="pf ${pc(pct)}" style="width:${pct}%"></div></div> <span class="mono" style="font-size:11px">${pct}%</span>`;
-const chk='<svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" width="14" height="14" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>';
-const trI=t=>t.includes('improv')?'<span style="color:var(--green);font-size:11px;font-weight:600">↑ Improving</span>':t.includes('stable')?'<span style="color:var(--green);font-size:11px;font-weight:600">→ Stable High</span>':'<span style="color:var(--text3);font-size:11px;font-weight:600">→ Flat</span>';
-const edlPct=(f,t)=>t===0?'—':pBar(Math.round((f/t)*100),70);
-
-// ═══════════════════════════════════════════════════════════════
-// VIEWS
-// ═══════════════════════════════════════════════════════════════
-const V={};
-
-V.dashboard=()=>`
-<div class="g g4 mb2">
-  <div class="c stat"><div class="sv">5</div><div class="sl">Active Studies</div><div class="ss" style="color:var(--green)">Meridian Biosciences</div></div>
-  <div class="c stat"><div class="sv">5</div><div class="sl">CRO Partners</div><div class="ss" style="color:var(--green)">4/5 Green RAG</div></div>
-  <div class="c stat"><div class="sv">${tFiled}</div><div class="sl">Documents Filed</div><div class="ss" style="color:var(--green)">↑ ${comp}% complete</div></div>
-  <div class="c stat"><div class="sv">${aS}%</div><div class="sl">Avg SLA Compliance</div><div class="ss" style="color:var(--green)">35-day target</div></div>
-</div>
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">📊</span> Study Completeness</div>
-  <table><thead><tr><th>Study</th><th>Phase</th><th>CRO</th><th>Filed</th><th>Expected</th><th>Complete</th></tr></thead><tbody>
-  ${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<tr><td><strong>${s.id}</strong><br><span style="font-size:10px;color:var(--text2)">${s.mol}</span></td><td>${phB(s.phase)}</td><td>${s.cro}</td><td>${s.filed}</td><td>${s.expected}</td><td>${pBar(parseFloat(p),90)}</td></tr>`}).join('')}
-  </tbody></table></div>
-  <div class="c"><div class="ct"><span class="ci">🏥</span> CRO Performance Summary</div>
-  <table><thead><tr><th>CRO</th><th>SLA %</th><th>QC Pass</th><th>Reject</th><th>AI Conf</th><th>RAG</th></tr></thead><tbody>
-  ${CROS.map(c=>`<tr><td><strong>${c.name}</strong></td><td><span class="b ${bc(c.sla)}">${c.sla}%</span></td><td>${c.qc}%</td><td>${c.rej}%</td><td class="mono">${c.ai}</td><td>${rD(c.rag)}</td></tr>`).join('')}
-  </tbody></table>
-  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--text3)">CRO names shown for illustration purposes only</div></div>
-</div>
-<div class="c"><div class="ct"><span class="ci">📦</span> Pipeline — 6-Stage Document Flow</div>
-<div style="display:flex;gap:6px;align-items:center;padding:8px 0;overflow-x:auto">
-${[['📥','01 Intake','CRO uploads','#EFF6FF','#DBEAFE','#93C5FD','#1E40AF'],['🤖','02 AI Classify','Box AI','#F5F3FF','#EDE9FE','#A78BFA','#5B21B6'],['🔍','03 QC Review','Human-in-loop','#FFFBEB','#FEF3C7','#FCD34D','#92400E'],['✅','04 Approved','TMF sections','#ECFDF5','#D1FAE5','#6EE7B7','#065F46'],['❌','05 Rejected','With comments','#FFF1F2','#FECDD3','#FDA4AF','#9F1239'],['📈','06 Analytics','Reports','#F0FDFA','#CCFBF1','#5EEAD4','#0F766E']].map((s,i,a)=>`<div style="flex:1;background:linear-gradient(135deg,${s[3]},${s[4]});border:2px solid ${s[5]};border-radius:10px;padding:12px;text-align:center;min-width:110px"><div style="font-size:16px">${s[0]}</div><div style="font-size:11px;font-weight:700;color:${s[6]};margin-top:2px">${s[1]}</div><div style="font-size:9.5px;color:var(--text2)">${s[2]}</div></div>${i<a.length-1?'<div style="font-size:16px;color:var(--text3)">→</div>':''}`).join('')}
-</div></div>`;
-
-// ──── EDL ────
-V.edl=()=>{
-  let html=`<div class="tabs" id="edlTabs"><div class="tab active" data-edl="overview">Overview</div>${STUDIES.map(s=>`<div class="tab" data-edl="${s.id}">${s.id}</div>`).join('')}</div><div id="edlContent">${renderEDLOverview()}${STUDIES.map(s=>renderEDLStudy(s)).join('')}</div>`;
-  return html;
-};
-
-function renderEDLOverview(){
-  return`<div class="panel active" id="edl-overview">
-  <div class="g g5 mb">
-    ${STUDIES.map(s=>{const st=EDL_STATUS[s.id];const tot=st.startup+st.fpfv+st.site_act+st.monitor;const exp=st.startup_t+st.fpfv_t+st.site_act_t+st.monitor_t;const p=Math.round((tot/exp)*100);
-    return`<div class="c stat"><div class="sv" style="color:${p>=90?'var(--green)':p>=75?'var(--amber)':'var(--red)'}">${p}%</div><div class="sl">${s.id}</div><div class="ss">${tot}/${exp} docs</div></div>`}).join('')}
-  </div>
-  <div class="g g2 mb">
-    <div class="c"><div class="ct"><span class="ci">📋</span> Study-Level EDL Template (${EDL_STUDY.reduce((s,m)=>s+m.docs.length,0)} document types)</div>
-    ${EDL_STUDY.map(ms=>`<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:var(--surface);border-radius:6px">🎯 ${ms.milestone}</div>
-    ${ms.docs.map(d=>`<div class="ms-row"><span class="mono" style="font-size:10px;color:var(--text3);width:40px">${d.tmf}</span><span style="flex:1">${d.name}</span>${d.required?'<span class="b bg" style="font-size:9px">Required</span>':'<span class="b bx" style="font-size:9px">Optional</span>'}</div>`).join('')}
-    </div>`).join('')}
-    </div>
-    <div class="c"><div class="ct"><span class="ci">🏥</span> Site-Level EDL Template (${EDL_SITE.reduce((s,m)=>s+m.docs.length,0)} document types per site)</div>
-    ${EDL_SITE.map(ms=>`<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:var(--surface);border-radius:6px">🎯 ${ms.milestone}</div>
-    ${ms.docs.map(d=>`<div class="ms-row"><span class="mono" style="font-size:10px;color:var(--text3);width:40px">${d.tmf}</span><span style="flex:1">${d.name}</span>${d.required?'<span class="b bg" style="font-size:9px">Required</span>':'<span class="b bx" style="font-size:9px">Optional</span>'}</div>`).join('')}
-    </div>`).join('')}
-    <div style="margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:var(--surface);border-radius:6px">🔄 Living Documents (Recurring)</div>
-    ${EDL_LIVING.map(d=>`<div class="ms-row"><span class="mono" style="font-size:10px;color:var(--text3);width:40px">${d.tmf}</span><span style="flex:1">${d.name}</span><span class="b bp" style="font-size:9px">${d.freq}</span></div>`).join('')}
-    </div>
-    </div>
-  </div>
-  </div>`;
-}
-
-function renderEDLStudy(s){
-  const st=EDL_STATUS[s.id];
-  const milestones=[
-    {name:'Study Startup',filed:st.startup,total:st.startup_t,level:'Study'},
-    {name:'FPFV',filed:st.fpfv,total:st.fpfv_t,level:'Study'},
-    {name:'Site Activation',filed:st.site_act,total:st.site_act_t,level:'Site (×'+s.sites+')'},
-    {name:'Ongoing Monitoring',filed:st.monitor,total:st.monitor_t,level:'Site (quarterly)'},
-    {name:'Database Lock',filed:st.dblock,total:st.dblock_t,level:'Study'},
-    {name:'Site Close-Out',filed:st.site_close,total:st.site_close_t,level:'Site'},
-    {name:'Study Close',filed:st.close,total:st.close_t,level:'Study'}
-  ];
-  const tF=milestones.reduce((a,m)=>a+m.filed,0), tT=milestones.reduce((a,m)=>a+m.total,0);
-  const overall=Math.round((tF/tT)*100);
-
-  return`<div class="panel" id="edl-${s.id}">
-  <div class="c mb" style="background:${overall>=90?'var(--gbg)':overall>=75?'var(--abg)':'var(--rbg)'};border-color:${overall>=90?'var(--green)':overall>=75?'var(--amber)':'var(--red)'}">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div><div style="font-size:16px;font-weight:700;color:var(--navy)">${s.id} — ${s.mol}</div>
-      <div style="font-size:12px;color:var(--text2)">${phB(s.phase)} ${s.ind} · ${s.cro} · ${s.sites} sites · ${s.enrolled} enrolled</div></div>
-      <div style="text-align:right"><div style="font-size:28px;font-weight:700;color:${overall>=90?'var(--gtx)':overall>=75?'var(--atx)':'var(--rtx)'}">${overall}%</div><div style="font-size:10px;color:var(--text2)">${tF} / ${tT} documents</div></div>
-    </div>
-  </div>
-  <div class="c mb"><div class="ct"><span class="ci">📋</span> EDL Completeness by Milestone</div>
-  <table><thead><tr><th>Milestone</th><th>Level</th><th>Filed</th><th>Expected</th><th>Completeness</th><th>Status</th></tr></thead><tbody>
-  ${milestones.map(m=>{const p=m.total===0?0:Math.round((m.filed/m.total)*100);const triggered=m.filed>0||m.total>0&&(m.name==='Study Startup'||m.name==='FPFV'||m.name==='Site Activation'||m.name==='Ongoing Monitoring');
-  return`<tr><td><strong>${m.name}</strong></td><td><span class="b bx">${m.level}</span></td><td>${m.filed}</td><td>${m.total}</td>
-  <td>${m.total>0?pBar(p,80):'—'}</td>
-  <td>${!triggered?'<span class="b bx">Not Yet Triggered</span>':p===100?'<span class="b bg">✓ Complete</span>':p>=75?'<span class="b ba">In Progress</span>':'<span class="b br">Gaps Found</span>'}</td></tr>`}).join('')}
-  </tbody></table></div>
-
-  <div class="g g2">
-    <div class="c"><div class="ct"><span class="ci">⚠️</span> Missing Documents (Gaps)</div>
-    ${(()=>{
-      const gaps=[];
-      if(st.startup<st.startup_t) gaps.push({ms:'Study Startup',count:st.startup_t-st.startup,examples:['Communication Plan','CSR Template']});
-      if(st.fpfv<st.fpfv_t) gaps.push({ms:'FPFV',count:st.fpfv_t-st.fpfv,examples:['IVRS/IWRS Manual','Randomization Plan']});
-      if(st.site_act<st.site_act_t) gaps.push({ms:'Site Activation',count:st.site_act_t-st.site_act,examples:['Financial Disclosure','Training Log']});
-      if(st.monitor<st.monitor_t) gaps.push({ms:'Ongoing Monitoring',count:st.monitor_t-st.monitor,examples:['Drug Accountability Log','Protocol Deviation Log']});
-      if(gaps.length===0) return '<div style="font-size:12px;color:var(--green);padding:8px 0">✓ No gaps for triggered milestones</div>';
-      return gaps.map(g=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:6px"><span class="rag ra"></span><strong>${g.ms}</strong> — ${g.count} missing</div><div style="font-size:11px;color:var(--text2);margin-top:2px;padding-left:14px">e.g. ${g.examples.join(', ')}</div></div>`).join('');
-    })()}
-    </div>
-    <div class="c"><div class="ct"><span class="ci">🎯</span> Next Expected Milestone</div>
-    <div style="background:var(--surface);border-radius:8px;padding:14px">
-      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px">${s.milestone==='FPFV'?'First Patient First Visit':'Ongoing Monitoring'}</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Current study milestone: <span class="b bb">${s.milestone}</span></div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:6px">Upcoming documents due:</div>
-      ${['Monitoring Visit Report (next quarter)','Enrollment Log update','Drug Accountability Log','Protocol Deviation Log update'].map(d=>`<div class="ms-row"><span class="ms-icon ms-pend">○</span>${d}</div>`).join('')}
-    </div></div>
-  </div>
-  </div>`;
-}
-
-// ──── CRO DASHBOARDS ────
-V.cro=()=>`<div class="tabs" id="croTabs"><div class="tab active" data-cro="all">All CROs</div>${CROS.map(c=>`<div class="tab" data-cro="${c.key}">${c.name}</div>`).join('')}</div><div id="croContent">${renderCAll()}${CROS.map(c=>renderCD(c)).join('')}</div>`;
-
-function renderCAll(){
-  return`<div class="panel active" id="cro-all">
-  <div class="g g5 mb"><div class="c stat"><div class="sv">${tQ4}</div><div class="sl">Q4 Documents</div></div><div class="c stat"><div class="sv">${aS}%</div><div class="sl">Avg SLA</div></div><div class="c stat"><div class="sv">${aQ}%</div><div class="sl">Avg QC Pass</div></div><div class="c stat"><div class="sv" style="color:var(--green)">4/5</div><div class="sl">Green RAG</div></div><div class="c stat"><div class="sv" style="color:var(--amber)">1/5</div><div class="sl">Amber RAG</div></div></div>
-  <div class="c mb"><div class="ct"><span class="ci">📋</span> CRO Performance Matrix — Q4 2025</div>
-  <table><thead><tr><th>CRO</th><th>Studies</th><th>CRAs</th><th>Q4 Docs</th><th>SLA %</th><th>QC Pass</th><th>Reject</th><th>AI Conf</th><th>RAG</th><th>Trend</th></tr></thead><tbody>
-  ${CROS.map(c=>`<tr><td><strong>${c.name}</strong></td><td style="font-size:11px">${c.studies.join(', ')}</td><td>${c.cras}</td><td>${c.q4}</td><td><span class="b ${bc(c.sla)}">${c.sla}%</span></td><td><span class="b ${bc(c.qc)}">${c.qc}%</span></td><td>${c.rej}%</td><td class="mono">${c.ai}</td><td>${rB(c.rag)}</td><td>${trI(c.trend)}</td></tr>`).join('')}
-  </tbody></table></div>
-  <div class="g g2">
-    <div class="c"><div class="ct"><span class="ci">📈</span> SLA Compliance by CRO</div>
-    ${CROS.map(c=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:90px;font-size:11px;font-weight:600;text-align:right">${c.name}</div><div class="pb" style="flex:1"><div class="pf ${pc(c.sla)}" style="width:${c.sla}%"></div></div><div style="width:36px;font-size:11px;font-weight:600" class="mono">${c.sla}%</div></div>`).join('')}</div>
-    <div class="c"><div class="ct"><span class="ci">🔍</span> QC Pass Rate by CRO</div>
-    ${CROS.map(c=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:90px;font-size:11px;font-weight:600;text-align:right">${c.name}</div><div class="pb" style="flex:1"><div class="pf ${pc(c.qc)}" style="width:${c.qc}%"></div></div><div style="width:36px;font-size:11px;font-weight:600" class="mono">${c.qc}%</div></div>`).join('')}</div>
-  </div>
-  <div style="margin-top:10px;font-size:10px;color:var(--text3);text-align:center">CRO names shown for illustration purposes only</div>
-  </div>`;
-}
-
-function renderCD(c){
-  const rc={green:['var(--green)','var(--gbg)','var(--gtx)'],amber:['var(--amber)','var(--abg)','var(--atx)'],red:['var(--red)','var(--rbg)','var(--rtx)']}[c.rag];
-  return`<div class="panel" id="cro-${c.key}">
-  <div class="c mb" style="background:${rc[1]};border-color:${rc[0]}">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div><div style="font-size:17px;font-weight:700;color:${rc[2]}">${c.name}</div><div style="font-size:11px;color:var(--text2);margin-top:1px">Studies: ${c.studies.join(', ')} · ${c.cras} CRAs</div></div>
-      <div style="display:flex;gap:8px;align-items:center">${rB(c.rag)} ${trI(c.trend)}</div>
-    </div>
-  </div>
-  <div class="g g5 mb">
-    <div class="c stat"><div class="sv">${c.q4}</div><div class="sl">Q4 Docs</div></div>
-    <div class="c stat"><div class="sv" style="color:${c.sla>=90?'var(--green)':'var(--amber)'}">${c.sla}%</div><div class="sl">SLA</div><div class="ss">${c.sla>=90?'<span style="color:var(--green)">Above target</span>':'<span style="color:var(--red)">Below 90%</span>'}</div></div>
-    <div class="c stat"><div class="sv" style="color:${c.qc>=90?'var(--green)':'var(--amber)'}">${c.qc}%</div><div class="sl">QC Pass</div></div>
-    <div class="c stat"><div class="sv">${c.rej}%</div><div class="sl">Rejection</div><div class="ss">${c.rej<5?'<span style="color:var(--green)">Below 5%</span>':'<span style="color:var(--red)">Above 5%</span>'}</div></div>
-    <div class="c stat"><div class="sv mono">${c.ai}</div><div class="sl">AI Conf</div></div>
-  </div>
-  <div class="g g2 mb">
-    <div class="c"><div class="ct"><span class="ci">📈</span> Monthly Trend — Q4 2025</div>
-    <table><thead><tr><th>Month</th><th>Docs</th><th>SLA</th><th>QC Pass</th></tr></thead><tbody>
-    ${c.mo.map(m=>`<tr><td><strong>${m.m} 2025</strong></td><td>${m.d}</td><td><span class="b ${bc(m.sl)}">${m.sl}%</span></td><td><span class="b ${bc(m.qc)}">${m.qc}%</span></td></tr>`).join('')}
-    </tbody></table>
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:600;margin-bottom:6px">SLA Trend</div>
-    <div style="display:flex;align-items:end;gap:5px;height:50px">${c.mo.map(m=>{const h=Math.max(15,(m.sl/100)*50);return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px"><div style="font-size:8px;font-weight:600;color:var(--text2)">${m.sl}%</div><div style="width:100%;height:${h}px;background:${m.sl>=90?'var(--green)':m.sl>=75?'var(--amber)':'var(--red)'};border-radius:3px 3px 0 0;opacity:.75"></div><div style="font-size:8px;color:var(--text3)">${m.m}</div></div>`}).join('')}</div></div></div>
-    <div class="c"><div class="ct"><span class="ci">👤</span> CRA Performance</div>
-    <table><thead><tr><th>CRA</th><th>Status</th><th>Onboarded</th><th>Sites</th><th>Q4 Docs</th><th>QC Pass</th></tr></thead><tbody>
-    ${c.cras_d.map(a=>`<tr><td><strong>${a.n}</strong></td><td><span class="b ${a.s==='Onboarded'?'bg':'ba'}">${a.s}</span></td><td class="mono" style="font-size:10px">${a.d}</td><td style="font-size:10.5px">${a.sites}</td><td>${a.dq}</td><td><span class="b ${bc(a.qp)}">${a.qp}%</span></td></tr>`).join('')}
-    </tbody></table></div>
-  </div>
-  <div class="g g2">
-    <div class="c"><div class="ct"><span class="ci">⚠️</span> Open Issues (${c.issues.length})</div>
-    ${c.issues.map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="rag r${c.rag==='green'?'a':'r'}"></span>${i}</div>`).join('')}</div>
-    <div class="c"><div class="ct"><span class="ci">✅</span> Recommended Actions</div>
-    ${c.actions.map((a,i)=>`<div class="act-item"><div class="act-num">${i+1}</div><div>${a}</div></div>`).join('')}</div>
-  </div></div>`;
-}
-
-// ──── ONBOARDING ────
-V.onboarding=()=>`
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">🚀</span> CRO Onboarding Workflow (3 Weeks)</div>
-  <div class="stepper">${[{n:'1',l:'Registration',t:'Week 1',s:'done'},{n:'2',l:'CRA Training',t:'Weeks 1–2',s:'done'},{n:'3',l:'Validation',t:'Weeks 2–3',s:'active'},{n:'4',l:'Go-Live',t:'Week 3+',s:''}].map(s=>`<div class="step ${s.s}"><div class="step-line"></div><div class="step-dot">${s.s==='done'?'✓':s.n}</div><div class="step-label"><strong>${s.l}</strong><br><span style="font-size:9px">${s.t}</span></div></div>`).join('')}</div>
-  <div style="margin-top:16px;font-size:12px">
-  ${[{t:'Phase 1 — Registration',items:['Create CRO profile','Box collaborator access','Submission requirements','Onboarding packet'],done:true},{t:'Phase 2 — CRA Training',items:['SmartTMF orientation','TMF Ref Model 3.2','Quality standards','Filing conventions','Demo environment'],done:true},{t:'Phase 3 — Validation',items:['5 test documents','AI verification','QC validation','Go-live approval'],done:false,p:1},{t:'Phase 4 — Go-Live',items:['Live submissions','30-day monitoring','Weekly scorecards','Monthly dashboard'],done:false}].map(p=>`<p style="margin-bottom:8px"><strong>${p.t}</strong></p><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">${p.items.map((it,i)=>{if(p.done)return`<span class="b bg">✓ ${it}</span>`;if(p.p!==undefined&&i<p.p)return`<span class="b bb">◉ ${it}</span>`;return`<span class="b bx">○ ${it}</span>`}).join('')}</div>`).join('')}
-  </div></div>
-  <div class="c"><div class="ct"><span class="ci">👥</span> CRA Roster (${CROS.reduce((s,c)=>s+c.cras_d.length,0)} CRAs)</div>
-  <table><thead><tr><th>CRA</th><th>CRO</th><th>Status</th><th>Onboarded</th><th>Sites</th></tr></thead><tbody>
-  ${CROS.flatMap(cr=>cr.cras_d.map(a=>`<tr><td><strong>${a.n}</strong></td><td>${cr.name}</td><td><span class="b ${a.s==='Onboarded'?'bg':'ba'}">${a.s}</span></td><td class="mono" style="font-size:10px">${a.d}</td><td style="font-size:10.5px">${a.sites}</td></tr>`)).join('')}
-  </tbody></table>
-  <div style="margin-top:12px"><button class="btn bp1 bsm">+ Onboard New CRO/CRA</button></div></div>
-</div>`;
-
-// ──── DOCUMENTS ────
-V.documents=()=>`<div class="c"><div class="ct"><span class="ci">📄</span> TMF Documents in Pipeline</div>
-<table><thead><tr><th>File</th><th>Study</th><th>Type</th><th>Version</th><th>Stage</th></tr></thead><tbody>
-${STUDIES.flatMap(s=>[
-  {f:`${s.mol} TMF Plan`,study:s.id,type:'TMF Plan',v:'v1.0'},
-  {f:`${s.mol} Protocol`,study:s.id,type:'Protocol',v:'v1.0'},
-  {f:`${s.mol} IB`,study:s.id,type:"Investigator's Brochure",v:'v1.0'}
-]).map(d=>`<tr><td><strong>${d.f}</strong></td><td>${d.study}</td><td>${d.type}</td><td class="mono">${d.v}</td><td><span class="b bg">Approved</span></td></tr>`).join('')}
-</tbody></table></div>`;
-
-// ──── AI CLASSIFICATION ────
-V.classification=()=>`<div class="c mb"><div class="ct"><span class="ci">🤖</span> AI Classification Engine — Box AI Metadata Extraction</div>
-<p style="font-size:12px;color:var(--text2);margin-bottom:14px">Documents uploaded to 01_Intake are processed by Box AI to extract TMF metadata against Reference Model 3.2. Confidence score determines routing.</p>
-<div style="background:var(--surface);border-radius:8px;padding:14px"><div style="font-size:12px;font-weight:600;margin-bottom:8px">Example: MRD-105 TMF Plan v3.0</div>
-<table><thead><tr><th>Field</th><th>Extracted Value</th><th>Confidence</th></tr></thead><tbody>
-${[['Artifact Type','TMF Plan',97],['TMF Section','01 Trial Management',95],['Study Number','MRD-105-102',99],['CRO','Kapadi/Alimentiv',92],['Version','v3.0',98],['Document Date','2025-06-15',94]].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td><span class="b bg">${r[2]}%</span></td></tr>`).join('')}
-</tbody></table>
-<div style="margin-top:12px;text-align:center"><span class="b bg" style="font-size:12px;padding:5px 16px">Overall: 95.8% → Auto-Approve Route</span></div></div></div>`;
-
-// ──── QC ────
-V.qc=()=>`<div class="c"><div class="ct"><span class="ci">🔍</span> QC Review Queue</div>
-<table><thead><tr><th>Document</th><th>Study</th><th>CRO</th><th>AI Conf</th><th>Route</th><th>Status</th><th>Action</th></tr></thead><tbody>
-${QC_QUEUE.map(q=>`<tr><td><strong>${q.doc}</strong></td><td>${q.study}</td><td>${q.cro}</td><td><span class="b ${q.conf>=90?'bg':'ba'}">${q.conf}%</span></td><td>${q.route}</td><td><span class="b ${q.status==='Approved'?'bg':'ba'}">${q.status}</span></td><td>${q.status==='Pending'?'<button class="btn bp1 bxs">Review</button>':'<span style="color:var(--text3)">—</span>'}</td></tr>`).join('')}
-</tbody></table></div>`;
-
-// ──── ANALYTICS ────
-V.analytics=()=>{
-  const health=(parseFloat(comp)*0.4+parseFloat(aS)*0.3+parseFloat(aQ)*0.3).toFixed(1);
-  return`<div class="g g4 mb"><div class="c stat"><div class="sv" style="color:var(--green)">${comp}%</div><div class="sl">TMF Completeness</div></div><div class="c stat"><div class="sv" style="color:var(--teal)">${aS}%</div><div class="sl">SLA Compliance</div></div><div class="c stat"><div class="sv" style="color:var(--blue)">${aQ}%</div><div class="sl">QC Pass Rate</div></div><div class="c stat"><div class="sv" style="color:var(--navy)">${health}%</div><div class="sl">TMF Health Score</div></div></div>
-  <div class="g g2 mb">
-    <div class="c"><div class="ct"><span class="ci">📊</span> TMF Health by Study</div>
-    ${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:100px;font-size:11px;font-weight:600;text-align:right">${s.id}</div><div class="pb" style="flex:1"><div class="pf ${pc(parseFloat(p))}" style="width:${p}%"></div></div><div style="width:40px;font-size:11px;font-weight:600" class="mono">${p}%</div></div>`}).join('')}</div>
-    <div class="c"><div class="ct"><span class="ci">🏥</span> Inspection Readiness Index</div>
-    <table><thead><tr><th>Metric</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead><tbody>
-    <tr><td>Completeness</td><td><span class="b ${bc(parseFloat(comp))}">${comp}%</span></td><td>40%</td><td>${(parseFloat(comp)*0.4).toFixed(1)}%</td></tr>
-    <tr><td>Currency (SLA)</td><td><span class="b ${bc(parseFloat(aS))}">${aS}%</span></td><td>30%</td><td>${(parseFloat(aS)*0.3).toFixed(1)}%</td></tr>
-    <tr><td>Quality (QC)</td><td><span class="b ${bc(parseFloat(aQ))}">${aQ}%</span></td><td>30%</td><td>${(parseFloat(aQ)*0.3).toFixed(1)}%</td></tr>
-    <tr style="border-top:2px solid var(--border)"><td><strong>TMF Health</strong></td><td colspan="2"></td><td><strong>${health}%</strong></td></tr>
-    </tbody></table></div>
-  </div>`;
-};
-
-// ──── VEEVA ────
-V.veeva=()=>`
-<div class="c mb" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#A78BFA">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <div><div class="ct" style="margin-bottom:2px"><span class="ci">🔗</span> Veeva Vault eTMF Integration</div>
-    <div style="font-size:11px;color:var(--text2)">Vault URL: <a href="#" style="color:var(--teal);font-weight:600">[client-instance].veevavault.com</a></div></div>
-    <span class="b bp">Simulation Mode</span>
-  </div>
-  <p style="font-size:11px;color:var(--text2);margin-top:6px">Study/site data simulated in Box until Vault API connection is configured. Folder structure mirrors Veeva document type hierarchy.</p>
-</div>
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">⬇️</span> Veeva → SmartTMF</div>
-  ${['Study Metadata (ID, phase, status)','Site Info (PI name, country, activation)','Expected Document List (EDL)','Document Lifecycle States','Governing Docs (Protocol, IB, ICF)'].map(d=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--purple)">→</span>${d}</div>`).join('')}</div>
-  <div class="c"><div class="ct"><span class="ci">⬆️</span> SmartTMF → Veeva</div>
-  ${['AI Classification Metadata','QC Approval/Rejection Status','Filing Timeliness Metrics','Completeness Scoring per Study/Site'].map(d=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--teal)">→</span>${d}</div>`).join('')}</div>
-</div>
-<div class="c"><div class="ct"><span class="ci">🗂</span> Simulated Study Data</div>
-<table><thead><tr><th>Study</th><th>Molecule</th><th>Phase</th><th>Indication</th><th>Sites</th><th>Enrolled</th><th>CRO</th><th>Complete</th></tr></thead><tbody>
-${STUDIES.map(s=>{const p=((s.filed/s.expected)*100).toFixed(1);return`<tr><td><strong>${s.id}</strong></td><td class="mono" style="font-size:10.5px">${s.mol}</td><td>${phB(s.phase)}</td><td>${s.ind}</td><td>${s.sites}</td><td>${s.enrolled}</td><td>${s.cro}</td><td>${pBar(parseFloat(p),70)}</td></tr>`}).join('')}
-</tbody></table></div>`;
-
-// ──── QUALITY ────
-V.quality=()=>`
-<div class="g g2 mb">
-  <div class="c"><div class="ct"><span class="ci">🛡</span> TMF Quality Framework</div>
-  <p style="font-size:11px;color:var(--text2);margin-bottom:10px">TMF Reference Model 3.2 · ICH E6(R2) GCP · 21 CFR Part 11 · EU CTR 536/2014</p>
-  <table><thead><tr><th>#</th><th>Quality Check</th><th>Method</th><th>Status</th></tr></thead><tbody>
-  ${[['1','Legibility Check','AI + Rule'],['2','Orientation Check','AI Vision'],['3','Duplicate Detection','Hash + AI'],['4','Signature Verification','AI Extract'],['5','Business Rules Validation','Config Rules'],['6','Filing Timeliness (35-day SLA)','Date Calc']].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td><span class="b bg">Active</span></td></tr>`).join('')}
-  </tbody></table>
-  <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text2)">These 6 checks run on <strong>every document</strong> entering the pipeline, regardless of type. They validate <em>how</em> documents are filed (quality). The EDL separately tracks <em>what</em> documents should exist (completeness).</div></div>
-  <div class="c"><div class="ct"><span class="ci">📊</span> TMF Health Score</div>
-  <div style="display:flex;gap:6px;margin-bottom:14px">
-  ${[['40%','Completeness','Expected vs actual','var(--gbg)','var(--gtx)'],['30%','Currency','Within 35-day SLA','var(--abg)','var(--atx)'],['30%','Quality','QC pass 1st attempt','var(--bbg)','var(--btx)']].map(w=>`<div style="flex:1;background:${w[3]};border-radius:7px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:${w[4]}">${w[0]}</div><div style="font-size:10px;font-weight:600;color:${w[4]}">${w[1]}</div><div style="font-size:9px;color:var(--text2)">${w[2]}</div></div>`).join('')}
-  </div>
-  <div style="font-size:11px;font-weight:600;margin-bottom:6px">RAG Thresholds</div>
-  <div style="display:flex;gap:5px">
-  ${[['Green','>90% SLA, <5% reject','var(--gbg)','var(--gtx)'],['Amber','75–90% SLA, 5–15%','var(--abg)','var(--atx)'],['Red','<75% SLA, >15%','var(--rbg)','var(--rtx)']].map(r=>`<div style="flex:1;background:${r[2]};border-radius:7px;padding:8px;text-align:center;font-size:11px"><strong style="color:${r[3]}">${r[0]}</strong><br><span style="font-size:10px">${r[1]}</span></div>`).join('')}
-  </div></div>
-</div>
-<div class="c"><div class="ct"><span class="ci">📋</span> AI Confidence Routing</div>
-<div style="display:flex;gap:10px;padding:6px 0">
-${[['≥ 90%','Auto-Approve','→ 04_Approved','var(--gbg)','var(--green)','var(--gtx)'],['75–89%','QC Review','→ 03_QC_Review','var(--abg)','var(--amber)','var(--atx)'],['< 75%','Manual Review','Flag for coordinator','var(--rbg)','var(--red)','var(--rtx)']].map(r=>`<div style="flex:1;background:${r[3]};border:2px solid ${r[4]};border-radius:9px;padding:16px;text-align:center"><div style="font-size:20px;font-weight:700;color:${r[5]}">${r[0]}</div><div style="font-size:11px;font-weight:600;color:${r[5]}">${r[1]}</div><div style="font-size:10px;color:var(--text2);margin-top:2px">${r[2]}</div></div>`).join('')}
-</div></div>`;
-
-// ──── PRICING ────
-V.pricing=()=>`
-<div style="text-align:center;margin-bottom:20px"><div style="font-size:20px;font-weight:700;color:var(--navy)">SmartTMF Pricing</div><div style="font-size:12px;color:var(--text2);margin-top:3px">Scale from startup to enterprise</div></div>
-<div class="g g3 mb2">
-${[{n:'Starter',p:'$15,000',pd:'/mo · Up to 3 studies',bg:'linear-gradient(135deg,#F8FAFC,#E2E8F0)',c:'var(--navy)',feat:['AI Classification (Box AI)','QC Workflow + Audit Trail','Dashboard + Metrics','Monthly Reports','1 CRO Onboarding','Email Support'],setup:'$25K (2–3 wks)',f:false},
-{n:'Professional',p:'$28,000',pd:'/mo · Up to 10 studies',bg:'linear-gradient(135deg,var(--teal),var(--sky))',c:'#fff',feat:['Everything in Starter, plus:','CRO Performance Dashboards','Veeva Vault Integration','Automated Document Routing','CRO/CRA Onboarding Program','Inspection Readiness Scoring','Full EDL Milestone Tracking','Weekly Analytics · 8hr SLA'],setup:'$50K (4–6 wks)',f:true,rec:true},
-{n:'Enterprise',p:'$45,000',pd:'/mo · Unlimited studies',bg:'linear-gradient(135deg,var(--dark),var(--navy))',c:'#fff',feat:['Everything in Professional, plus:','Multi-Client Tenants','Custom Metadata Templates','Predictive Inspection AI','Bi-directional Veeva Sync','Cross-Study Portfolio View','Dedicated Success Mgr · 4hr SLA'],setup:'$85K (8–12 wks)',f:false}
-].map(t=>`<div class="c pc${t.f?' feat':''}"><div class="ph" style="background:${t.bg}">${t.rec?'<div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:3px">Recommended</div>':''}<div class="pn" style="color:${t.c}">${t.n}</div><div class="pp" style="color:${t.c}">${t.p}</div><div class="ppd" style="color:${t.c==='#fff'?'rgba(255,255,255,.7)':'var(--text2)'}">${t.pd}</div></div><div class="pfl">${t.feat.map(f=>`<div class="pfi">${chk}${f.startsWith('Everything')?`<strong>${f}</strong>`:f}</div>`).join('')}</div><div class="pcta"><div style="font-size:10px;color:var(--text2);margin-bottom:6px">Setup: ${t.setup}</div><button class="btn ${t.f?'bp1':'bo1'}" style="width:100%">${t.f?'Get Started':'Contact Sales'}</button></div></div>`).join('')}
-</div>
-<div class="g g2"><div class="c"><div class="ct"><span class="ci">💰</span> Add-Ons & Discounts</div>
-<table><thead><tr><th>Item</th><th>Price</th></tr></thead><tbody>
-<tr><td>Veeva Vault Integration</td><td><strong>$35,000</strong></td></tr>
-<tr><td>12-month commitment</td><td><strong style="color:var(--green)">10% off</strong></td></tr>
-<tr><td>24-month commitment</td><td><strong style="color:var(--green)">15% off</strong></td></tr>
-<tr><td>Multi-client bundle</td><td><strong style="color:var(--green)">20% off</strong></td></tr>
-</tbody></table></div>
-<div class="c"><div class="ct"><span class="ci">📋</span> Sample Package (Professional)</div>
-<div style="background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-radius:7px;padding:12px;margin-bottom:10px"><div style="font-size:14px;font-weight:700;color:#0F766E">Professional + Veeva Integration</div><div style="font-size:11px;color:var(--text2);margin-top:2px">5 studies · 5 CROs · Full EDL + Dashboard</div></div>
-<table style="font-size:11.5px"><tbody>
-<tr><td>Monthly recurring</td><td style="text-align:right"><strong>$28,000</strong></td></tr>
-<tr><td>Setup (one-time)</td><td style="text-align:right">$50,000</td></tr>
-<tr><td>Veeva integration</td><td style="text-align:right">$35,000</td></tr>
-<tr><td>12-month discount</td><td style="text-align:right;color:var(--green)">−10%</td></tr>
-<tr style="border-top:2px solid var(--border)"><td><strong>Year 1 Total</strong></td><td style="text-align:right"><strong style="font-size:14px;color:var(--navy)">$387,200</strong></td></tr>
-</tbody></table></div></div>`;
-
-// ──── SCALING ────
-V.scaling=()=>`
-<div class="c mb" style="background:linear-gradient(135deg,#0D1B2A,#1F3864);color:#fff;border:none">
-<div style="font-size:17px;font-weight:700;margin-bottom:4px">Multi-Client Architecture</div>
-<div style="font-size:11px;color:rgba(255,255,255,.6)">Each client gets an isolated SmartTMF instance — separate Box workspace, client-specific configs, zero cross-client data leakage.</div></div>
-<div class="g g3 mb">
-${[{n:'Client 1: Meridian Bio',b:'bg',s:'Live',bc:'var(--green)',info:'5 studies · 5 CROs · 17 sites<br>Tier: Professional'},{n:'Client 2: [Next Client]',b:'ba',s:'Onboarding',bc:'var(--amber)',info:'Setup: 2–3 wks (Starter)<br>or 4–6 wks (Professional)',o:.8},{n:'Client 3+: Template',b:'bx',s:'Available',bc:'var(--border)',info:'Repeatable deployment<br>SmartTMF template cloning',o:.6}].map(c=>`<div class="c" style="border-left:4px solid ${c.bc};${c.o?'opacity:'+c.o:''}"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px">${c.n}</div><span class="b ${c.b}">${c.s}</span><div style="font-size:10.5px;color:var(--text2);margin-top:6px;line-height:1.5">${c.info}</div></div>`).join('')}
-</div>
-<div class="g g2 mb">
-<div class="c"><div class="ct"><span class="ci">🔄</span> Changes Per Client</div>
-${['Box folder structure','smarttmf_config.json','Veeva Vault connection','CRO definitions & onboarding','Quality thresholds & SLAs','EDL templates per study'].map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="b bb">Config</span>${i}</div>`).join('')}</div>
-<div class="c"><div class="ct"><span class="ci">✅</span> Stays the Same</div>
-${['SmartTMF app (React + Box AI + Anthropic)','6-stage pipeline','AI classification engine','QC workflow + analytics','CRO onboarding process','EDL framework & milestone logic'].map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="b bg">Platform</span>${i}</div>`).join('')}</div>
-</div>
-<div class="c"><div class="ct"><span class="ci">👥</span> Operations Scaling</div>
-<div class="g g3">${[['1–3','Clients','1 SmartTMF Admin + TMF coordinators'],['4–8','Clients','2 Admins + team leads per client'],['9+','Clients','Dedicated Ops team + success managers']].map(t=>`<div style="background:var(--surface);border-radius:7px;padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--teal)">${t[0]}</div><div style="font-size:11px;font-weight:600">${t[1]}</div><div style="font-size:10px;color:var(--text2);margin-top:3px">${t[2]}</div></div>`).join('')}</div></div>`;
-
-// ═══════════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════════
-const VM={
-  dashboard:['Dashboard',`SmartTMF Pipeline — ${CLIENT} · 5 Studies · 5 CROs`],
-  documents:['Documents','TMF Plans & Workspace Files'],
-  edl:['Expected Document List','Full Milestone-Triggered EDL · Study + Site Level'],
-  classification:['AI Classification','Box AI Metadata Extraction Engine'],
-  qc:['QC Workflow','Human-in-the-Loop Quality Control'],
-  analytics:['Analytics','TMF Health Monitoring & Inspection Readiness'],
-  cro:['CRO Dashboards','Performance Tracking by CRO Partner'],
-  onboarding:['CRO & CRA Onboarding','4-Phase Structured Onboarding Workflow'],
-  veeva:['Veeva Vault Integration','eTMF Data Feed Simulation'],
-  quality:['Quality Standards','TMF Reference Model 3.2 · ICH-GCP · 21 CFR Part 11'],
-  pricing:['Pricing','SmartTMF Platform Tiers & Implementation Costs'],
-  scaling:['Multi-Client Scaling','Isolated Tenant Architecture']
-};
-
-function nav(id){
-  const el=document.getElementById('content');
-  el.innerHTML=V[id]();
-  document.getElementById('hT').textContent=VM[id][0];
-  document.getElementById('hS').textContent=VM[id][1];
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`.nav-item[data-v="${id}"]`)?.classList.add('active');
-  el.scrollTop=0;
-  if(id==='cro') bindTabs('croTabs','cro-');
-  if(id==='edl') bindTabs('edlTabs','edl-');
-}
-
-function bindTabs(tabsId,prefix){
-  document.querySelectorAll(`#${tabsId} .tab`).forEach(tab=>{
-    tab.addEventListener('click',function(){
-      document.querySelectorAll(`#${tabsId} .tab`).forEach(t=>t.classList.remove('active'));
-      this.classList.add('active');
-      const key=this.dataset.cro||this.dataset.edl;
-      document.querySelectorAll(`#${tabsId}+div .panel`).forEach(p=>p.classList.remove('active'));
-      const target=document.getElementById(prefix+key);
-      if(target) target.classList.add('active');
-    });
-  });
-}
-
-document.querySelectorAll('.nav-item[data-v]').forEach(item=>{
-  item.addEventListener('click',()=>nav(item.dataset.v));
-});
-
-nav('dashboard');
-</script>
-
-<style id="smarttmf-live-vault-box-style">
-.card-click{cursor:pointer;transition:transform .16s ease, box-shadow .16s ease}
-.card-click:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(15,23,42,.08)}
-.live-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid var(--border)}
-.live-chip.ok{background:#ECFDF5;color:#065F46;border-color:#A7F3D0}
-.live-chip.warn{background:#FEFCE8;color:#854D0E;border-color:#FDE68A}
-.live-chip.err{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
-.kicker{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);font-weight:700}
-.subtle{font-size:11px;color:var(--text2)}
-.section-note{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--text2)}
-.file-pill{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:#F8FAFC;border:1px solid var(--border);font-size:10px;font-weight:700;color:var(--navy)}
-.list-link{color:var(--teal);font-weight:700;cursor:pointer;text-decoration:none}
-.list-link:hover{text-decoration:underline}
-</style>
-<script id="smarttmf-live-vault-box-script">
-(function(){
-  const STATE={health:null,intake:null,vault:null,lastLoaded:null};
-  const HEALTH_URL='/api/health';
-  const INTAKE_URL='/api/intake';
-  const VAULT_URL='/api/vault-summary';
-
-  async function j(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok) throw new Error(url+' '+r.status);return r.json();}
-  function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-  function n(v,fallback='—'){return (v===undefined||v===null||v==='')?fallback:v;}
-  function fmtDate(v){if(!v) return '—'; try{return new Date(v).toLocaleString();}catch(e){return v;}}
-  function statusChip(s){s=String(s||'warning').toLowerCase(); const cls=s==='ok'?'ok':(s==='error'?'err':'warn'); const label=s==='ok'?'Green':(s==='error'?'Red':'Amber'); return `<span class="live-chip ${cls}">${label}</span>`;}
-  function currentNav(){return document.querySelector('.nav-item.active[data-v]')?.dataset.v||'dashboard';}
-
-  function docsRows(files){
-    if(!files || !files.length) return `<tr><td colspan="6">No live documents available yet.</td></tr>`;
-    return files.map((f)=>`<tr>
-      <td><strong>${esc(f.name||'Untitled')}</strong><br><span class="subtle">${esc(f.id||'')}</span></td>
-      <td>${esc(f.study||'Unassigned')}</td>
-      <td>${esc(f.type||f.artifactType||'—')}</td>
-      <td><span class="file-pill">${esc(f.stage||'Vault')}</span></td>
-      <td>${fmtDate(f.updated||f.modified_at||f.version_modified_date__v)}</td>
-      <td>${esc(f.source||'Vault')}</td>
-    </tr>`).join('');
-  }
-
-  function studyRows(){
-    const rows=STATE.vault?.byStudy||[];
-    if(!rows.length) return `<tr><td colspan="5">No study-level Vault summary available yet.</td></tr>`;
-    return rows.map(s=>`<tr>
-      <td><a class="list-link" onclick="nav('documents')">${esc(s.study||s.name||'Unknown')}</a></td>
-      <td>${n(s.documents,0)}</td>
-      <td>${n(s.sites,0)}</td>
-      <td>${n(s.countries,0)}</td>
-      <td>${n(s.types,0)}</td>
-    </tr>`).join('');
-  }
-
-  function recentIntakeRows(){
-    const files=STATE.intake?.intake?.recentFiles||[];
-    if(!files.length) return `<tr><td colspan="4">No recent intake files available yet.</td></tr>`;
-    return files.map(f=>`<tr>
-      <td><a class="list-link" onclick="nav('documents')">${esc(f.name||'Untitled')}</a></td>
-      <td>${esc(f.study||'Unassigned')}</td>
-      <td>${esc(f.stage||'Intake')}</td>
-      <td>${fmtDate(f.modified_at||f.created_at)}</td>
-    </tr>`).join('');
-  }
-
-  function croRows(){
-    const cros=STATE.intake?.intake?.cros||[];
-    if(!cros.length) return `<tr><td colspan="4">No CRO grouping available yet.</td></tr>`;
-    return cros.map(c=>`<tr><td><strong>${esc(c.name||'Unknown')}</strong></td><td>${n(c.files,0)}</td><td>${n(c.studies,0)}</td><td>${n(c.inQc,0)}</td></tr>`).join('');
-  }
-
-  function applyChrome(){
-    const veevaNav=document.querySelector('.nav-item[data-v="veeva"]');
-    if(veevaNav) veevaNav.innerHTML=veevaNav.innerHTML.replace('Veeva Vault','Vault via Glean');
-    const hPills=document.querySelectorAll('.header-right .pill');
-    if(hPills[1]) hPills[1].textContent='Vault Connected via Glean';
-  }
-
-  function renderDashboard(){
-    const o=STATE.vault?.overview||{};
-    const i=STATE.intake?.intake||{};
-    return `
+const state={overview:null,intake:null,vault:null,health:null};
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function fmt(v){if(v===undefined||v===null||v==='') return '—'; return v;}
+function d(v){if(!v) return '—'; try{return new Date(v).toLocaleString()}catch(e){return v}}
+async function j(u){const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw new Error(u+' '+r.status); return r.json();}
+async function load(){try{const [overview,intake,vault,health]=await Promise.all([j('/api/overview'),j('/api/intake'),j('/api/vault-summary'),j('/api/health')]); state.overview=overview; state.intake=intake; state.vault=vault; state.health=health; nav(document.querySelector('.nav-item.active')?.dataset.v||'dashboard');}catch(e){console.error(e); document.getElementById('content').innerHTML=`<div class="c"><div class="ct">Live data error</div><div class="hint">${esc(e.message)}</div></div>`;}}
+function healthChip(){const h=state.overview?.overview?.health||'amber'; return `<span class="b ${h==='green'?'bg':h==='red'?'br':'ba'}">${h.toUpperCase()}</span>`;}
+const V={
+  dashboard(){const o=state.overview?.overview||{}; const intake=state.intake?.intake||{}; return `
     <div class="g g4 mb2">
-      <div class="c stat card-click" onclick="nav('veeva')"><div class="sv">${n(o.activeStudies,0)}</div><div class="sl">Active Studies</div><div class="ss" style="color:var(--green)">Vault grouped by study</div></div>
-      <div class="c stat card-click" onclick="nav('cro')"><div class="sv">${n(i.croCount,0)}</div><div class="sl">CRO Partners</div><div class="ss" style="color:var(--blue)">Box intake onboarding</div></div>
-      <div class="c stat card-click" onclick="nav('documents')"><div class="sv">${n(o.documentsFiled,0)}</div><div class="sl">Documents Filed</div><div class="ss" style="color:var(--green)">Vault source of record</div></div>
-      <div class="c stat card-click" onclick="nav('veeva')"><div class="sv">${n(o.sitesActive,0)}</div><div class="sl">Sites Active</div><div class="ss" style="color:var(--blue)">Vault site context</div></div>
+      <div class="c stat" onclick="nav('vault')"><div class="sv">${fmt(o.activeStudies)}</div><div class="sl">Active Studies</div><div class="ss ok">Click for Vault breakdown</div></div>
+      <div class="c stat" onclick="nav('cro')"><div class="sv">${fmt(o.croPartners)}</div><div class="sl">CRO Partners</div><div class="ss">Live from intake pattern</div></div>
+      <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(o.documentsFiled)}</div><div class="sl">Documents Filed</div><div class="ss ok">Vault source of record</div></div>
+      <div class="c stat" onclick="nav('vault')"><div class="sv">${fmt(o.sitesActive)}</div><div class="sl">Sites Active</div><div class="ss">Study/site context</div></div>
     </div>
     <div class="g g2 mb">
-      <div class="c"><div class="ct"><span class="ci">📥</span> Box Intake Workflow</div>
-        <div class="section-note" style="margin-bottom:10px">CROs upload messy files into Box intake. AI and human oversight prepare them for final filing into Vault.</div>
-        <div class="g g4" style="margin-bottom:10px">
-          <div class="c stat card-click" onclick="nav('documents')"><div class="sv">${n(i.newItems,0)}</div><div class="sl">New Intake</div></div>
-          <div class="c stat card-click" onclick="nav('classification')"><div class="sv">${n(i.readyForClassification,0)}</div><div class="sl">Needs Classification</div></div>
-          <div class="c stat card-click" onclick="nav('qc')"><div class="sv">${n(i.inQcReview,0)}</div><div class="sl">In QC Review</div></div>
-          <div class="c stat card-click" onclick="nav('documents')"><div class="sv">${n(i.approvedCount,0)}</div><div class="sl">Approved / Filed</div></div>
+      <div class="c"><div class="ct">Intake Overview</div>
+        <div class="g g4 mb">
+          <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.newItems)}</div><div class="sl">New Intake Items</div></div>
+          <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.readyForClassification)}</div><div class="sl">Needs Classification</div></div>
+          <div class="c stat" onclick="nav('qc')"><div class="sv">${fmt(intake.inQcReview)}</div><div class="sl">In QC Review</div></div>
+          <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.approvedCount)}</div><div class="sl">Filed / Approved</div></div>
         </div>
-        <table><thead><tr><th>File</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${recentIntakeRows()}</tbody></table>
+        <div class="hint">Box is the intake work queue. Vault is the source of record. Glean provides filing support and oversight.</div>
       </div>
-      <div class="c"><div class="ct"><span class="ci">🟢</span> Live Indexing Health</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
-          <div>${statusChip(STATE.health?.status)}</div>
-          <button class="btn bo1 bsm" onclick="nav('analytics')">View details</button>
-        </div>
-        <div class="section-note">Main page shows only overall health. Detailed document, object, and environment numbers are available in Analytics.</div>
-        <div style="margin-top:12px;font-size:12px;color:var(--text2)">Vault is connected via Glean. Box remains the intake/work queue.</div>
+      <div class="c"><div class="ct">TMF Health</div>
+        <div style="font-size:32px;font-weight:800;margin-bottom:10px">${healthChip()}</div>
+        <div class="hint">Main page keeps health simple. Click into Analytics or Admin Health for actual document, object, and user counts.</div>
+        <div style="margin-top:12px"><button class="btn bp1" onclick="nav('analytics')">View details</button></div>
       </div>
     </div>
-    <div class="c"><div class="ct"><span class="ci">🏗️</span> SmartTMF Operating Model</div>
-      <div style="display:flex;gap:8px;align-items:center;overflow-x:auto;padding:8px 0 2px 0">
-        ${[['📥','Box Intake','CROs upload documents'],['🤖','AI Classification','Metadata proposed'],['🔍','QC Review','Human oversight'],['🗂️','Vault Filing','System of record'],['💬','Glean','Search, agent, oversight']].map((s,i,a)=>`<div style="flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center"><div style="font-size:18px">${s[0]}</div><div style="font-size:12px;font-weight:800;margin-top:4px;color:var(--navy)">${s[1]}</div><div class="subtle" style="margin-top:4px">${s[2]}</div></div>${i<a.length-1?'<div style="font-size:18px;color:var(--text3)">→</div>':''}`).join('')}
-      </div>
-    </div>`;
-  }
-
-  function renderDocuments(){
-    const docs=STATE.vault?.recentDocuments||[];
-    return `
-    <div class="c mb"><div class="ct"><span class="ci">📄</span> Vault Document Worklist</div>
-      <div class="section-note">Clinical users can review documents by study and open this worklist from the homepage cards. Box intake details feed QC and classification; Vault remains the source of record.</div>
-    </div>
-    <div class="g g2 mb">
-      <div class="c"><div class="ct"><span class="ci">🧪</span> Documents by Study</div>
-        <table><thead><tr><th>Study</th><th>Documents</th><th>Sites</th><th>Countries</th><th>Types</th></tr></thead><tbody>${studyRows()}</tbody></table>
-      </div>
-      <div class="c"><div class="ct"><span class="ci">🕒</span> Recent Vault Documents</div>
-        <table><thead><tr><th>File</th><th>Study</th><th>Type</th><th>Stage</th><th>Updated</th><th>Source</th></tr></thead><tbody>${docsRows(docs)}</tbody></table>
-      </div>
-    </div>`;
-  }
-
-  function renderClassification(){
-    const i=STATE.intake?.intake||{};
-    return `
-    <div class="c"><div class="ct"><span class="ci">🤖</span> AI Classification</div>
-      <div class="section-note" style="margin-bottom:12px">AI classification supports metadata extraction and filing preparation. Lower-confidence items route to QC for human oversight.</div>
-      <table><thead><tr><th>Metric</th><th>Value</th><th>Meaning</th></tr></thead><tbody>
-        <tr><td>Needs Classification</td><td><strong>${n(i.readyForClassification,0)}</strong></td><td>Box intake items awaiting metadata extraction</td></tr>
-        <tr><td>In QC Review</td><td><strong>${n(i.inQcReview,0)}</strong></td><td>Items requiring human review</td></tr>
-        <tr><td>Approved / Filed</td><td><strong>${n(i.approvedCount,0)}</strong></td><td>Items ready for or completed in Vault filing</td></tr>
-        <tr><td>Rejected</td><td><strong>${n(i.rejectedCount,0)}</strong></td><td>Items requiring correction and resubmission</td></tr>
-      </tbody></table>
-    </div>`;
-  }
-
-  function renderQc(){
-    const files=(STATE.intake?.intake?.recentFiles||[]).filter(f=>String(f.stage||'').toLowerCase().includes('qc')).slice(0,25);
-    return `
-    <div class="c"><div class="ct"><span class="ci">🔍</span> QC Workflow</div>
-      <table><thead><tr><th>Document</th><th>Study</th><th>Stage</th><th>Updated</th><th>Action</th></tr></thead><tbody>
-      ${files.length?files.map(f=>`<tr><td><strong>${esc(f.name||'Untitled')}</strong></td><td>${esc(f.study||'Unassigned')}</td><td>${esc(f.stage||'QC Review')}</td><td>${fmtDate(f.modified_at||f.created_at)}</td><td><button class="btn bp1 bxs">Review</button></td></tr>`).join(''):`<tr><td colspan="5">No files currently in QC review.</td></tr>`}
-      </tbody></table>
-    </div>`;
-  }
-
-  function renderAnalytics(){
-    const h=STATE.health||{}; const ds=h.datasources||{}; const v=STATE.vault||{};
-    return `
-    <div class="g g4 mb">
-      <div class="c stat"><div class="sv">${statusChip(h.status)}</div><div class="sl">Live Indexing Health</div></div>
-      <div class="c stat"><div class="sv">${n(v.documentsFiled,0)}</div><div class="sl">Documents Filed</div><div class="ss">${esc(ds.documents?.name||'vaultetmfv2documents')}</div></div>
-      <div class="c stat"><div class="sv">${n(v.objectCounts?.studies,0)}</div><div class="sl">Studies Indexed</div><div class="ss">${esc(ds.objects?.name||'vaultetmfv2objects')}</div></div>
-      <div class="c stat"><div class="sv">${n(v.objectCounts?.sites,0)}</div><div class="sl">Sites Indexed</div><div class="ss">Vault object summary</div></div>
-    </div>
-    <div class="g g2 mb">
-      <div class="c"><div class="ct"><span class="ci">🛠️</span> Admin Health Detail</div>
-        <table><thead><tr><th>Area</th><th>Status</th><th>Detail</th></tr></thead><tbody>
-          <tr><td>Documents</td><td>${esc(ds.documents?.status||'—')}</td><td>${n(v.documentsFiled,0)} filed / grouped from Vault</td></tr>
-          <tr><td>Objects</td><td>${esc(ds.objects?.status||'—')}</td><td>${n(v.objectCounts?.studies,0)} studies • ${n(v.objectCounts?.sites,0)} sites</td></tr>
-          <tr><td>Security</td><td>${esc(ds.security?.status||'—')}</td><td>${esc(ds.security?.name||'vaultetmfv2security')}</td></tr>
-        </tbody></table>
-      </div>
-      <div class="c"><div class="ct"><span class="ci">📊</span> Documents by Type</div>
-        <table><thead><tr><th>Type</th><th>Count</th></tr></thead><tbody>
-          ${(v.byType||[]).length?(v.byType||[]).map(t=>`<tr><td>${esc(t.type||'Unspecified')}</td><td>${n(t.count,0)}</td></tr>`).join(''):'<tr><td colspan="2">No type breakdown available yet.</td></tr>'}
-        </tbody></table>
-      </div>
-    </div>`;
-  }
-
-  function renderCro(){
-    return `
-    <div class="c"><div class="ct"><span class="ci">🤝</span> CRO Intake Overview</div>
-      <div class="section-note" style="margin-bottom:12px">CRO counts are driven from Box intake and onboarding context rather than hardcoded examples.</div>
-      <table><thead><tr><th>CRO</th><th>Files</th><th>Studies</th><th>In QC</th></tr></thead><tbody>${croRows()}</tbody></table>
-    </div>`;
-  }
-
-  function renderOnboarding(){
-    const i=STATE.intake?.intake||{};
-    return `
-    <div class="c"><div class="ct"><span class="ci">🚀</span> Onboarding and Intake Setup</div>
-      <div class="section-note" style="margin-bottom:12px">Use this view to track Box intake readiness across CROs and studies. Box is the intake workspace; Vault is the final filing destination.</div>
-      <div class="g g4">
-        <div class="c stat"><div class="sv">${n(i.croCount,0)}</div><div class="sl">CROs</div></div>
-        <div class="c stat"><div class="sv">${n((i.studies||[]).length,0)}</div><div class="sl">Studies in Intake</div></div>
-        <div class="c stat"><div class="sv">${n(i.newItems,0)}</div><div class="sl">Current Intake</div></div>
-        <div class="c stat"><div class="sv">${n(i.agingItems,0)}</div><div class="sl">Aging Items</div></div>
-      </div>
-    </div>`;
-  }
-
-  function renderVaultViaGlean(){
-    const v=STATE.vault||{};
-    return `
-    <div class="c mb" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#A78BFA">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <div><div class="ct" style="margin-bottom:2px"><span class="ci">🔗</span> Vault via Glean</div>
-        <div style="font-size:11px;color:var(--text2)">Vault is the source of record. Glean provides connection, search, and workflow support.</div></div>
-        <span class="b bp">Connected via Glean</span>
-      </div>
-    </div>
-    <div class="g g2 mb">
-      <div class="c"><div class="ct"><span class="ci">⬇️</span> Box → Vault Filing Flow</div>
-        <div class="section-note">Files arrive in Box intake, are classified and reviewed, then land in Vault as the system of record.</div>
-      </div>
-      <div class="c"><div class="ct"><span class="ci">🗂️</span> Vault Summary</div>
-        <table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>
-          <tr><td>Studies</td><td>${n(v.objectCounts?.studies,0)}</td></tr>
-          <tr><td>Sites</td><td>${n(v.objectCounts?.sites,0)}</td></tr>
-          <tr><td>Countries</td><td>${n(v.objectCounts?.countries,0)}</td></tr>
-          <tr><td>Documents Filed</td><td>${n(v.documentsFiled,0)}</td></tr>
-        </tbody></table>
-      </div>
-    </div>`;
-  }
-
-  async function loadLive(){
-    try{
-      const [health,intake,vault]=await Promise.all([
-        j(HEALTH_URL).catch(()=>({status:'warning'})),
-        j(INTAKE_URL).catch(()=>({intake:{newItems:0,recentFiles:[],studies:[],cros:[]}})),
-        j(VAULT_URL).catch(()=>({overview:{},objectCounts:{},byStudy:[],recentDocuments:[],byType:[]}))
-      ]);
-      STATE.health=health; STATE.intake=intake; STATE.vault=vault; STATE.lastLoaded=Date.now();
-      applyChrome();
-      // override view renderers
-      V.dashboard=renderDashboard;
-      V.documents=renderDocuments;
-      V.classification=renderClassification;
-      V.qc=renderQc;
-      V.analytics=renderAnalytics;
-      V.cro=renderCro;
-      V.onboarding=renderOnboarding;
-      V.veeva=renderVaultViaGlean;
-      VM.dashboard=['Dashboard',`SmartTMF Pipeline — Box Intake to Vault via Glean`];
-      VM.documents=['Documents','Live Vault document worklist'];
-      VM.classification=['AI Classification','Live intake classification workflow'];
-      VM.qc=['QC Workflow','Human oversight queue'];
-      VM.analytics=['Analytics','Admin health, studies, and document detail'];
-      VM.cro=['CRO Dashboards','Live CRO intake overview'];
-      VM.onboarding=['Onboarding','CRO and study intake readiness'];
-      VM.veeva=['Vault via Glean','Vault source of record, connected via Glean'];
-      const active=currentNav();
-      nav(active);
-    }catch(e){console.error('SmartTMF live load failed',e);}
-  }
-
-  document.addEventListener('DOMContentLoaded',()=>{
-    applyChrome();
-    loadLive();
-    setInterval(loadLive,60000);
-  });
-})();
+    <div class="g g2">
+      <div class="c"><div class="ct">Intake by Study</div>
+      <table><thead><tr><th>Study</th><th>Files</th><th>Needs Class.</th><th>In QC</th></tr></thead><tbody>
+      ${(intake.studies||[]).length?(intake.studies||[]).map(s=>`<tr><td><strong><a href="#" onclick="nav('documents');return false;">${esc(s.study)}</a></strong></td><td>${fmt(s.count)}</td><td>${fmt(s.readyForClassification)}</td><td>${fmt(s.inQc)}</td></tr>`).join(''):`<tr><td colspan="4">No study groupings returned from Box yet.</td></tr>`}
+      </tbody></table></div>
+      <div class="c"><div class="ct">Recent Intake Activity</div>
+      <table><thead><tr><th>File</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>
+      ${(intake.recentFiles||[]).length?(intake.recentFiles||[]).map(f=>`<tr><td><strong><a href="#" onclick="nav('documents');return false;">${esc(f.name)}</a></strong></td><td>${esc(f.study||'Unassigned')}</td><td>${esc(f.stage||'Intake')}</td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="4">No recent Box files found.</td></tr>`}
+      </tbody></table></div>
+    </div>`},
+  documents(){const intake=state.intake?.intake||{}; return `<div class="c"><div class="ct">Live Document Worklist</div><table><thead><tr><th>File</th><th>Study</th><th>Artifact</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${(intake.recentFiles||[]).length?(intake.recentFiles||[]).map(f=>`<tr><td><strong>${esc(f.name)}</strong></td><td>${esc(f.study)}</td><td>${esc(f.artifactType||'Needs classification')}</td><td><span class="b bb">${esc(f.stage||'Intake')}</span></td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="5">No files returned from Box intake.</td></tr>`}</tbody></table></div>`},
+  qc(){const intake=state.intake?.intake||{}; const q=(intake.recentFiles||[]).filter(f=>String(f.stage).toLowerCase().includes('qc')); return `<div class="c"><div class="ct">QC Review Queue</div><table><thead><tr><th>Document</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${q.length?q.map(f=>`<tr><td><strong>${esc(f.name)}</strong></td><td>${esc(f.study)}</td><td>${esc(f.stage)}</td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="4">No files currently in QC Review.</td></tr>`}</tbody></table></div>`},
+  analytics(){const h=state.health||{}; const ds=h.datasources||{}; return `<div class="g g4 mb"><div class="c stat"><div class="sv">${healthChip()}</div><div class="sl">Live Indexing Health</div></div><div class="c stat"><div class="sv">${fmt(ds.documents?.indexed)}</div><div class="sl">Documents Indexed</div></div><div class="c stat"><div class="sv">${fmt(ds.objects?.indexed)}</div><div class="sl">Objects Indexed</div></div><div class="c stat"><div class="sv">${fmt(ds.security?.usersDiscovered)}</div><div class="sl">Users Discovered</div></div></div>
+  <div class="c"><div class="ct">Admin Detail</div><table><thead><tr><th>Area</th><th>Status</th><th>Details</th></tr></thead><tbody><tr><td>Documents</td><td>${esc(ds.documents?.status||'—')}</td><td>${fmt(ds.documents?.indexed)} indexed</td></tr><tr><td>Objects</td><td>${esc(ds.objects?.status||'—')}</td><td>${fmt(ds.objects?.indexed)} indexed</td></tr><tr><td>Security</td><td>${esc(ds.security?.status||'—')}</td><td>${fmt(ds.security?.usersDiscovered)} users discovered</td></tr></tbody></table></div>`},
+  cro(){const cros=state.intake?.intake?.cros||[]; return `<div class="c"><div class="ct">CRO View</div><table><thead><tr><th>CRO</th><th>Status</th></tr></thead><tbody>${cros.length?cros.map(c=>`<tr><td><strong>${esc(c)}</strong></td><td><span class="b bg">Active in intake</span></td></tr>`).join(''):`<tr><td colspan="2">No CROs inferred from current intake files yet.</td></tr>`}</tbody></table></div>`},
+  onboarding(){return `<div class="c"><div class="ct">Onboarding</div><div class="hint">Use Box intake folders to onboard new CRO teams. As files arrive, SmartTMF groups them by study and stage, and Glean supports classification and filing oversight.</div></div>`},
+  vault(){const v=state.vault||{}; return `<div class="g g2 mb"><div class="c"><div class="ct">Vault Summary</div><div class="g g4"><div class="c stat"><div class="sv">${fmt(v.studiesCount)}</div><div class="sl">Studies</div></div><div class="c stat"><div class="sv">${fmt(v.sitesCount)}</div><div class="sl">Sites</div></div><div class="c stat"><div class="sv">${fmt(v.documentsFiled)}</div><div class="sl">Recent Documents</div></div><div class="c stat"><div class="sv">${esc(state.health?.datasources?.documents?.name||'vaultetmfv2documents')}</div><div class="sl">Documents source</div></div></div></div><div class="c"><div class="ct">Vault via Glean</div><div class="hint">Vault remains the source of record. This view summarizes live study, site, and recent document context surfaced through the environment.</div></div></div><div class="g g2"><div class="c"><div class="ct">Documents by Study</div><table><thead><tr><th>Study</th><th>Recent Docs</th></tr></thead><tbody>${(v.documentsByStudy||[]).length?(v.documentsByStudy||[]).map(r=>`<tr><td>${esc(r.study)}</td><td>${fmt(r.count)}</td></tr>`).join(''):`<tr><td colspan="2">No Vault document summary available yet.</td></tr>`}</tbody></table></div><div class="c"><div class="ct">Recent Vault Documents</div><table><thead><tr><th>Document</th><th>Study</th><th>Updated</th></tr></thead><tbody>${(v.recentDocuments||[]).length?(v.recentDocuments||[]).map(d0=>`<tr><td><strong>${esc(d0.title__v||d0.name__v||d0.id)}</strong></td><td>${esc(d0.study__v||'Unassigned')}</td><td>${d(d0.version_modified_date__v)}</td></tr>`).join(''):`<tr><td colspan="3">No recent Vault documents available.</td></tr>`}</tbody></table></div></div>`},
+  agent(){return `<div class="c"><div class="ct">ABC BioPharma TMF Filer Agent</div><div class="hint">The agent supports classification, study/site context lookup, and filing preparation with human oversight. It complements the Box intake workflow and Vault filing process.</div></div>`},
+  admin(){return `<div class="c"><div class="ct">Admin Health</div><pre style="white-space:pre-wrap;font-size:12px;background:#0F172A;color:#E2E8F0;padding:14px;border-radius:10px;overflow:auto">${esc(JSON.stringify(state.health,null,2))}</pre></div>`}
+};
+const VM={dashboard:['Dashboard','Live Box intake and Vault filing oversight'],documents:['Documents','Live document worklist'],qc:['QC Workflow','Human oversight queue'],analytics:['Analytics','Admin detail and indexing health'],cro:['CRO View','Live CRO presence from intake'],onboarding:['Onboarding','Use intake to onboard new CROs'],vault:['Vault via Glean','Vault is the source of record'],agent:['Agent','Glean filing support'],admin:['Admin Health','Raw health response']} ;
+function nav(id){document.getElementById('content').innerHTML=V[id]();document.getElementById('hT').textContent=VM[id][0];document.getElementById('hS').textContent=VM[id][1];document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.querySelector(`.nav-item[data-v="${id}"]`)?.classList.add('active');}
+document.querySelectorAll('.nav-item[data-v]').forEach(item=>item.addEventListener('click',()=>nav(item.dataset.v)));
+load(); setInterval(load,60000);
 </script>
-
 </body>
 </html>
