@@ -1,50 +1,18 @@
 export default async function handler(req, res) {
-  const now = new Date().toISOString();
-
+  const ok = (v) => !!(v && String(v).trim());
   const payload = {
-    status: 'ok',
-    generatedAt: now,
-    environment: {
-      company: 'ABC BioPharma',
-      name: 'SmartTMF Box Intake + Vault Filing Support',
-      systemOfRecord: 'Vault',
-      intakeSystem: 'Box',
-      intelligenceLayer: 'Glean'
-    },
+    status: ok(process.env.VAULT_URL) && ok(process.env.GLEAN_API_URL) ? 'ok' : 'warning',
+    generatedAt: new Date().toISOString(),
     datasources: {
-      documents: {
-        name: process.env.DATASOURCE_DOCUMENTS || 'vaultetmfv2documents',
-        indexed: 59,
-        status: 'active',
-        description: 'TMF documents and metadata'
-      },
-      objects: {
-        name: process.env.DATASOURCE_OBJECTS || 'vaultetmfv2objects',
-        indexed: 22,
-        status: 'active',
-        description: 'Study, country, and site context'
-      },
-      security: {
-        name: process.env.DATASOURCE_SECURITY || 'vaultetmfv2security',
-        usersDiscovered: 20,
-        groupsDiscovered: 45,
-        membershipsMapped: 135,
-        status: 'snapshot',
-        description: 'Security snapshot and readiness context'
-      }
+      documents: { name: process.env.DATASOURCE_DOCUMENTS || 'vaultetmfv2documents', status: 'active' },
+      objects: { name: process.env.DATASOURCE_OBJECTS || 'vaultetmfv2objects', status: 'active' },
+      security: { name: process.env.DATASOURCE_SECURITY || 'vaultetmfv2security', status: 'snapshot' }
     },
-    health: {
-      dashboard: 'live',
-      agent: 'available',
-      filingMode: 'gather_only',
-      adminOps: 'enabled'
-    },
-    runs: {
-      lastFullCrawl: 'Ready to wire from workflow history',
-      lastReindex: 'Ready to wire from workflow history',
-      lastIncrementalSync: 'Ready to wire from workflow history'
+    connections: {
+      box: ok(process.env.BOX_DEVELOPER_TOKEN) || ok(process.env.BOX_CLIENT_ID),
+      vault: ok(process.env.VAULT_URL) && ok(process.env.VAULT_USERNAME) && ok(process.env.VAULT_PASSWORD),
+      glean: ok(process.env.GLEAN_API_URL)
     }
   };
-
   res.status(200).json(payload);
 }
