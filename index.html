@@ -1,889 +1,440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USDM SmartTMF v2 — AI-Powered TMF Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --navy: #1F3864; --teal: #00838F; --sky: #0097A7; --dark: #0D1B2A;
-  --surface: #F8FAFC; --card: #FFFFFF; --border: #E2E8F0;
-  --text: #1E293B; --text2: #64748B; --text3: #94A3B8;
-  --green: #10B981; --green-bg: #ECFDF5; --green-text: #065F46;
-  --amber: #F59E0B; --amber-bg: #FFFBEB; --amber-text: #92400E;
-  --red: #EF4444; --red-bg: #FEF2F2; --red-text: #991B1B;
-  --blue: #3B82F6; --blue-bg: #EFF6FF; --blue-text: #1E40AF;
-  --purple: #8B5CF6; --purple-bg: #F5F3FF; --purple-text: #5B21B6;
-  --radius: 10px; --shadow-sm: 0 1px 2px rgba(0,0,0,.05); --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-lg: 0 4px 12px rgba(0,0,0,.08);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--surface);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.mono{font-family:'JetBrains Mono',monospace}
-.app{display:flex;height:100vh;overflow:hidden}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ABC BioPharma Vault eTMF v2</title>
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --brand: #111827;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+      --red: #dc2626;
+      --blue: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 0.9fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 1px 2px rgba(16,24,40,.04);
+    }
+    .hero-card {
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,.08), transparent 30%),
+        radial-gradient(circle at left center, rgba(22,163,74,.08), transparent 26%),
+        linear-gradient(135deg, rgba(202,138,4,.08), rgba(255,255,255,0));
+    }
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-pill.ok { background: rgba(22,163,74,.08); color: var(--green); }
+    .status-pill.warn { background: rgba(202,138,4,.12); color: var(--yellow); }
+    .status-pill.err { background: rgba(220,38,38,.08); color: var(--red); }
 
-/* ===== SIDEBAR ===== */
-.sidebar{width:232px;background:linear-gradient(180deg,var(--dark) 0%,#162544 50%,var(--navy) 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0;border-right:1px solid rgba(255,255,255,.06)}
-.sidebar-logo{padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.sidebar-logo img{height:26px;filter:brightness(10)}
-.logo-text{display:flex;flex-direction:column}
-.logo-text span:first-child{font-size:15px;font-weight:700;letter-spacing:-.3px;color:#fff}
-.logo-text span:last-child{font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--sky);margin-top:-1px}
-.sidebar-nav{flex:1;padding:6px 8px;overflow-y:auto}
-.nav-section{margin:14px 0 6px 10px;font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28)}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);transition:all .12s ease;margin:1px 0;position:relative}
-.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
-.nav-item.active{background:rgba(0,151,167,.2);color:#fff;font-weight:600}
-.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--sky)}
-.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.8}
-.nav-item.active svg{opacity:1}
-.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:20px;text-align:center}
-.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.3);line-height:1.6}
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .button {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .button.primary { background: var(--brand); color: white; }
+    .button.secondary { background: white; color: var(--text); border: 1px solid var(--border); }
 
-/* ===== MAIN ===== */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.header{height:54px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
-.header-title{font-size:16px;font-weight:700;color:var(--navy);white-space:nowrap}
-.header-sub{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.status-pill{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap}
-.status-pill::before{content:'';width:6px;height:6px;border-radius:50%}
-.status-live{background:#ECFDF5;color:#065F46}.status-live::before{background:var(--green)}
-.status-sim{background:#F5F3FF;color:#5B21B6}.status-sim::before{background:var(--purple)}
-.content{flex:1;overflow-y:auto;padding:20px 24px 40px}
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      height: 100%;
+    }
+    .summary-item {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .summary-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .summary-value {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.25;
+    }
 
-/* ===== LAYOUT ===== */
-.grid{display:grid;gap:16px}
-.g2{grid-template-columns:1fr 1fr}
-.g3{grid-template-columns:1fr 1fr 1fr}
-.g4{grid-template-columns:repeat(4,1fr)}
-.g5{grid-template-columns:repeat(5,1fr)}
-.mb16{margin-bottom:16px}
-.mb20{margin-bottom:20px}
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .metric-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: white;
+      min-height: 120px;
+    }
+    .metric-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric-sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
-/* ===== CARDS ===== */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
-.card-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.card-title .icon{font-size:15px}
-.stat{text-align:center;padding:14px 12px}
-.stat-val{font-size:26px;font-weight:700;color:var(--navy);letter-spacing:-.5px}
-.stat-label{font-size:11px;color:var(--text2);margin-top:3px;font-weight:500}
-.stat-sub{font-size:10px;margin-top:5px;font-weight:600}
-.up{color:var(--green)}
-.down{color:var(--red)}
-.flat{color:var(--text3)}
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
 
-/* ===== TABLES ===== */
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:9px 12px;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);border-bottom:2px solid var(--border);background:var(--surface)}
-td{padding:9px 12px;border-bottom:1px solid var(--border)}
-tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:rgba(0,131,143,.02)}
-td strong{font-weight:600;color:var(--navy)}
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .table th, .table td {
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .table th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
 
-/* ===== BADGES ===== */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.b-green{background:var(--green-bg);color:var(--green-text)}
-.b-amber{background:var(--amber-bg);color:var(--amber-text)}
-.b-red{background:var(--red-bg);color:var(--red-text)}
-.b-blue{background:var(--blue-bg);color:var(--blue-text)}
-.b-purple{background:var(--purple-bg);color:var(--purple-text)}
-.b-gray{background:#F1F5F9;color:#475569}
-.rag{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
-.rag-g{background:var(--green)}.rag-a{background:var(--amber)}.rag-r{background:var(--red)}
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+    }
 
-/* ===== BUTTONS ===== */
-.btn{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:inherit}
-.btn-p{background:var(--teal);color:#fff}.btn-p:hover{background:var(--navy)}
-.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-o:hover{background:var(--surface)}
-.btn-sm{padding:5px 10px;font-size:11.5px}
-.btn-xs{padding:3px 8px;font-size:10.5px;border-radius:5px}
-
-/* ===== PROGRESS ===== */
-.pbar{height:7px;background:#E2E8F0;border-radius:4px;overflow:hidden}
-.pfill{height:100%;border-radius:4px;transition:width .4s ease}
-.p-green{background:linear-gradient(90deg,#10B981,#34D399)}.p-amber{background:linear-gradient(90deg,#F59E0B,#FBBF24)}.p-red{background:linear-gradient(90deg,#EF4444,#F87171)}.p-teal{background:linear-gradient(90deg,var(--teal),var(--sky))}
-
-/* ===== TABS ===== */
-.tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:9px;border:1px solid var(--border);flex-wrap:wrap}
-.tab{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .12s;user-select:none}
-.tab:hover{color:var(--text);background:rgba(0,0,0,.03)}
-.tab.active{background:var(--card);color:var(--navy);font-weight:700;box-shadow:var(--shadow)}
-
-/* ===== STEPPER ===== */
-.stepper{display:flex;margin:16px 0}
-.step{flex:1;text-align:center;position:relative}
-.step-dot{width:30px;height:30px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;position:relative;z-index:1}
-.step.done .step-dot{background:var(--green);color:#fff}
-.step.active .step-dot{background:var(--teal);color:#fff;box-shadow:0 0 0 4px rgba(0,131,143,.15)}
-.step-label{font-size:10.5px;color:var(--text2);line-height:1.4}
-.step-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
-.step:last-child .step-line{display:none}
-.step.done .step-line{background:var(--green)}
-
-/* ===== PRICING ===== */
-.pricing-card{border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.pricing-header{padding:22px;text-align:center}
-.pricing-name{font-size:17px;font-weight:700}
-.pricing-price{font-size:34px;font-weight:700;margin:10px 0 2px;letter-spacing:-.5px}
-.pricing-period{font-size:12px}
-.pricing-features{padding:0 20px 20px;flex:1}
-.pricing-feature{display:flex;align-items:start;gap:7px;padding:5px 0;font-size:12.5px}
-.pricing-feature svg{width:15px;height:15px;color:var(--green);flex-shrink:0;margin-top:2px}
-.pricing-cta{padding:12px 20px 20px;text-align:center}
-.pricing-card.featured{border:2px solid var(--teal);box-shadow:var(--shadow-lg)}
-
-/* ===== VEEVA FLOW ===== */
-.flow-row{display:flex;align-items:center;gap:10px;padding:10px 0;flex-wrap:wrap}
-.flow-box{padding:9px 14px;border-radius:8px;font-size:11.5px;font-weight:600;text-align:center}
-.flow-arrow{color:var(--text3);font-size:16px;font-weight:700}
-
-/* ===== VIEWS ===== */
-.view{display:none;animation:fadeUp .2s ease}
-.view.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* ===== CRO DETAIL PANELS ===== */
-.cro-panel{display:none;animation:fadeUp .2s ease}
-.cro-panel.active{display:block}
-.metric-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:4px solid var(--border)}
-.metric-ring-val{font-size:18px;font-weight:700}
-.metric-ring-label{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
-.kpi-row{display:flex;gap:12px;flex-wrap:wrap}
-.kpi-box{flex:1;min-width:120px;padding:14px;border-radius:8px;text-align:center}
-.kpi-val{font-size:22px;font-weight:700;letter-spacing:-.3px}
-.kpi-label{font-size:10px;color:var(--text2);margin-top:2px;font-weight:500}
-.issue-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px}
-.issue-item:last-child{border-bottom:none}
-.trend-bar{display:flex;align-items:center;gap:6px;font-size:12px}
-.trend-segment{height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
-.action-item{display:flex;align-items:start;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12.5px}
-.action-item:last-child{border-bottom:none}
-.action-num{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
-</style>
+    @media (max-width: 1100px) {
+      .hero, .grid-2, .metrics, .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-<!-- ===== SIDEBAR ===== -->
-<nav class="sidebar">
-<div class="sidebar-logo">
-<div class="logo-text">
-<span>SmartTMF</span>
-<span>USDM Life Sciences</span>
-</div>
-</div>
-<div class="sidebar-nav">
-<div class="nav-section">Core</div>
-<div class="nav-item active" data-view="dashboard">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-Dashboard
-</div>
-<div class="nav-item" data-view="documents">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-Documents
-</div>
-<div class="nav-item" data-view="classification">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-AI Classification
-</div>
-<div class="nav-item" data-view="qc">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-QC Workflow <span class="nav-badge">3</span>
-</div>
-<div class="nav-item" data-view="analytics">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-Analytics
-</div>
+  <div class="page">
+    <section class="hero">
+      <div class="card hero-card">
+        <div class="eyebrow">ABC BioPharma</div>
+        <h1>Vault eTMF v2 Dashboard</h1>
+        <p>
+          Live operational view for TMF intake, indexing health, environment readiness, agent availability, and admin-controlled maintenance actions.
+        </p>
 
-<div class="nav-section">CRO Management</div>
-<div class="nav-item" data-view="cro">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-CRO Dashboards
-</div>
-<div class="nav-item" data-view="onboarding">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-Onboarding
-</div>
-
-<div class="nav-section">Integration</div>
-<div class="nav-item" data-view="veeva">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-Veeva Vault
-</div>
-<div class="nav-item" data-view="quality">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-Quality Standards
-</div>
-
-<div class="nav-section">Business</div>
-<div class="nav-item" data-view="pricing">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-Pricing
-</div>
-<div class="nav-item" data-view="scaling">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-Multi-Client
-</div>
-</div>
-<div class="sidebar-footer">
-SmartTMF v2.0 · Production Build<br>
-Box Live · Veeva eTMF Simulation<br>
-© 2026 USDM Life Sciences
-</div>
-</nav>
-
-<!-- ===== MAIN ===== -->
-<main class="main">
-<header class="header">
-<div style="min-width:0">
-<div class="header-title" id="hTitle">Dashboard</div>
-<div class="header-sub" id="hSub">SmartTMF Pipeline Overview — 5 Studies · 5 CROs · Live on Box</div>
-</div>
-<div class="header-right">
-<div class="status-pill status-live">Box Connected</div>
-<div class="status-pill status-sim">Veeva Simulated</div>
-</div>
-</header>
-
-<div class="content" id="content"></div>
-</main>
-</div>
-
-<script>
-// ===================================================================
-// DATA LAYER — All application data in one place
-// ===================================================================
-const DATA = {
-  studies: [
-    {id:'XEN-301',program:'XmAb13676-06',phase:'Phase 3',indication:'Non-Hodgkin Lymphoma',sites:5,enrolled:36,cro:'Parexel',filed:198,expected:245,status:'Active'},
-    {id:'XEN-541',program:'XmAb541-01',phase:'Phase 2',indication:'Inflammatory Bowel Disease',sites:3,enrolled:43,cro:'Kapadi/Alimentiv',filed:172,expected:189,status:'Active'},
-    {id:'XEN-717',program:'XmAb717-06',phase:'Phase 2',indication:'Systemic Lupus Erythematosus',sites:3,enrolled:16,cro:'PPD',filed:121,expected:156,status:'Active'},
-    {id:'XEN-819',program:'XmAb819-01',phase:'Phase 1',indication:'Solid Tumors',sites:2,enrolled:7,cro:'ICON',filed:82,expected:98,status:'Active'},
-    {id:'XEN-942',program:'XmAb942-01',phase:'Phase 1',indication:'Advanced Malignancies',sites:4,enrolled:43,cro:'Kapadi/Alimentiv',filed:195,expected:210,status:'Active'}
-  ],
-  cros: [
-    {
-      name:'Parexel',key:'parexel',studies:['XEN-301'],cras:2,q4Docs:48,sla:92,qcPass:88,reject:4,aiConf:0.91,rag:'green',
-      topIssues:['Missing PI signature (2 docs)','Late monitoring visit report (1 doc)'],
-      cras_detail:[
-        {name:'Jennifer Adams',status:'Onboarded',date:'2024-02-15',sites:'301-001, 301-002',docsQ4:26,qcPass:92},
-        {name:'David Park',status:'Onboarded',date:'2024-03-01',sites:'301-003, 301-004, 301-005',docsQ4:22,qcPass:84}
-      ],
-      monthly:[{m:'Oct',docs:14,sla:90,qc:86},{m:'Nov',docs:16,sla:93,qc:88},{m:'Dec',docs:18,sla:94,qc:91}],
-      trend:'improving',
-      actions:['Follow up on 2 unsigned PI documents from Site 301-004','Schedule QC refresher training for David Park (84% pass rate)','Review monitoring visit report SLA compliance']
-    },
-    {
-      name:'Kapadi/Alimentiv',key:'kapadi',studies:['XEN-541','XEN-942'],cras:3,q4Docs:72,sla:95,qcPass:93,reject:2,aiConf:0.94,rag:'green',
-      topIssues:['Duplicate filing (1 doc)'],
-      cras_detail:[
-        {name:'Emily Chen',status:'Onboarded',date:'2023-09-01',sites:'541-001/002, 942-001/002',docsQ4:32,qcPass:96},
-        {name:'Robert Liu',status:'Onboarded',date:'2023-09-15',sites:'541-003, 942-003/004',docsQ4:28,qcPass:93},
-        {name:'Amanda Wright',status:'In Training',date:'—',sites:'Pending assignment',docsQ4:12,qcPass:87}
-      ],
-      monthly:[{m:'Oct',docs:22,sla:94,qc:91},{m:'Nov',docs:24,sla:95,qc:94},{m:'Dec',docs:26,sla:96,qc:95}],
-      trend:'stable-high',
-      actions:['Complete Amanda Wright onboarding validation (3/5 test docs submitted)','Review duplicate filing prevention with team','Nominate Emily Chen as CRA mentor for new onboards']
-    },
-    {
-      name:'PPD',key:'ppd',studies:['XEN-717'],cras:1,q4Docs:31,sla:78,qcPass:81,reject:12,aiConf:0.86,rag:'amber',
-      topIssues:['Missing signatures (3 docs)','Wrong TMF section classification (2 docs)','Naming convention violations (2 docs)','Late filings beyond 35-day SLA (4 docs)'],
-      cras_detail:[
-        {name:'Chris Martinez',status:'Onboarded',date:'2024-03-15',sites:'717-001, 717-002, 717-003',docsQ4:31,qcPass:81}
-      ],
-      monthly:[{m:'Oct',docs:12,sla:75,qc:78},{m:'Nov',docs:10,sla:77,qc:80},{m:'Dec',docs:9,sla:82,qc:85}],
-      trend:'improving-slowly',
-      actions:['URGENT: Schedule corrective action meeting with PPD TMF lead','Assign additional CRA to XEN-717 to reduce workload','Implement weekly filing checkpoint calls','Provide targeted training on TMF section classification','Review and remediate 4 overdue documents']
-    },
-    {
-      name:'ICON',key:'icon',studies:['XEN-819'],cras:1,q4Docs:22,sla:86,qcPass:85,reject:9,aiConf:0.88,rag:'green',
-      topIssues:['Format issue — wrong PDF version (1 doc)','Missing document version number (1 doc)'],
-      cras_detail:[
-        {name:'Priya Nair',status:'Onboarded',date:'2024-07-20',sites:'819-001, 819-002',docsQ4:22,qcPass:85}
-      ],
-      monthly:[{m:'Oct',docs:6,sla:83,qc:82},{m:'Nov',docs:8,sla:87,qc:86},{m:'Dec',docs:8,sla:89,qc:88}],
-      trend:'improving',
-      actions:['Monitor SLA trend — approaching green threshold','Provide PDF formatting guide to Priya Nair','Review version numbering convention with ICON']
-    },
-    {
-      name:'Fortrea',key:'fortrea',studies:['All (Safety)'],cras:2,q4Docs:56,sla:91,qcPass:90,reject:5,aiConf:0.92,rag:'green',
-      topIssues:['Late SAE initial report (2 docs)','Missing follow-up report (1 doc)'],
-      cras_detail:[
-        {name:'Tom Nguyen',status:'Onboarded',date:'2024-02-01',sites:'All studies (Safety)',docsQ4:30,qcPass:92},
-        {name:'Maria Santos',status:'Onboarded',date:'2024-03-01',sites:'All studies (Safety)',docsQ4:26,qcPass:88}
-      ],
-      monthly:[{m:'Oct',docs:17,sla:89,qc:88},{m:'Nov',docs:19,sla:92,qc:91},{m:'Dec',docs:20,sla:93,qc:92}],
-      trend:'improving',
-      actions:['Review SAE reporting timelines with pharmacovigilance team','Ensure follow-up reports tracked in SAE log','Schedule quarterly safety document filing review']
-    }
-  ],
-  tmfPlans: [
-    {file:'XmAb13676-06 TMF Plan v1.0',study:'XEN-301',ver:'v1.0'},
-    {file:'XmAb541-01 TMF Plan v1.0',study:'XEN-541',ver:'v1.0'},
-    {file:'XmAb541-01 TMF Plan v2.0',study:'XEN-541',ver:'v2.0'},
-    {file:'XmAb541-01 TMF Plan v3.0',study:'XEN-541',ver:'v3.0'},
-    {file:'XmAb717-06 TMF Plan v1.0',study:'XEN-717',ver:'v1.0'},
-    {file:'XmAb717-06 TMF Plan v2.0',study:'XEN-717',ver:'v2.0'},
-    {file:'XmAb819-01 TMF Plan v1.0',study:'XEN-819',ver:'v1.0'},
-    {file:'XmAb819-01 TMF Plan v2.0',study:'XEN-819',ver:'v2.0'},
-    {file:'XmAb942-01 TMF Plan v1.0',study:'XEN-942',ver:'v1.0'},
-    {file:'XmAb942-01 TMF Plan v2.0',study:'XEN-942',ver:'v2.0'},
-    {file:'XmAb942-01 TMF Plan v3.0',study:'XEN-942',ver:'v3.0'},
-    {file:'XmAb942-01 TMF Plan v4.0',study:'XEN-942',ver:'v4.0'}
-  ],
-  qcQueue: [
-    {doc:'XmAb717-06 TMF Plan v2.0',study:'XEN-717',conf:82,route:'QC Review',status:'Pending',cro:'PPD'},
-    {doc:'Monitoring Visit Report 301-004',study:'XEN-301',conf:78,route:'QC Review',status:'Pending',cro:'Parexel'},
-    {doc:'SAE Report XEN-942-015',study:'XEN-942',conf:85,route:'QC Review',status:'Pending',cro:'Kapadi/Alimentiv'},
-    {doc:'XmAb541-01 TMF Plan v3.0',study:'XEN-541',conf:96,route:'Auto-Approved',status:'Approved',cro:'Kapadi/Alimentiv'}
-  ]
-};
-
-// Computed
-const totalFiled = DATA.studies.reduce((s,d)=>s+d.filed,0);
-const totalExpected = DATA.studies.reduce((s,d)=>s+d.expected,0);
-const completeness = ((totalFiled/totalExpected)*100).toFixed(1);
-const avgSLA = (DATA.cros.reduce((s,c)=>s+c.sla,0)/DATA.cros.length).toFixed(1);
-const avgQC = (DATA.cros.reduce((s,c)=>s+c.qcPass,0)/DATA.cros.length).toFixed(1);
-const totalQ4 = DATA.cros.reduce((s,c)=>s+c.q4Docs,0);
-
-// ===================================================================
-// HELPERS
-// ===================================================================
-function pclass(pct){return pct>=90?'p-green':pct>=75?'p-amber':'p-red'}
-function bclass(pct){return pct>=90?'b-green':pct>=75?'b-amber':'b-red'}
-function ragDot(r){return `<span class="rag rag-${r[0]}"></span>`}
-function ragBadge(r){const m={green:['b-green','Green'],amber:['b-amber','Amber'],red:['b-red','Red']};return `<span class="badge ${m[r][0]}">● ${m[r][1]}</span>`}
-function phaseBadge(p){return p.includes('3')?`<span class="badge b-blue">${p}</span>`:p.includes('2')?`<span class="badge b-blue">${p}</span>`:`<span class="badge b-purple">${p}</span>`}
-function progressBar(pct,w){return `<div class="pbar" style="width:${w||100}px;display:inline-block"><div class="pfill ${pclass(pct)}" style="width:${pct}%"></div></div> ${pct}%`}
-function checkSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" width="15" height="15" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>'}
-function trendIcon(t){if(t.includes('improv'))return '<span class="up">↑ Improving</span>';if(t.includes('stable'))return '<span class="up">→ Stable (High)</span>';return '<span class="flat">→ Stable</span>'}
-
-// ===================================================================
-// VIEW RENDERERS
-// ===================================================================
-const VIEWS = {};
-
-// ---------- DASHBOARD ----------
-VIEWS.dashboard = ()=>`
-<div class="grid g4 mb20">
-  <div class="card stat"><div class="stat-val">5</div><div class="stat-label">Active Studies</div><div class="stat-sub up">All XmAb programs</div></div>
-  <div class="card stat"><div class="stat-val">5</div><div class="stat-label">CRO Partners</div><div class="stat-sub up">4/5 Green RAG</div></div>
-  <div class="card stat"><div class="stat-val">${totalFiled}</div><div class="stat-label">Documents Filed</div><div class="stat-sub up">↑ ${completeness}% complete</div></div>
-  <div class="card stat"><div class="stat-val">${avgSLA}%</div><div class="stat-label">Avg SLA Compliance</div><div class="stat-sub up">35-day target</div></div>
-</div>
-<div class="grid g2 mb16">
-  <div class="card">
-    <div class="card-title"><span class="icon">📊</span> Study Completeness</div>
-    <table><thead><tr><th>Study</th><th>Phase</th><th>CRO</th><th>Filed</th><th>Expected</th><th>Completeness</th></tr></thead><tbody>
-    ${DATA.studies.map(s=>{const pct=((s.filed/s.expected)*100).toFixed(1);return `<tr><td><strong>${s.program}</strong></td><td>${phaseBadge(s.phase)}</td><td>${s.cro}</td><td>${s.filed}</td><td>${s.expected}</td><td>${progressBar(parseFloat(pct),100)}</td></tr>`}).join('')}
-    </tbody></table>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">🏥</span> CRO Performance Summary</div>
-    <table><thead><tr><th>CRO</th><th>SLA %</th><th>QC Pass</th><th>Reject %</th><th>AI Conf</th><th>RAG</th></tr></thead><tbody>
-    ${DATA.cros.map(c=>`<tr><td><strong>${c.name}</strong></td><td>${c.sla}%</td><td>${c.qcPass}%</td><td>${c.reject}%</td><td class="mono">${c.aiConf}</td><td>${ragDot(c.rag)}</td></tr>`).join('')}
-    </tbody></table>
-  </div>
-</div>
-<div class="card">
-  <div class="card-title"><span class="icon">📦</span> Pipeline — 6-Stage Document Flow (Live Box Folders)</div>
-  <div style="display:flex;gap:8px;align-items:center;padding:10px 0;overflow-x:auto">
-    ${[
-      ['📥','01 Intake','CRO uploads','#EFF6FF','#DBEAFE','#93C5FD','#1E40AF'],
-      ['🤖','02 AI Classify','Box AI Extract','#F5F3FF','#EDE9FE','#A78BFA','#5B21B6'],
-      ['🔍','03 QC Review','Human-in-loop','#FFFBEB','#FEF3C7','#FCD34D','#92400E'],
-      ['✅','04 Approved','TMF sections','#ECFDF5','#D1FAE5','#6EE7B7','#065F46'],
-      ['❌','05 Rejected','With comments','#FFF1F2','#FECDD3','#FDA4AF','#9F1239'],
-      ['📈','06 Analytics','AI reports','#F0FDFA','#CCFBF1','#5EEAD4','#0F766E']
-    ].map((s,i,a)=>`<div style="flex:1;background:linear-gradient(135deg,${s[3]},${s[4]});border:2px solid ${s[5]};border-radius:12px;padding:14px;text-align:center;min-width:120px"><div style="font-size:18px">${s[0]}</div><div style="font-size:11.5px;font-weight:700;color:${s[6]};margin-top:3px">${s[1]}</div><div style="font-size:10px;color:var(--text2)">${s[2]}</div></div>${i<a.length-1?'<div style="font-size:18px;color:var(--text3)">→</div>':''}`).join('')}
-  </div>
-</div>`;
-
-// ---------- CRO DASHBOARDS ----------
-VIEWS.cro = ()=>{
-  let html = `<div class="tabs mb16" id="croTabs">
-    <div class="tab active" data-cro="all">All CROs</div>
-    ${DATA.cros.map(c=>`<div class="tab" data-cro="${c.key}">${c.name}</div>`).join('')}
-  </div>
-  <div id="croContent">
-    ${renderCROAll()}
-    ${DATA.cros.map(c=>renderCRODetail(c)).join('')}
-  </div>`;
-  return html;
-};
-
-function renderCROAll(){
-  return `<div class="cro-panel active" id="cro-all">
-    <div class="grid g5 mb16">
-      <div class="card stat"><div class="stat-val">${totalQ4}</div><div class="stat-label">Q4 Documents</div></div>
-      <div class="card stat"><div class="stat-val">${avgSLA}%</div><div class="stat-label">Avg SLA</div></div>
-      <div class="card stat"><div class="stat-val">${avgQC}%</div><div class="stat-label">Avg QC Pass</div></div>
-      <div class="card stat"><div class="stat-val" style="color:var(--green)">4/5</div><div class="stat-label">Green RAG</div></div>
-      <div class="card stat"><div class="stat-val" style="color:var(--amber)">1/5</div><div class="stat-label">Amber RAG</div></div>
-    </div>
-    <div class="card mb16">
-      <div class="card-title"><span class="icon">📋</span> CRO Performance Matrix — Q4 2025</div>
-      <table><thead><tr><th>CRO</th><th>Studies</th><th>CRAs</th><th>Q4 Docs</th><th>SLA %</th><th>QC Pass</th><th>Reject %</th><th>AI Conf</th><th>RAG</th><th>Trend</th><th>Top Issues</th></tr></thead><tbody>
-      ${DATA.cros.map(c=>`<tr>
-        <td><strong>${c.name}</strong></td>
-        <td>${c.studies.join(', ')}</td>
-        <td>${c.cras}</td>
-        <td>${c.q4Docs}</td>
-        <td><span class="badge ${bclass(c.sla)}">${c.sla}%</span></td>
-        <td><span class="badge ${bclass(c.qcPass)}">${c.qcPass}%</span></td>
-        <td>${c.reject}%</td>
-        <td class="mono">${c.aiConf}</td>
-        <td>${ragBadge(c.rag)}</td>
-        <td>${trendIcon(c.trend)}</td>
-        <td style="font-size:11px;max-width:200px">${c.topIssues[0]||'—'}</td>
-      </tr>`).join('')}
-      </tbody></table>
-    </div>
-    <div class="grid g2">
-      <div class="card">
-        <div class="card-title"><span class="icon">📈</span> SLA Compliance by CRO</div>
-        ${DATA.cros.map(c=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="width:100px;font-size:12px;font-weight:600;text-align:right">${c.name}</div>
-          <div class="pbar" style="flex:1"><div class="pfill ${pclass(c.sla)}" style="width:${c.sla}%"></div></div>
-          <div style="width:40px;font-size:12px;font-weight:600" class="mono">${c.sla}%</div>
-        </div>`).join('')}
-      </div>
-      <div class="card">
-        <div class="card-title"><span class="icon">🔍</span> QC Pass Rate by CRO</div>
-        ${DATA.cros.map(c=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="width:100px;font-size:12px;font-weight:600;text-align:right">${c.name}</div>
-          <div class="pbar" style="flex:1"><div class="pfill ${pclass(c.qcPass)}" style="width:${c.qcPass}%"></div></div>
-          <div style="width:40px;font-size:12px;font-weight:600" class="mono">${c.qcPass}%</div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderCRODetail(c){
-  const ragColors = {green:['var(--green)','var(--green-bg)','var(--green-text)'],amber:['var(--amber)','var(--amber-bg)','var(--amber-text)'],red:['var(--red)','var(--red-bg)','var(--red-text)']};
-  const rc = ragColors[c.rag];
-  return `<div class="cro-panel" id="cro-${c.key}">
-    <!-- Header banner -->
-    <div class="card mb16" style="background:${rc[1]};border-color:${rc[0]}">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div>
-          <div style="font-size:18px;font-weight:700;color:${rc[2]}">${c.name}</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">Studies: ${c.studies.join(', ')} · ${c.cras} CRAs · Box Folder ID: 368165046653</div>
+        <div class="pills">
+          <div id="statusPill" class="pill status-pill warn">Loading…</div>
+          <div class="pill">Agent: ABC BioPharma TMF Filer Agent</div>
+          <div class="pill">Mode: Gather-only</div>
         </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          ${ragBadge(c.rag)}
-          <span style="font-size:12px;font-weight:600">${trendIcon(c.trend)}</span>
+
+        <div class="actions">
+          <a class="button primary" href="/api/health" target="_blank" rel="noopener">Open health JSON</a>
+          <a class="button secondary" href="/api/intake" target="_blank" rel="noopener">Open intake JSON</a>
         </div>
       </div>
-    </div>
 
-    <!-- KPIs -->
-    <div class="grid g5 mb16">
-      <div class="card stat"><div class="stat-val">${c.q4Docs}</div><div class="stat-label">Q4 Docs Submitted</div></div>
-      <div class="card stat"><div class="stat-val" style="color:${c.sla>=90?'var(--green)':c.sla>=75?'var(--amber)':'var(--red)'}">${c.sla}%</div><div class="stat-label">SLA Compliance</div><div class="stat-sub">${c.sla>=90?'<span class="up">Above target</span>':'<span class="down">Below 90% target</span>'}</div></div>
-      <div class="card stat"><div class="stat-val" style="color:${c.qcPass>=90?'var(--green)':c.qcPass>=75?'var(--amber)':'var(--red)'}">${c.qcPass}%</div><div class="stat-label">QC Pass Rate</div></div>
-      <div class="card stat"><div class="stat-val">${c.reject}%</div><div class="stat-label">Rejection Rate</div><div class="stat-sub">${c.reject<5?'<span class="up">Below 5% target</span>':'<span class="down">Above 5% target</span>'}</div></div>
-      <div class="card stat"><div class="stat-val mono">${c.aiConf}</div><div class="stat-label">AI Confidence</div></div>
-    </div>
-
-    <div class="grid g2 mb16">
-      <!-- Monthly Trend -->
       <div class="card">
-        <div class="card-title"><span class="icon">📈</span> Monthly Trend — Q4 2025</div>
-        <table><thead><tr><th>Month</th><th>Docs</th><th>SLA %</th><th>QC Pass %</th></tr></thead><tbody>
-        ${c.monthly.map(m=>`<tr>
-          <td><strong>${m.m} 2025</strong></td>
-          <td>${m.docs}</td>
-          <td><span class="badge ${bclass(m.sla)}">${m.sla}%</span></td>
-          <td><span class="badge ${bclass(m.qc)}">${m.qc}%</span></td>
-        </tr>`).join('')}
-        </tbody></table>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-          <div style="font-size:12px;font-weight:600;margin-bottom:8px">SLA Trend</div>
-          <div style="display:flex;align-items:end;gap:6px;height:60px">
-            ${c.monthly.map(m=>{const h=Math.max(20,(m.sla/100)*60);return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="font-size:9px;font-weight:600;color:var(--text2)">${m.sla}%</div><div style="width:100%;height:${h}px;background:${m.sla>=90?'var(--green)':m.sla>=75?'var(--amber)':'var(--red)'};border-radius:4px 4px 0 0;opacity:.8"></div><div style="font-size:9px;color:var(--text3)">${m.m}</div></div>`}).join('')}
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-label">Documents datasource</div>
+            <div class="summary-value" id="dsDocuments">vaultetmfv2documents</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Objects datasource</div>
+            <div class="summary-value" id="dsObjects">vaultetmfv2objects</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Security datasource</div>
+            <div class="summary-value" id="dsSecurity">vaultetmfv2security</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Last refresh</div>
+            <div class="summary-value" id="lastRefresh">—</div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- CRA Detail -->
+    <section class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Documents Indexed</div>
+        <div class="metric-value" id="documentsIndexed">—</div>
+        <div class="metric-sub" id="documentsSub">Waiting for health data</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Objects Indexed</div>
+        <div class="metric-value" id="objectsIndexed">—</div>
+        <div class="metric-sub" id="objectsSub">Waiting for health data</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Users Discovered</div>
+        <div class="metric-value" id="usersDiscovered">—</div>
+        <div class="metric-sub" id="usersSub">Waiting for health data</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Environment Status</div>
+        <div class="metric-value" id="environmentStatus">—</div>
+        <div class="metric-sub" id="environmentSub">Waiting for health data</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
       <div class="card">
-        <div class="card-title"><span class="icon">👤</span> CRA Performance</div>
-        <table><thead><tr><th>CRA</th><th>Status</th><th>Onboarded</th><th>Sites</th><th>Q4 Docs</th><th>QC Pass</th></tr></thead><tbody>
-        ${c.cras_detail.map(a=>`<tr>
-          <td><strong>${a.name}</strong></td>
-          <td><span class="badge ${a.status==='Onboarded'?'b-green':'b-amber'}">${a.status}</span></td>
-          <td class="mono" style="font-size:11px">${a.date}</td>
-          <td style="font-size:11px">${a.sites}</td>
-          <td>${a.docsQ4}</td>
-          <td><span class="badge ${bclass(a.qcPass)}">${a.qcPass}%</span></td>
-        </tr>`).join('')}
-        </tbody></table>
+        <div class="section-title">
+          <h2>Live Indexing Health</h2>
+          <span class="small" id="healthGeneratedAt">—</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="healthTableBody">
+            <tr><td colspan="3">Loading…</td></tr>
+          </tbody>
+        </table>
       </div>
-    </div>
 
-    <div class="grid g2">
-      <!-- Issues -->
       <div class="card">
-        <div class="card-title"><span class="icon">⚠️</span> Open Issues</div>
-        ${c.topIssues.length?c.topIssues.map(iss=>`<div class="issue-item"><span class="rag rag-${c.rag==='green'?'a':'r'}"></span> ${iss}</div>`).join(''):'<div style="font-size:12px;color:var(--text2);padding:8px 0">No open issues</div>'}
+        <div class="section-title">
+          <h2>Intake Status</h2>
+          <span class="small" id="intakeGeneratedAt">—</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="intakeTableBody">
+            <tr><td colspan="2">Loading…</td></tr>
+          </tbody>
+        </table>
       </div>
+    </section>
 
-      <!-- Action Items -->
+    <section class="grid-2">
       <div class="card">
-        <div class="card-title"><span class="icon">✅</span> Recommended Actions</div>
-        ${c.actions.map((a,i)=>`<div class="action-item"><div class="action-num">${i+1}</div><div>${a}</div></div>`).join('')}
+        <h2>Security and Oversight</h2>
+        <p>
+          AI acts as a delegate to the user, not as an autonomous final decision-maker. Operationally impactful actions should remain under explicit human review and acknowledgement.
+        </p>
       </div>
-    </div>
-  </div>`;
-}
 
-// ---------- ONBOARDING ----------
-VIEWS.onboarding = ()=>`
-<div class="grid g2 mb16">
-  <div class="card">
-    <div class="card-title"><span class="icon">🚀</span> CRO Onboarding Workflow (3 Weeks)</div>
-    <div class="stepper">
-      ${[
-        {n:'1',l:'Registration',t:'Week 1',s:'done'},
-        {n:'2',l:'CRA Training',t:'Weeks 1–2',s:'done'},
-        {n:'3',l:'Validation',t:'Weeks 2–3',s:'active'},
-        {n:'4',l:'Go-Live',t:'Week 3+',s:''}
-      ].map(s=>`<div class="step ${s.s}"><div class="step-line"></div><div class="step-dot">${s.s==='done'?'✓':s.n}</div><div class="step-label"><strong>${s.l}</strong><br><span style="font-size:9px">${s.t}</span></div></div>`).join('')}
-    </div>
-    <div style="margin-top:20px;font-size:13px">
-      ${[
-        {title:'Phase 1 — CRO Registration',items:['Create CRO profile','Box collaborator access','Submission requirements','Onboarding packet issued'],done:true},
-        {title:'Phase 2 — CRA Training',items:['SmartTMF orientation','TMF Ref Model 3.2 guide','Quality standards training','Filing conventions','Demo environment practice'],done:true},
-        {title:'Phase 3 — Validation',items:['5 test documents submitted','AI classification verified','QC reviewer validates','Go-live approval'],done:false,progress:1},
-        {title:'Phase 4 — Go-Live Monitoring',items:['Live submissions begin','30-day monitoring period','Weekly quality scorecards','Monthly CRO dashboard review'],done:false}
-      ].map(p=>`<p style="margin-bottom:10px"><strong>${p.title}</strong></p>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
-          ${p.items.map((it,i)=>{
-            if(p.done) return `<span class="badge b-green">✓ ${it}</span>`;
-            if(p.progress!==undefined && i<p.progress) return `<span class="badge b-blue">◉ ${it}</span>`;
-            return `<span class="badge b-gray">○ ${it}</span>`;
-          }).join('')}
-        </div>`).join('')}
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">👥</span> CRA Roster (${DATA.cros.reduce((s,c)=>s+c.cras_detail.length,0)} CRAs)</div>
-    <table><thead><tr><th>CRA</th><th>CRO</th><th>Status</th><th>Onboarded</th><th>Sites</th></tr></thead><tbody>
-    ${DATA.cros.flatMap(cr=>cr.cras_detail.map(a=>`<tr>
-      <td><strong>${a.name}</strong></td>
-      <td>${cr.name}</td>
-      <td><span class="badge ${a.status==='Onboarded'?'b-green':'b-amber'}">${a.status}</span></td>
-      <td class="mono" style="font-size:11px">${a.date}</td>
-      <td style="font-size:11px">${a.sites}</td>
-    </tr>`)).join('')}
-    </tbody></table>
-    <div style="margin-top:14px"><button class="btn btn-p btn-sm" onclick="alert('Opens CRO onboarding wizard — creates Box folder, assigns permissions, generates onboarding packet')">+ Onboard New CRO/CRA</button></div>
-  </div>
-</div>`;
-
-// ---------- DOCUMENTS ----------
-VIEWS.documents = ()=>`
-<div class="card">
-  <div class="card-title"><span class="icon">📄</span> TMF Plans in Box Pipeline (${DATA.tmfPlans.length} documents)</div>
-  <table><thead><tr><th>File Name</th><th>Study</th><th>Version</th><th>Stage</th></tr></thead><tbody>
-  ${DATA.tmfPlans.map(d=>`<tr><td><strong>${d.file}</strong></td><td>${d.study}</td><td class="mono">${d.ver}</td><td><span class="badge b-green">Approved</span></td></tr>`).join('')}
-  </tbody></table>
-</div>`;
-
-// ---------- AI CLASSIFICATION ----------
-VIEWS.classification = ()=>`
-<div class="card mb16">
-  <div class="card-title"><span class="icon">🤖</span> AI Classification Engine — Box AI Metadata Extraction</div>
-  <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Documents uploaded to 01_Intake are processed by Box AI to extract TMF metadata against Reference Model 3.2. Confidence score determines routing.</p>
-  <div style="background:var(--surface);border-radius:8px;padding:16px">
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Example: XmAb942-01 TMF Plan v3.0</div>
-    <table><thead><tr><th>Field</th><th>Extracted Value</th><th>Confidence</th></tr></thead><tbody>
-    ${[
-      ['Artifact Type','TMF Plan',97],['TMF Section','01 Trial Management',95],
-      ['Study Number','XmAb942-01',99],['CRO','Kapadi/Alimentiv',92],
-      ['Version','v3.0',98],['Document Date','2025-06-15',94]
-    ].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td><span class="badge b-green">${r[2]}%</span></td></tr>`).join('')}
-    </tbody></table>
-    <div style="margin-top:14px;text-align:center"><span class="badge b-green" style="font-size:13px;padding:6px 18px">Overall: 95.8% → Auto-Approve Route</span></div>
-  </div>
-</div>`;
-
-// ---------- QC WORKFLOW ----------
-VIEWS.qc = ()=>`
-<div class="card">
-  <div class="card-title"><span class="icon">🔍</span> QC Review Queue</div>
-  <table><thead><tr><th>Document</th><th>Study</th><th>CRO</th><th>AI Confidence</th><th>Route</th><th>Status</th><th>Action</th></tr></thead><tbody>
-  ${DATA.qcQueue.map(q=>`<tr>
-    <td><strong>${q.doc}</strong></td>
-    <td>${q.study}</td>
-    <td>${q.cro}</td>
-    <td><span class="badge ${q.conf>=90?'b-green':'b-amber'}">${q.conf}%</span></td>
-    <td>${q.route}</td>
-    <td><span class="badge ${q.status==='Approved'?'b-green':'b-amber'}">${q.status}</span></td>
-    <td>${q.status==='Pending'?'<button class="btn btn-p btn-xs">Review</button>':'<span style="color:var(--text3)">—</span>'}</td>
-  </tr>`).join('')}
-  </tbody></table>
-</div>`;
-
-// ---------- ANALYTICS ----------
-VIEWS.analytics = ()=>`
-<div class="grid g3 mb16">
-  <div class="card stat"><div class="stat-val" style="color:var(--green)">${completeness}%</div><div class="stat-label">Overall TMF Completeness</div></div>
-  <div class="card stat"><div class="stat-val" style="color:var(--teal)">${avgSLA}%</div><div class="stat-label">Average SLA Compliance</div></div>
-  <div class="card stat"><div class="stat-val" style="color:var(--blue)">${avgQC}%</div><div class="stat-label">Average QC Pass Rate</div></div>
-</div>
-<div class="grid g2 mb16">
-  <div class="card">
-    <div class="card-title"><span class="icon">📊</span> TMF Health Score by Study</div>
-    ${DATA.studies.map(s=>{const pct=((s.filed/s.expected)*100).toFixed(1);return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div style="width:110px;font-size:12px;font-weight:600;text-align:right">${s.id}</div>
-      <div class="pbar" style="flex:1"><div class="pfill ${pclass(parseFloat(pct))}" style="width:${pct}%"></div></div>
-      <div style="width:45px;font-size:12px;font-weight:600" class="mono">${pct}%</div>
-    </div>`}).join('')}
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">🏥</span> Inspection Readiness Index</div>
-    <table><thead><tr><th>Metric</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead><tbody>
-    <tr><td>Completeness Index</td><td><span class="badge ${bclass(parseFloat(completeness))}">${completeness}%</span></td><td>40%</td><td>${(parseFloat(completeness)*0.4).toFixed(1)}%</td></tr>
-    <tr><td>Currency Index (SLA)</td><td><span class="badge ${bclass(parseFloat(avgSLA))}">${avgSLA}%</span></td><td>30%</td><td>${(parseFloat(avgSLA)*0.3).toFixed(1)}%</td></tr>
-    <tr><td>Quality Index (QC)</td><td><span class="badge ${bclass(parseFloat(avgQC))}">${avgQC}%</span></td><td>30%</td><td>${(parseFloat(avgQC)*0.3).toFixed(1)}%</td></tr>
-    <tr style="border-top:2px solid var(--border)"><td><strong>Overall TMF Health</strong></td><td colspan="2"></td><td><strong>${(parseFloat(completeness)*0.4+parseFloat(avgSLA)*0.3+parseFloat(avgQC)*0.3).toFixed(1)}%</strong></td></tr>
-    </tbody></table>
-  </div>
-</div>
-<div class="card">
-  <div class="card-title"><span class="icon">🔬</span> Run Full TMF Analysis</div>
-  <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Execute a comprehensive TMF health assessment across all studies using Box AI — generates risk assessments, gap analysis, and recommendations.</p>
-  <button class="btn btn-p" onclick="alert('Running TMF Analysis via Box AI...\\n\\nThis would call Box AI across all study folders to:\\n• Identify missing documents per EDL\\n• Flag overdue filings\\n• Score inspection readiness\\n• Generate remediation recommendations')">Run TMF Analysis</button>
-</div>`;
-
-// ---------- VEEVA ----------
-VIEWS.veeva = ()=>`
-<div class="card mb16" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#A78BFA">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div>
-      <div class="card-title" style="margin-bottom:4px"><span class="icon">🔗</span> Veeva Vault eTMF Integration</div>
-      <div style="font-size:12px;color:var(--text2)">Vault URL: <a href="https://partnersi-usdm-etmf.veevavault.com" target="_blank" style="color:var(--teal);font-weight:600">partnersi-usdm-etmf.veevavault.com</a></div>
-    </div>
-    <span class="badge b-purple">Simulation Mode</span>
-  </div>
-  <p style="font-size:12px;color:var(--text2);margin-top:8px">Study/site data simulated in Box (veeva_study_data.json) until Vault API connection is configured. Folder structure mirrors Veeva document type hierarchy.</p>
-</div>
-<div class="grid g2 mb16">
-  <div class="card">
-    <div class="card-title"><span class="icon">⬇️</span> Veeva → SmartTMF</div>
-    <div class="flow-row">
-      <div class="flow-box" style="background:#EDE9FE;color:#5B21B6;border:2px solid #A78BFA">Veeva Vault</div>
-      <div class="flow-arrow">→</div>
-      <div style="display:flex;flex-direction:column;gap:6px;flex:1">
-        ${['Study Metadata (ID, phase, status)','Site Info (PI name, country, activation)','Expected Document List (EDL)','Document Lifecycle States','Governing Docs (Protocol, IB, ICF)'].map(d=>`<div class="flow-box" style="background:#DBEAFE;color:#1E40AF;border:1px solid #93C5FD;text-align:left">${d}</div>`).join('')}
+      <div class="card">
+        <h2>Admin Ops</h2>
+        <p>
+          Full crawl, reindex, and troubleshooting remain administrator-only operations. This dashboard is intended to surface live status without exposing unrestricted maintenance controls to all users.
+        </p>
       </div>
-    </div>
+    </section>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">⬆️</span> SmartTMF → Veeva</div>
-    <div class="flow-row">
-      <div class="flow-box" style="background:#ECFDF5;color:#065F46;border:2px solid #6EE7B7">SmartTMF AI</div>
-      <div class="flow-arrow">→</div>
-      <div style="display:flex;flex-direction:column;gap:6px;flex:1">
-        ${['AI Classification Metadata','QC Approval/Rejection Status','Filing Timeliness Metrics','Completeness Scoring per Study/Site'].map(d=>`<div class="flow-box" style="background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;text-align:left">${d}</div>`).join('')}
-      </div>
-    </div>
-  </div>
-</div>
-<div class="card">
-  <div class="card-title"><span class="icon">🗂</span> Simulated Study Data (veeva_study_data.json → Box file 2147763002321)</div>
-  <table><thead><tr><th>Study</th><th>Program</th><th>Phase</th><th>Indication</th><th>Sites</th><th>Enrolled</th><th>CRO</th><th>Completeness</th></tr></thead><tbody>
-  ${DATA.studies.map(s=>{const pct=((s.filed/s.expected)*100).toFixed(1);return `<tr><td><strong>${s.id}</strong></td><td class="mono" style="font-size:11px">${s.program}</td><td>${phaseBadge(s.phase)}</td><td>${s.indication}</td><td>${s.sites}</td><td>${s.enrolled}</td><td>${s.cro}</td><td>${progressBar(parseFloat(pct),80)}</td></tr>`}).join('')}
-  </tbody></table>
-</div>`;
 
-// ---------- QUALITY ----------
-VIEWS.quality = ()=>`
-<div class="grid g2 mb16">
-  <div class="card">
-    <div class="card-title"><span class="icon">🛡</span> TMF Quality Framework</div>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Based on TMF Reference Model 3.2 · ICH E6(R2) GCP · 21 CFR Part 11 · EU CTR 536/2014</p>
-    <table><thead><tr><th>#</th><th>Quality Check</th><th>Method</th><th>Status</th></tr></thead><tbody>
-    ${[
-      ['1','Legibility Check','AI + Rule'],['2','Orientation Check','AI Vision'],
-      ['3','Duplicate Detection','Hash + AI'],['4','Signature Verification','AI Extract'],
-      ['5','Business Rules Validation','Config Rules'],['6','Filing Timeliness (35-day SLA)','Date Calc']
-    ].map(r=>`<tr><td>${r[0]}</td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td><span class="badge b-green">Active</span></td></tr>`).join('')}
-    </tbody></table>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">📊</span> TMF Health Score Methodology</div>
-    <div style="display:flex;gap:8px;margin-bottom:16px">
-      ${[['40%','Completeness','Expected vs actual','var(--green-bg)','var(--green-text)'],['30%','Currency','Within 35-day SLA','var(--amber-bg)','var(--amber-text)'],['30%','Quality','QC pass first attempt','var(--blue-bg)','var(--blue-text)']].map(w=>`<div style="flex:1;background:${w[3]};border-radius:8px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:${w[4]}">${w[0]}</div><div style="font-size:11px;font-weight:600;color:${w[4]}">${w[1]} Index</div><div style="font-size:10px;color:var(--text2)">${w[2]}</div></div>`).join('')}
-    </div>
-    <div style="font-size:12px;font-weight:600;margin-bottom:8px">RAG Thresholds</div>
-    <div style="display:flex;gap:6px">
-      ${[['Green','>90% SLA, <5% reject','var(--green-bg)','var(--green-text)'],['Amber','75–90% SLA, 5–15% reject','var(--amber-bg)','var(--amber-text)'],['Red','<75% SLA, >15% reject','var(--red-bg)','var(--red-text)']].map(r=>`<div style="flex:1;background:${r[2]};border-radius:8px;padding:10px;text-align:center"><strong style="color:${r[3]}">${r[0]}</strong><br><span style="font-size:10.5px">${r[1]}</span></div>`).join('')}
-    </div>
-  </div>
-</div>
-<div class="grid g3 mb16">
-  ${[['Option A: Veeva Vault Feed','EDL templates, milestone definitions, document type hierarchies auto-sync via Vault API','Target State','b-purple','var(--purple-bg)','var(--purple-text)'],
-     ['Option B: Box Simulation','Study/site data in veeva_study_data.json, EDL spreadsheets in SmartTMF config folder','Active Now','b-green','var(--green-bg)','var(--green-text)'],
-     ['Option C: Manual Config','Artifact types, TMF sections, quality rules in smarttmf_config.json','Available','b-blue','var(--blue-bg)','var(--blue-text)']
-  ].map(o=>`<div class="card" style="background:${o[4]}"><div style="font-size:13px;font-weight:700;color:${o[5]};margin-bottom:6px">${o[0]}</div><div style="font-size:12px;color:var(--text2);margin-bottom:8px">${o[1]}</div><span class="badge ${o[3]}">${o[2]}</span></div>`).join('')}
-</div>
-<div class="card">
-  <div class="card-title"><span class="icon">📋</span> AI Classification Confidence Routing</div>
-  <div style="display:flex;gap:12px;padding:8px 0">
-    ${[['≥ 90%','Auto-Approve','Route to 04_Approved','var(--green-bg)','var(--green)','var(--green-text)'],['75–89%','QC Review','Route to 03_QC_Review','var(--amber-bg)','var(--amber)','var(--amber-text)'],['< 75%','Manual Review','Flag for coordinator','var(--red-bg)','var(--red)','var(--red-text)']].map(r=>`<div style="flex:1;background:${r[3]};border:2px solid ${r[4]};border-radius:10px;padding:18px;text-align:center"><div style="font-size:22px;font-weight:700;color:${r[5]}">${r[0]}</div><div style="font-size:12px;font-weight:600;color:${r[5]}">${r[1]}</div><div style="font-size:10.5px;color:var(--text2);margin-top:3px">${r[2]}</div></div>`).join('')}
-  </div>
-</div>`;
+  <script>
+    async function getJson(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`${url} ${res.status}`);
+      return res.json();
+    }
 
-// ---------- PRICING ----------
-VIEWS.pricing = ()=>`
-<div style="text-align:center;margin-bottom:24px">
-  <div style="font-size:22px;font-weight:700;color:var(--navy)">SmartTMF Pricing</div>
-  <div style="font-size:13px;color:var(--text2);margin-top:4px">Scale from startup to enterprise with flexible tiers</div>
-</div>
-<div class="grid g3 mb20">
-  ${[
-    {name:'Starter',price:'$15,000',period:'/month · Up to 3 studies',bg:'linear-gradient(135deg,#F8FAFC,#E2E8F0)',color:'var(--navy)',features:['AI Classification Engine (Box AI)','QC Workflow + Audit Trail','Live Dashboard + Metrics','Monthly Analytics Reports','1 CRO Onboarding Included','Email Support'],setup:'$25,000 (2–3 weeks)',featured:false,btn:'btn-o'},
-    {name:'Professional',price:'$28,000',period:'/month · Up to 10 studies',bg:'linear-gradient(135deg,var(--teal),var(--sky))',color:'#fff',features:['Everything in Starter, plus:','CRO Performance Dashboards (RAG)','Veeva Vault eTMF Integration','Automated Document Routing','CRO/CRA Onboarding Program','Inspection Readiness Scoring','Weekly Analytics · 8hr SLA'],setup:'$50,000 (4–6 weeks)',featured:true,btn:'btn-p',rec:true},
-    {name:'Enterprise',price:'$45,000',period:'/month · Unlimited studies',bg:'linear-gradient(135deg,var(--dark),var(--navy))',color:'#fff',features:['Everything in Professional, plus:','Multi-Client Tenants (Isolated)','Custom Metadata Templates','Predictive Inspection AI','Bi-directional Veeva Sync','Cross-Study Portfolio View','Dedicated Success Manager · 4hr SLA'],setup:'$85,000 (8–12 weeks)',featured:false,btn:'btn-o'}
-  ].map(t=>`<div class="card pricing-card${t.featured?' featured':''}">
-    <div class="pricing-header" style="background:${t.bg}">
-      ${t.rec?'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px">Recommended</div>':''}
-      <div class="pricing-name" style="color:${t.color}">${t.name}</div>
-      <div class="pricing-price" style="color:${t.color}">${t.price}</div>
-      <div class="pricing-period" style="color:${t.color==='#fff'?'rgba(255,255,255,.7)':'var(--text2)'}">${t.period}</div>
-    </div>
-    <div class="pricing-features">${t.features.map(f=>`<div class="pricing-feature">${checkSvg()}${f.startsWith('Everything')?`<strong>${f}</strong>`:f}</div>`).join('')}</div>
-    <div class="pricing-cta">
-      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Setup: ${t.setup}</div>
-      <button class="${'btn '+t.btn}" style="width:100%">${t.featured?'Get Started':'Contact Sales'}</button>
-    </div>
-  </div>`).join('')}
-</div>
-<div class="grid g2">
-  <div class="card">
-    <div class="card-title"><span class="icon">💰</span> Add-Ons & Discounts</div>
-    <table><thead><tr><th>Item</th><th>Price</th></tr></thead><tbody>
-    <tr><td>Veeva Vault Integration (one-time)</td><td><strong>$35,000</strong></td></tr>
-    <tr><td>12-month commitment</td><td><strong class="up">10% off</strong></td></tr>
-    <tr><td>24-month commitment</td><td><strong class="up">15% off</strong></td></tr>
-    <tr><td>Multi-client bundle (per additional)</td><td><strong class="up">20% off</strong></td></tr>
-    </tbody></table>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">📋</span> Xencor Recommended Package</div>
-    <div style="background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-radius:8px;padding:14px;margin-bottom:12px">
-      <div style="font-size:15px;font-weight:700;color:#0F766E">Professional Tier + Veeva Integration</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:3px">5 studies · 5 CROs · Full dashboard suite</div>
-    </div>
-    <table style="font-size:12px"><tbody>
-    <tr><td>Monthly recurring</td><td style="text-align:right"><strong>$28,000</strong></td></tr>
-    <tr><td>Setup (one-time)</td><td style="text-align:right">$50,000</td></tr>
-    <tr><td>Veeva integration (one-time)</td><td style="text-align:right">$35,000</td></tr>
-    <tr><td>12-month commitment discount</td><td style="text-align:right;color:var(--green)">−10%</td></tr>
-    <tr style="border-top:2px solid var(--border)"><td><strong>Year 1 Total</strong></td><td style="text-align:right"><strong style="font-size:16px;color:var(--navy)">$387,200</strong></td></tr>
-    </tbody></table>
-  </div>
-</div>`;
+    function setStatusPill(status) {
+      const pill = document.getElementById('statusPill');
+      const s = String(status || 'unknown').toLowerCase();
+      pill.textContent = s;
+      pill.className = 'pill status-pill ' + (s === 'ok' ? 'ok' : s === 'warning' ? 'warn' : 'err');
+    }
 
-// ---------- SCALING ----------
-VIEWS.scaling = ()=>`
-<div class="card mb16" style="background:linear-gradient(135deg,#0D1B2A,#1F3864);color:#fff;border:none">
-  <div style="font-size:18px;font-weight:700;margin-bottom:6px">Multi-Client Architecture</div>
-  <div style="font-size:12px;color:rgba(255,255,255,.65)">Each client gets an isolated SmartTMF instance — separate Box workspace, client-specific configs, zero cross-client data leakage.</div>
-</div>
-<div class="grid g3 mb16">
-  ${[
-    {name:'Client 1: Xencor',badge:'b-green',status:'Live',border:'var(--green)',info:'6 studies · 5 CROs · 17 sites<br>Box: 368160762511<br>Tier: Professional'},
-    {name:'Client 2: [Next Client]',badge:'b-amber',status:'Onboarding',border:'var(--amber)',info:'Setup: 2–3 wks (Starter)<br>or 4–6 wks (Professional)<br>Clone template structure',opacity:.8},
-    {name:'Client 3+: Template',badge:'b-gray',status:'Available',border:'var(--border)',info:'Repeatable deployment<br>SmartTMF template cloning<br>Standardized onboarding',opacity:.6}
-  ].map(c=>`<div class="card" style="border-left:4px solid ${c.border};${c.opacity?'opacity:'+c.opacity:''}">
-    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px">${c.name}</div>
-    <span class="badge ${c.badge}">${c.status}</span>
-    <div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.6">${c.info}</div>
-  </div>`).join('')}
-</div>
-<div class="grid g2 mb16">
-  <div class="card">
-    <div class="card-title"><span class="icon">🔄</span> What Changes Per Client</div>
-    ${['Box folder structure (cloned from template)','smarttmf_config.json (client-specific rules)','Veeva Vault connection (client instance)','CRO partner definitions & onboarding','Quality thresholds & SLA targets'].map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span class="badge b-blue">Config</span> ${i}</div>`).join('')}
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">✅</span> What Stays the Same</div>
-    ${['SmartTMF app (React + Box AI + Anthropic)','6-stage pipeline architecture','AI classification engine','QC workflow + analytics engine','CRO onboarding process'].map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span class="badge b-green">Platform</span> ${i}</div>`).join('')}
-  </div>
-</div>
-<div class="card">
-  <div class="card-title"><span class="icon">👥</span> Operations Team Scaling</div>
-  <div class="grid g3">
-    ${[['1–3','Clients','1 SmartTMF Admin + existing TMF coordinators'],['4–8','Clients','2 SmartTMF Admins + team leads per client'],['9+','Clients','Dedicated SmartTMF Ops team + client success managers']].map(t=>`<div style="background:var(--surface);border-radius:8px;padding:16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--teal)">${t[0]}</div><div style="font-size:12px;font-weight:600">${t[1]}</div><div style="font-size:11px;color:var(--text2);margin-top:4px">${t[2]}</div></div>`).join('')}
-  </div>
-</div>`;
+    function renderHealth(data) {
+      const docs = data?.datasources?.documents || {};
+      const objs = data?.datasources?.objects || {};
+      const sec  = data?.datasources?.security || {};
+      const env  = data?.environment || {};
+      const health = data?.health || {};
 
-// ===================================================================
-// NAVIGATION & RENDERING
-// ===================================================================
-const viewMeta = {
-  dashboard:['Dashboard','SmartTMF Pipeline Overview — 5 Studies · 5 CROs · Live on Box'],
-  documents:['Documents','TMF Plans & Workspace Files in Box'],
-  classification:['AI Classification','Box AI Metadata Extraction Engine'],
-  qc:['QC Workflow','Human-in-the-Loop Quality Control'],
-  analytics:['Analytics','TMF Health Monitoring & Inspection Readiness'],
-  cro:['CRO Dashboards','Performance Tracking by CRO Partner'],
-  onboarding:['CRO & CRA Onboarding','4-Phase Structured Onboarding Workflow'],
-  veeva:['Veeva Vault Integration','eTMF Data Feed — partnersi-usdm-etmf.veevavault.com'],
-  quality:['Quality Standards','TMF Reference Model 3.2 · ICH-GCP · 21 CFR Part 11'],
-  pricing:['Pricing','SmartTMF Platform Tiers & Implementation Costs'],
-  scaling:['Multi-Client Scaling','Isolated Tenant Architecture for Multiple Sponsors']
-};
+      document.getElementById('dsDocuments').textContent = docs.name || 'vaultetmfv2documents';
+      document.getElementById('dsObjects').textContent = objs.name || 'vaultetmfv2objects';
+      document.getElementById('dsSecurity').textContent = sec.name || 'vaultetmfv2security';
+      document.getElementById('lastRefresh').textContent = data.generatedAt || '—';
 
-let currentView = 'dashboard';
+      document.getElementById('documentsIndexed').textContent = docs.indexed ?? '—';
+      document.getElementById('documentsSub').textContent = `${docs.status || 'unknown'} • ${docs.description || ''}`;
 
-function navigate(viewId){
-  currentView = viewId;
-  const content = document.getElementById('content');
-  content.innerHTML = VIEWS[viewId]();
-  document.getElementById('hTitle').textContent = viewMeta[viewId][0];
-  document.getElementById('hSub').textContent = viewMeta[viewId][1];
-  
-  // Update nav
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active');
-  
-  // Scroll to top
-  content.scrollTop = 0;
-  
-  // Post-render hooks
-  if(viewId==='cro') initCROTabs();
-}
+      document.getElementById('objectsIndexed').textContent = objs.indexed ?? '—';
+      document.getElementById('objectsSub').textContent = `${objs.status || 'unknown'} • ${objs.description || ''}`;
 
-function initCROTabs(){
-  document.querySelectorAll('#croTabs .tab').forEach(tab=>{
-    tab.addEventListener('click',function(){
-      document.querySelectorAll('#croTabs .tab').forEach(t=>t.classList.remove('active'));
-      this.classList.add('active');
-      const cro = this.dataset.cro;
-      document.querySelectorAll('.cro-panel').forEach(p=>p.classList.remove('active'));
-      document.getElementById('cro-'+cro)?.classList.add('active');
-    });
-  });
-}
+      document.getElementById('usersDiscovered').textContent = sec.usersDiscovered ?? '—';
+      document.getElementById('usersSub').textContent = `${sec.groupsDiscovered ?? '—'} groups • ${sec.membershipsMapped ?? '—'} memberships`;
 
-// Bind nav clicks
-document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
-  item.addEventListener('click',()=>navigate(item.dataset.view));
-});
+      document.getElementById('environmentStatus').textContent = health.dashboard || env.mode || '—';
+      document.getElementById('environmentSub').textContent = `${env.company || 'ABC BioPharma'} ${env.name || 'Vault eTMF v2'}`;
 
-// Initial render
-navigate('dashboard');
-</script>
+      document.getElementById('healthGeneratedAt').textContent = data.generatedAt || '—';
+      setStatusPill(data.status);
+
+      const tbody = document.getElementById('healthTableBody');
+      tbody.innerHTML = `
+        <tr>
+          <td>Documents</td>
+          <td>${docs.status || '—'}</td>
+          <td>${docs.name || '—'} • ${docs.indexed ?? '—'} indexed</td>
+        </tr>
+        <tr>
+          <td>Objects</td>
+          <td>${objs.status || '—'}</td>
+          <td>${objs.name || '—'} • ${objs.indexed ?? '—'} indexed</td>
+        </tr>
+        <tr>
+          <td>Security</td>
+          <td>${sec.status || '—'}</td>
+          <td>${sec.name || '—'} • ${sec.usersDiscovered ?? '—'} users discovered</td>
+        </tr>
+        <tr>
+          <td>Agent</td>
+          <td>${health.agent || '—'}</td>
+          <td>Filing mode: ${health.filingMode || '—'}</td>
+        </tr>
+      `;
+    }
+
+    function renderIntake(data) {
+      const intake = data?.intake || {};
+      document.getElementById('intakeGeneratedAt').textContent = data.generatedAt || '—';
+
+      const tbody = document.getElementById('intakeTableBody');
+      tbody.innerHTML = `
+        <tr><td>Source</td><td>${intake.source || '—'}</td></tr>
+        <tr><td>Folder</td><td>${intake.folder || '—'}</td></tr>
+        <tr><td>New Items</td><td>${intake.newItems ?? '—'}</td></tr>
+        <tr><td>Ready for Classification</td><td>${intake.readyForClassification ?? '—'}</td></tr>
+        <tr><td>Ready for Indexing</td><td>${intake.readyForIndexing ?? '—'}</td></tr>
+        <tr><td>Aging Items</td><td>${intake.agingItems ?? '—'}</td></tr>
+        <tr><td>Note</td><td>${intake.note || '—'}</td></tr>
+      `;
+    }
+
+    async function refresh() {
+      try {
+        const [health, intake] = await Promise.all([
+          getJson('/api/health'),
+          getJson('/api/intake')
+        ]);
+        renderHealth(health);
+        renderIntake(intake);
+      } catch (err) {
+        console.error('Dashboard refresh failed', err);
+        setStatusPill('error');
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 60000);
+  </script>
 </body>
 </html>
