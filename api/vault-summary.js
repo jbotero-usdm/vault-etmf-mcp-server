@@ -3,21 +3,22 @@ import { vqlQuery } from '../lib/vault.js';
 export default async function handler(req, res) {
   try {
     const studiesVql = `
-      SELECT name__v, status__v
+      SELECT id, name__v, status__v
       FROM study__v
       ORDER BY name__v
+      LIMIT 100
     `;
 
     const sitesVql = `
-      SELECT name__v, status__v
+      SELECT id, name__v, status__v
       FROM site__v
-      LIMIT 200
+      LIMIT 100
     `;
 
     const docsVql = `
       SELECT id, name__v, document_number__v, status__v, version_modified_date__v
       FROM documents
-      WHERE status__v != 'obsolete__v'
+      WHERE status__v != 'Obsolete'
       ORDER BY version_modified_date__v DESC
       LIMIT 200
     `;
@@ -50,8 +51,9 @@ export default async function handler(req, res) {
       documentsFiled: docs.length,
       documentsByStudy,
       recentDocuments,
-      studies: studies.map(s => ({ name: s.name__v, status: s.status__v })),
+      studies: studies.map(s => ({ id: s.id, name: s.name__v, status: s.status__v })),
       sites: sites.map(s => ({
+        id: s.id,
         name: s.name__v,
         status: s.status__v,
         study: 'Unassigned',
