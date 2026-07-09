@@ -3,15 +3,16 @@ import { vqlQuery } from '../lib/vault.js';
 export default async function handler(req, res) {
   try {
     const studiesVql = `
-      SELECT name__v, status__v
+      SELECT id, name__v, status__v
       FROM study__v
       ORDER BY name__v
+      LIMIT 100
     `;
 
     const sitesVql = `
-      SELECT name__v, status__v
+      SELECT id, name__v, status__v
       FROM site__v
-      LIMIT 200
+      LIMIT 100
     `;
 
     const docsVql = `
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
       statusBreakdown[k] = (statusBreakdown[k] || 0) + 1;
     }
 
-    const unclassifiedInbox = statusBreakdown['unclassified__v'] || 0;
+    const unclassifiedInbox = statusBreakdown['Unclassified'] || 0;
 
     const croPartners = [...new Set(
       docs.map(d => (d.name__v || '').split('_')[0]).filter(Boolean)
@@ -62,7 +63,7 @@ export default async function handler(req, res) {
         documentsFiled: docs.length,
         sitesActive: sites.length,
         unclassifiedInbox,
-        studies: studies.map(s => ({ name: s.name__v, status: s.status__v })),
+        studies: studies.map(s => ({ id: s.id, name: s.name__v, status: s.status__v })),
         statusBreakdown,
         recentActivity,
       },
