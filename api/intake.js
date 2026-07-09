@@ -1,20 +1,18 @@
 import { vqlQuery } from '../lib/vault.js';
 
 const STAGE_MAP = {
-  'unclassified__v': 'Intake',
-  'needs_classification': 'Needs Classification',
-  'in_qc_review__v': 'QC Review',
-  'approved__v': 'Approved',
-  'effective__v': 'Approved',
-  'rejected__v': 'Rejected',
-  'obsolete__v': 'Rejected',
+  Unclassified: 'Intake',
+  'In Progress': 'In Progress',
+  Approved: 'Approved',
+  Effective: 'Approved',
+  Rejected: 'Rejected',
+  Obsolete: 'Rejected',
 };
 
 export default async function handler(req, res) {
   try {
     const vql = `
-      SELECT id, document_number__v, name__v, status__v,
-             created_date__v, last_modified_date__v
+      SELECT id, document_number__v, name__v, status__v, created_date__v, last_modified_date__v
       FROM documents
       ORDER BY last_modified_date__v DESC
       LIMIT 100
@@ -38,25 +36,14 @@ export default async function handler(req, res) {
     }));
 
     const intake = recentFiles.filter(f => f.stage === 'Intake');
-    const classification = recentFiles.filter(f => f.stage === 'Needs Classification');
-    const qc = recentFiles.filter(f => f.stage === 'QC Review');
     const approved = recentFiles.filter(f => f.stage === 'Approved');
     const rejected = recentFiles.filter(f => f.stage === 'Rejected');
+    const inProgress = recentFiles.filter(f => f.stage === 'In Progress');
 
     const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
     const agingItems = intake.filter(f =>
       f.modified_at && (Date.now() - new Date(f.modified_at).getTime() > SEVEN_DAYS)
     );
-
-    const byStudy = {
-      Unassigned: {
-        study: 'Unassigned',
-        count: recentFiles.length,
-        readyForClassification: classification.length,
-        inQc: qc.length,
-        aging: agingItems.length,
-      }
-    };
 
     const cros = [...new Set(recentFiles.map(f => {
       const parts = (f.name || '').split('_');
@@ -70,14 +57,20 @@ export default async function handler(req, res) {
         source: 'Vault eTMF Inbox',
         totalFiles: recentFiles.length,
         newItems: intake.length,
-        readyForClassification: classification.length,
-        inQcReview: qc.length,
+        readyForClassification: intake.length,
+        inQcReview: inProgress.length,
         approvedCount: approved.length,
         rejectedCount: rejected.length,
         agingItems: agingItems.length,
         cros,
         recentFiles: recentFiles.slice(0, 25),
-        studies: Object.values(byStudy),
+        studies: [{
+          study: 'Unassigned',
+          count: recentFiles.length,
+          readyForClassification: intake.length,
+          inQc: inProgress.length,
+          aging: agingItems.length,
+        }],
       },
     });
   } catch (e) {
