@@ -1,6 +1,6 @@
-const VAULT_URL = process.env.VAULT_URL;       // e.g. https://usdm-etmf.veevavault.com
-const VAULT_USER = process.env.VAULT_USER;
-const VAULT_PASS = process.env.VAULT_PASS;
+const VAULT_URL  = process.env.VAULT_URL;
+const VAULT_USER = process.env.VAULT_USERNAME;
+const VAULT_PASS = process.env.VAULT_PASSWORD;
 
 let sessionId = null;
 
@@ -33,8 +33,8 @@ export async function vqlQuery(vql) {
 
   const data = await resp.json();
 
-  // Re-auth on expired session and retry once
   if (data.responseStatus === 'FAILURE' && data.responseMessage?.includes('INVALID_SESSION')) {
+    sessionId = null;
     await authenticate();
     return vqlQuery(vql);
   }
