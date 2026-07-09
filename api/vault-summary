@@ -1,103 +1,133 @@
-async function vaultAuth(base, username, password) {
-  const r = await fetch(`${base.replace(/\/$/, '')}/api/v24.1/auth`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ username, password })
-  });
-  if (!r.ok) throw new Error(`Vault auth ${r.status}: ${await r.text()}`);
-  const data = await r.json();
-  if (data.responseStatus !== 'SUCCESS') throw new Error(`Vault auth failed: ${JSON.stringify(data)}`);
-  return data.sessionId;
-}
-
-async function vaultQuery(base, sessionId, q) {
-  const r = await fetch(`${base.replace(/\/$/, '')}/api/v24.1/query`, {
-    method: 'POST',
-    headers: { Authorization: sessionId, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ q })
-  });
-  if (!r.ok) throw new Error(`Vault query ${r.status}: ${await r.text()}`);
-  const data = await r.json();
-  if (!['SUCCESS','WARNING'].includes(data.responseStatus)) throw new Error(`Vault query failed: ${JSON.stringify(data)}`);
-  return data.data || [];
-}
-
-async function queryAll(base, sessionId, template, batch=200, maxPages=10) {
-  let offset = 0;
-  const rows = [];
-  for (let i=0; i<maxPages; i++) {
-    const q = template.replace('{limit}', String(batch)).replace('{offset}', String(offset));
-    const data = await vaultQuery(base, sessionId, q);
-    rows.push(...data);
-    if (data.length < batch) break;
-    offset += data.length;
-  }
-  return rows;
-}
+import { vqlQuery } from '../lib/vault.js';
 
 export default async function handler(req, res) {
   try {
-    const base = process.env.VAULT_URL;
-    const username = process.env.VAULT_USERNAME;
-    const password = process.env.VAULT_PASSWORD;
-    if (!base || !username || !password) {
-      return res.status(200).json({
-        status: 'warning', generatedAt: new Date().toISOString(),
-        overview: { activeStudies: 0, documentsFiled: 0, sitesActive: 0 },
-        objectCounts: { studies: 0, sites: 0, countries: 0 },
-        byStudy: [], recentDocuments: [], byType: [], note: 'Vault credentials missing'
-      });
+    // Documents by study and status
+    const docsByStudyVql = `
+      SELECT study__vr.name__v AS study_name,
+             status__v,
+             COUNT(id) AS doc_count
+      FROM documents
+      GROUP BY study__vr.name__v, status__v
+    `;
+
+    // Documents by artifact zone
+    const docsByZoneVql = `
+      SELECT study__vr.name__v AS study_name,
+             artifact_type__v,
+             COUNT(id) AS doc_count
+      FROM documents
+      WHERE status__v != 'obsolete__v'
+      GROUP BY study__vr.name__v, artifact_type__v
+    `;
+
+    // Sites by study
+    const sitesByStudyVql = `
+      SELECT study__vr.name__v AS study_name,
+             status__v,
+             COUNT(id) AS site_count
+      FROM site__v
+      GROUP BY study__vr.name__v, status__v
+    `;
+
+    // Filing timeliness — docs filed in last 90 days with created vs modified delta
+    const timelinessVql = `
+      SELECT id, document_number__v, name__v,
+             study__vr.name__v AS study_name,
+             status__v, artifact_type__v,
+             created_date__v, last_modified_date__v
+      FROM documents
+      WHERE status__v IN ('approved__v', 'effective__v')
+        AND last_modified_date__v >= DATEADD(day, -90, NOW())
+      ORDER BY last_modified_date__v DESC
+      LIMIT 200
+    `;
+
+    const [docsByStudy, docsByZone, sitesByStudy, timeliness] = await Promise.all([
+      vqlQuery(docsByStudyVql),
+      vqlQuery(docsByZoneVql),
+      vqlQuery(sitesByStudyVql).catch(() => []),
+      vqlQuery(timelinessVql),
+    ]);
+
+    // Build per-study summary
+    const studyMap = {};
+
+    for (const row of docsByStudy) {
+      const study = row.study_name || 'Unassigned';
+      studyMap[study] ||= {
+        study,
+        totalDocuments: 0,
+        statusBreakdown: {},
+        artifactTypes: {},
+        sites: { active: 0, inactive: 0 },
+        filingTimeliness: { onTime: 0, late: 0, rate: null },
+      };
+      studyMap[study].totalDocuments += row.doc_count || 0;
+      studyMap[study].statusBreakdown[row.status__v || 'unknown'] = row.doc_count || 0;
     }
 
-    const sessionId = await vaultAuth(base, username, password);
-    const studies = await queryAll(base, sessionId, `SELECT id, name__v FROM study__v ORDER BY id LIMIT {limit} OFFSET {offset}`);
-    const sites = await queryAll(base, sessionId, `SELECT id, name__v, study__v FROM site__v ORDER BY id LIMIT {limit} OFFSET {offset}`);
-    const countries = await queryAll(base, sessionId, `SELECT id, name__v, study__v FROM study_country__v ORDER BY id LIMIT {limit} OFFSET {offset}`);
-    const docs = await queryAll(base, sessionId, `SELECT id, name__v, study__v, type__v, status__v, version_modified_date__v FROM documents WHERE status__v != 'Obsolete' ORDER BY version_modified_date__v DESC LIMIT {limit} OFFSET {offset}`, 200, 8);
-
-    const studyName = new Map(studies.map(s => [String(s.id), s.name__v || String(s.id)]));
-    const siteCounts = new Map();
-    const countryCounts = new Map();
-    for (const s of sites) {
-      const k = String(s.study__v || 'Unassigned');
-      siteCounts.set(k, (siteCounts.get(k) || 0) + 1);
-    }
-    for (const c of countries) {
-      const k = String(c.study__v || 'Unassigned');
-      countryCounts.set(k, (countryCounts.get(k) || 0) + 1);
+    for (const row of docsByZone) {
+      const study = row.study_name || 'Unassigned';
+      if (!studyMap[study]) continue;
+      const artifact = row.artifact_type__v || 'Unclassified';
+      studyMap[study].artifactTypes[artifact] = (studyMap[study].artifactTypes[artifact] || 0) + (row.doc_count || 0);
     }
 
-    const byStudyMap = new Map();
-    const byTypeMap = new Map();
-    for (const d of docs) {
-      const sid = String(d.study__v || 'Unassigned');
-      const s = byStudyMap.get(sid) || { study: studyName.get(sid) || sid, documents: 0, sites: siteCounts.get(sid) || 0, countries: countryCounts.get(sid) || 0, typeSet: new Set() };
-      s.documents += 1;
-      if (d.type__v) s.typeSet.add(d.type__v);
-      byStudyMap.set(sid, s);
-      const t = d.type__v || 'Unspecified';
-      byTypeMap.set(t, (byTypeMap.get(t) || 0) + 1);
+    for (const row of sitesByStudy) {
+      const study = row.study_name || 'Unassigned';
+      if (!studyMap[study]) continue;
+      if (row.status__v === 'active__v') {
+        studyMap[study].sites.active += row.site_count || 0;
+      } else {
+        studyMap[study].sites.inactive += row.site_count || 0;
+      }
     }
 
-    const byStudy = Array.from(byStudyMap.values()).map(s => ({ study: s.study, documents: s.documents, sites: s.sites, countries: s.countries, types: s.typeSet.size })).sort((a,b)=>b.documents-a.documents);
-    const byType = Array.from(byTypeMap.entries()).map(([type,count]) => ({ type, count })).sort((a,b)=>b.count-a.count);
-    const recentDocuments = docs.slice(0,25).map(d => ({ id: d.id, name: d.name__v, study: studyName.get(String(d.study__v)) || String(d.study__v || 'Unassigned'), type: d.type__v || 'Unspecified', stage: 'Vault', updated: d.version_modified_date__v, source: 'Vault' }));
+    // Filing timeliness: 35-day threshold (configurable per study)
+    const FILING_DEADLINES = {
+      'XmAb13676-06': 35,
+      'XmAb14045-08': 35,
+      'XmAb18087-16': 35,
+      'XmAb819-01':   15,
+      'XmAb942-01':   15,
+      'XmAb808-02':   35,
+    };
+    const DEFAULT_DEADLINE = 35;
+
+    for (const doc of timeliness) {
+      const study = doc.study_name || 'Unassigned';
+      if (!studyMap[study]) continue;
+      const created = new Date(doc.created_date__v);
+      const modified = new Date(doc.last_modified_date__v);
+      const daysToFile = (modified - created) / (1000 * 60 * 60 * 24);
+      const deadline = FILING_DEADLINES[study] || DEFAULT_DEADLINE;
+
+      if (daysToFile <= deadline) {
+        studyMap[study].filingTimeliness.onTime += 1;
+      } else {
+        studyMap[study].filingTimeliness.late += 1;
+      }
+    }
+
+    // Calculate timeliness rate
+    for (const s of Object.values(studyMap)) {
+      const total = s.filingTimeliness.onTime + s.filingTimeliness.late;
+      s.filingTimeliness.rate = total > 0
+        ? Math.round((s.filingTimeliness.onTime / total) * 100)
+        : null;
+      s.filingTimeliness.deadline = FILING_DEADLINES[s.study] || DEFAULT_DEADLINE;
+    }
+
+    // Totals
+    const studies = Object.values(studyMap).sort((a, b) => b.totalDocuments - a.totalDocuments);
+    const totalDocs = studies.reduce((sum, s) => sum + s.totalDocuments, 0);
+    const totalOnTime = studies.reduce((sum, s) => sum + s.filingTimeliness.onTime, 0);
+    const totalLate = studies.reduce((sum, s) => sum + s.filingTimeliness.late, 0);
+    const overallTimeliness = (totalOnTime + totalLate) > 0
+      ? Math.round((totalOnTime / (totalOnTime + totalLate)) * 100)
+      : null;
 
     res.status(200).json({
       status: 'ok',
-      generatedAt: new Date().toISOString(),
-      overview: {
-        activeStudies: studies.length,
-        documentsFiled: docs.length,
-        sitesActive: sites.length
-      },
-      documentsFiled: docs.length,
-      objectCounts: { studies: studies.length, sites: sites.length, countries: countries.length },
-      byStudy,
-      byType,
-      recentDocuments
-    });
-  } catch (err) {
-    res.status(500).json({ status: 'error', generatedAt: new Date().toISOString(), error: String(err), overview: { activeStudies: 0, documentsFiled: 0, sitesActive: 0 }, objectCounts: { studies: 0, sites: 0, countries: 0 }, byStudy: [], byType: [], recentDocuments: [] });
-  }
-}
+    
