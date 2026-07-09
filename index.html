@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USDM SmartTMF — Box to Vault via Glean</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>USDM SmartTMF — Vault eTMF via Glean</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#1F3864;--teal:#00838F;--sky:#0097A7;--dark:#0D1B2A;--surface:#F8FAFC;--card:#FFFFFF;--border:#E2E8F0;--text:#1E293B;--text2:#64748B;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--blue:#3B82F6;--r:10px;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -20,82 +20,88 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th{text-align:left;pa
 <body>
 <div class="app">
 <nav class="sidebar">
-  <div class="sidebar-logo"><div class="logo-text"><span>SmartTMF</span><span>USDM Life Sciences</span></div></div>
-  <div class="sidebar-nav">
-    <div class="nav-section">Core</div>
-    <div class="nav-item active" data-v="dashboard">Dashboard</div>
-    <div class="nav-item" data-v="documents">Documents</div>
-    <div class="nav-item" data-v="qc">QC Workflow</div>
-    <div class="nav-item" data-v="analytics">Analytics</div>
-    <div class="nav-section">Operations</div>
-    <div class="nav-item" data-v="cro">CRO View</div>
-    <div class="nav-item" data-v="onboarding">Onboarding</div>
-    <div class="nav-item" data-v="vault">Vault via Glean</div>
-    <div class="nav-item" data-v="agent">Agent</div>
-    <div class="nav-item" data-v="admin">Admin Health</div>
-  </div>
+<div class="sidebar-logo"><div class="logo-text"><span>SmartTMF</span><span>USDM Life Sciences</span></div></div>
+<div class="sidebar-nav">
+<div class="nav-section">Core</div>
+<div class="nav-item active" data-v="dashboard">Dashboard</div>
+<div class="nav-item" data-v="documents">Documents</div>
+<div class="nav-item" data-v="qc">QC Workflow</div>
+<div class="nav-item" data-v="analytics">Analytics</div>
+<div class="nav-section">Operations</div>
+<div class="nav-item" data-v="cro">CRO View</div>
+<div class="nav-item" data-v="onboarding">Onboarding</div>
+<div class="nav-item" data-v="vault">Vault via Glean</div>
+<div class="nav-item" data-v="agent">Agent</div>
+<div class="nav-item" data-v="admin">Admin Health</div>
+</div>
 </nav>
 <main class="main">
-  <header class="header">
-    <div><div class="header-title" id="hT">Dashboard</div><div class="header-sub" id="hS">Live Box intake and Vault filing oversight</div></div>
-    <div class="header-right"><div class="pill pill-g">Box Connected</div><div class="pill pill-b">Vault Connected via Glean</div></div>
-  </header>
-  <div class="content" id="content"></div>
+<header class="header">
+<div><div class="header-title" id="hT">Dashboard</div><div class="header-sub" id="hS">Live Vault eTMF intake and filing oversight</div></div>
+<div class="header-right"><div class="pill pill-g">Vault Connected</div><div class="pill pill-b">Vault Indexed via Glean</div></div>
+</header>
+<div class="content" id="content"></div>
 </main>
 </div>
 <script>
 const state={overview:null,intake:null,vault:null,health:null};
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function fmt(v){if(v===undefined||v===null||v==='') return '—'; return v;}
-function d(v){if(!v) return '—'; try{return new Date(v).toLocaleString()}catch(e){return v}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]));}
+function fmt(v){if(v===undefined||v===null||v==='') return ''; return v;}
+function d(v){if(!v) return ''; try{return new Date(v).toLocaleString()}catch(e){return v}}
 async function j(u){const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw new Error(u+' '+r.status); return r.json();}
 async function load(){try{const [overview,intake,vault,health]=await Promise.all([j('/api/overview'),j('/api/intake'),j('/api/vault-summary'),j('/api/health')]); state.overview=overview; state.intake=intake; state.vault=vault; state.health=health; nav(document.querySelector('.nav-item.active')?.dataset.v||'dashboard');}catch(e){console.error(e); document.getElementById('content').innerHTML=`<div class="c"><div class="ct">Live data error</div><div class="hint">${esc(e.message)}</div></div>`;}}
 function healthChip(){const h=state.overview?.overview?.health||'amber'; return `<span class="b ${h==='green'?'bg':h==='red'?'br':'ba'}">${h.toUpperCase()}</span>`;}
 const V={
-  dashboard(){const o=state.overview?.overview||{}; const intake=state.intake?.intake||{}; return `
-    <div class="g g4 mb2">
-      <div class="c stat" onclick="nav('vault')"><div class="sv">${fmt(o.activeStudies)}</div><div class="sl">Active Studies</div><div class="ss ok">Click for Vault breakdown</div></div>
-      <div class="c stat" onclick="nav('cro')"><div class="sv">${fmt(o.croPartners)}</div><div class="sl">CRO Partners</div><div class="ss">Live from intake pattern</div></div>
-      <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(o.documentsFiled)}</div><div class="sl">Documents Filed</div><div class="ss ok">Vault source of record</div></div>
-      <div class="c stat" onclick="nav('vault')"><div class="sv">${fmt(o.sitesActive)}</div><div class="sl">Sites Active</div><div class="ss">Study/site context</div></div>
-    </div>
-    <div class="g g2 mb">
-      <div class="c"><div class="ct">Intake Overview</div>
-        <div class="g g4 mb">
-          <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.newItems)}</div><div class="sl">New Intake Items</div></div>
-          <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.readyForClassification)}</div><div class="sl">Needs Classification</div></div>
-          <div class="c stat" onclick="nav('qc')"><div class="sv">${fmt(intake.inQcReview)}</div><div class="sl">In QC Review</div></div>
-          <div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.approvedCount)}</div><div class="sl">Filed / Approved</div></div>
-        </div>
-        <div class="hint">Box is the intake work queue. Vault is the source of record. Glean provides filing support and oversight.</div>
-      </div>
-      <div class="c"><div class="ct">TMF Health</div>
-        <div style="font-size:32px;font-weight:800;margin-bottom:10px">${healthChip()}</div>
-        <div class="hint">Main page keeps health simple. Click into Analytics or Admin Health for actual document, object, and user counts.</div>
-        <div style="margin-top:12px"><button class="btn bp1" onclick="nav('analytics')">View details</button></div>
-      </div>
-    </div>
-    <div class="g g2">
-      <div class="c"><div class="ct">Intake by Study</div>
-      <table><thead><tr><th>Study</th><th>Files</th><th>Needs Class.</th><th>In QC</th></tr></thead><tbody>
-      ${(intake.studies||[]).length?(intake.studies||[]).map(s=>`<tr><td><strong><a href="#" onclick="nav('documents');return false;">${esc(s.study)}</a></strong></td><td>${fmt(s.count)}</td><td>${fmt(s.readyForClassification)}</td><td>${fmt(s.inQc)}</td></tr>`).join(''):`<tr><td colspan="4">No study groupings returned from Box yet.</td></tr>`}
-      </tbody></table></div>
-      <div class="c"><div class="ct">Recent Intake Activity</div>
-      <table><thead><tr><th>File</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>
-      ${(intake.recentFiles||[]).length?(intake.recentFiles||[]).map(f=>`<tr><td><strong><a href="#" onclick="nav('documents');return false;">${esc(f.name)}</a></strong></td><td>${esc(f.study||'Unassigned')}</td><td>${esc(f.stage||'Intake')}</td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="4">No recent Box files found.</td></tr>`}
-      </tbody></table></div>
-    </div>`},
-  documents(){const intake=state.intake?.intake||{}; return `<div class="c"><div class="ct">Live Document Worklist</div><table><thead><tr><th>File</th><th>Study</th><th>Artifact</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${(intake.recentFiles||[]).length?(intake.recentFiles||[]).map(f=>`<tr><td><strong>${esc(f.name)}</strong></td><td>${esc(f.study)}</td><td>${esc(f.artifactType||'Needs classification')}</td><td><span class="b bb">${esc(f.stage||'Intake')}</span></td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="5">No files returned from Box intake.</td></tr>`}</tbody></table></div>`},
-  qc(){const intake=state.intake?.intake||{}; const q=(intake.recentFiles||[]).filter(f=>String(f.stage).toLowerCase().includes('qc')); return `<div class="c"><div class="ct">QC Review Queue</div><table><thead><tr><th>Document</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${q.length?q.map(f=>`<tr><td><strong>${esc(f.name)}</strong></td><td>${esc(f.study)}</td><td>${esc(f.stage)}</td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="4">No files currently in QC Review.</td></tr>`}</tbody></table></div>`},
-  analytics(){const h=state.health||{}; const ds=h.datasources||{}; return `<div class="g g4 mb"><div class="c stat"><div class="sv">${healthChip()}</div><div class="sl">Live Indexing Health</div></div><div class="c stat"><div class="sv">${fmt(ds.documents?.indexed)}</div><div class="sl">Documents Indexed</div></div><div class="c stat"><div class="sv">${fmt(ds.objects?.indexed)}</div><div class="sl">Objects Indexed</div></div><div class="c stat"><div class="sv">${fmt(ds.security?.usersDiscovered)}</div><div class="sl">Users Discovered</div></div></div>
-  <div class="c"><div class="ct">Admin Detail</div><table><thead><tr><th>Area</th><th>Status</th><th>Details</th></tr></thead><tbody><tr><td>Documents</td><td>${esc(ds.documents?.status||'—')}</td><td>${fmt(ds.documents?.indexed)} indexed</td></tr><tr><td>Objects</td><td>${esc(ds.objects?.status||'—')}</td><td>${fmt(ds.objects?.indexed)} indexed</td></tr><tr><td>Security</td><td>${esc(ds.security?.status||'—')}</td><td>${fmt(ds.security?.usersDiscovered)} users discovered</td></tr></tbody></table></div>`},
-  cro(){const cros=state.intake?.intake?.cros||[]; return `<div class="c"><div class="ct">CRO View</div><table><thead><tr><th>CRO</th><th>Status</th></tr></thead><tbody>${cros.length?cros.map(c=>`<tr><td><strong>${esc(c)}</strong></td><td><span class="b bg">Active in intake</span></td></tr>`).join(''):`<tr><td colspan="2">No CROs inferred from current intake files yet.</td></tr>`}</tbody></table></div>`},
-  onboarding(){return `<div class="c"><div class="ct">Onboarding</div><div class="hint">Use Box intake folders to onboard new CRO teams. As files arrive, SmartTMF groups them by study and stage, and Glean supports classification and filing oversight.</div></div>`},
-  vault(){const v=state.vault||{}; return `<div class="g g2 mb"><div class="c"><div class="ct">Vault Summary</div><div class="g g4"><div class="c stat"><div class="sv">${fmt(v.studiesCount)}</div><div class="sl">Studies</div></div><div class="c stat"><div class="sv">${fmt(v.sitesCount)}</div><div class="sl">Sites</div></div><div class="c stat"><div class="sv">${fmt(v.documentsFiled)}</div><div class="sl">Recent Documents</div></div><div class="c stat"><div class="sv">${esc(state.health?.datasources?.documents?.name||'vaultetmfv2documents')}</div><div class="sl">Documents source</div></div></div></div><div class="c"><div class="ct">Vault via Glean</div><div class="hint">Vault remains the source of record. This view summarizes live study, site, and recent document context surfaced through the environment.</div></div></div><div class="g g2"><div class="c"><div class="ct">Documents by Study</div><table><thead><tr><th>Study</th><th>Recent Docs</th></tr></thead><tbody>${(v.documentsByStudy||[]).length?(v.documentsByStudy||[]).map(r=>`<tr><td>${esc(r.study)}</td><td>${fmt(r.count)}</td></tr>`).join(''):`<tr><td colspan="2">No Vault document summary available yet.</td></tr>`}</tbody></table></div><div class="c"><div class="ct">Recent Vault Documents</div><table><thead><tr><th>Document</th><th>Study</th><th>Updated</th></tr></thead><tbody>${(v.recentDocuments||[]).length?(v.recentDocuments||[]).map(d0=>`<tr><td><strong>${esc(d0.title__v||d0.name__v||d0.id)}</strong></td><td>${esc(d0.study__v||'Unassigned')}</td><td>${d(d0.version_modified_date__v)}</td></tr>`).join(''):`<tr><td colspan="3">No recent Vault documents available.</td></tr>`}</tbody></table></div></div>`},
-  agent(){return `<div class="c"><div class="ct">ABC BioPharma TMF Filer Agent</div><div class="hint">The agent supports classification, study/site context lookup, and filing preparation with human oversight. It complements the Box intake workflow and Vault filing process.</div></div>`},
-  admin(){return `<div class="c"><div class="ct">Admin Health</div><pre style="white-space:pre-wrap;font-size:12px;background:#0F172A;color:#E2E8F0;padding:14px;border-radius:10px;overflow:auto">${esc(JSON.stringify(state.health,null,2))}</pre></div>`}
+dashboard(){const o=state.overview?.overview||{}; const intake=state.intake?.intake||{}; return `
+<div class="g g4 mb2">
+<div class="c stat" onclick="nav('vault')"><div class="sv">${fmt(o.activeStudies)}</div><div class="sl">Active Studies</div><div class="ss ok">Click for Vault breakdown</div></div>
+<div class="c stat" onclick="nav('cro')"><div class="sv">${fmt(o.croPartners)}</div><div class="sl">CRO Partners</div><div class="ss">Live from Vault data</div></div>
+<div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(o.documentsFiled)}</div><div class="sl">Documents Filed</div><div class="ss ok">Vault source of record</div></div>
+<div class="c stat" onclick="nav('vault')"><div class="sv">${fmt(o.sitesActive)}</div><div class="sl">Sites Active</div><div class="ss">Study/site context</div></div>
+</div>
+<div class="g g2 mb">
+<div class="c"><div class="ct">Intake Overview</div>
+<div class="g g4 mb">
+<div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.newItems)}</div><div class="sl">Vault Inbox Items</div></div>
+<div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.readyForClassification)}</div><div class="sl">Needs Classification</div></div>
+<div class="c stat" onclick="nav('qc')"><div class="sv">${fmt(intake.inQcReview)}</div><div class="sl">In QC Review</div></div>
+<div class="c stat" onclick="nav('documents')"><div class="sv">${fmt(intake.approvedCount)}</div><div class="sl">Filed / Approved</div></div>
+</div>
+<div class="hint">Vault eTMF Inbox is the intake work queue.
+Vault is the source of record.
+Glean provides filing support and oversight.</div>
+</div>
+<div class="c"><div class="ct">TMF Health</div>
+<div style="font-size:32px;font-weight:800;margin-bottom:10px">${healthChip()}</div>
+<div class="hint">Main page keeps health simple.
+Click into Analytics or Admin Health for actual document, object, and user counts.</div>
+<div style="margin-top:12px"><button class="btn bp1" onclick="nav('analytics')">View details</button></div>
+</div>
+</div>
+<div class="g g2">
+<div class="c"><div class="ct">Intake by Study</div>
+<table><thead><tr><th>Study</th><th>Docs</th><th>Needs Class.</th><th>In QC</th></tr></thead><tbody>
+${(intake.studies||[]).length?(intake.studies||[]).map(s=>`<tr><td><strong><a href="#" onclick="nav('documents');return false;">${esc(s.study)}</a></strong></td><td>${fmt(s.count)}</td><td>${fmt(s.readyForClassification)}</td><td>${fmt(s.inQc)}</td></tr>`).join(''):`<tr><td colspan="4">No study groupings returned from Vault yet.</td></tr>`}
+</tbody></table></div>
+<div class="c"><div class="ct">Recent Intake Activity</div>
+<table><thead><tr><th>Document</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>
+${(intake.recentFiles||[]).length?(intake.recentFiles||[]).map(f=>`<tr><td><strong><a href="#" onclick="nav('documents');return false;">${esc(f.name)}</a></strong></td><td>${esc(f.study||'Unassigned')}</td><td>${esc(f.stage||'Intake')}</td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="4">No recent Vault documents found.</td></tr>`}
+</tbody></table></div>
+</div>`},
+documents(){const intake=state.intake?.intake||{}; return `<div class="c"><div class="ct">Live Document Worklist</div><table><thead><tr><th>Document</th><th>Study</th><th>Artifact</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${(intake.recentFiles||[]).length?(intake.recentFiles||[]).map(f=>`<tr><td><strong>${esc(f.name)}</strong></td><td>${esc(f.study)}</td><td>${esc(f.artifactType||'Needs classification')}</td><td><span class="b bb">${esc(f.stage||'Intake')}</span></td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="5">No documents returned from Vault inbox.</td></tr>`}</tbody></table></div>`},
+qc(){const intake=state.intake?.intake||{}; const q=(intake.recentFiles||[]).filter(f=>String(f.stage).toLowerCase().includes('qc')); return `<div class="c"><div class="ct">QC Review Queue</div><table><thead><tr><th>Document</th><th>Study</th><th>Stage</th><th>Updated</th></tr></thead><tbody>${q.length?q.map(f=>`<tr><td><strong>${esc(f.name)}</strong></td><td>${esc(f.study)}</td><td>${esc(f.stage)}</td><td>${d(f.modified_at||f.created_at)}</td></tr>`).join(''):`<tr><td colspan="4">No documents currently in QC Review.</td></tr>`}</tbody></table></div>`},
+analytics(){const h=state.health||{}; const ds=h.datasources||{}; return `<div class="g g4 mb"><div class="c stat"><div class="sv">${healthChip()}</div><div class="sl">Live Indexing Health</div></div><div class="c stat"><div class="sv">${fmt(ds.documents?.indexed)}</div><div class="sl">Documents Indexed</div></div><div class="c stat"><div class="sv">${fmt(ds.objects?.indexed)}</div><div class="sl">Objects Indexed</div></div><div class="c stat"><div class="sv">${fmt(ds.security?.usersDiscovered)}</div><div class="sl">Users Discovered</div></div></div>
+<div class="c"><div class="ct">Admin Detail</div><table><thead><tr><th>Area</th><th>Status</th><th>Details</th></tr></thead><tbody><tr><td>Documents</td><td>${esc(ds.documents?.status||'')}</td><td>${fmt(ds.documents?.indexed)} indexed</td></tr><tr><td>Objects</td><td>${esc(ds.objects?.status||'')}</td><td>${fmt(ds.objects?.indexed)} indexed</td></tr><tr><td>Security</td><td>${esc(ds.security?.status||'')}</td><td>${fmt(ds.security?.usersDiscovered)} users discovered</td></tr></tbody></table></div>`},
+cro(){const cros=state.intake?.intake?.cros||[]; return `<div class="c"><div class="ct">CRO View</div><table><thead><tr><th>CRO</th><th>Status</th></tr></thead><tbody>${cros.length?cros.map(c=>`<tr><td><strong>${esc(c)}</strong></td><td><span class="b bg">Active in Vault</span></td></tr>`).join(''):`<tr><td colspan="2">No CROs inferred from current Vault documents yet.</td></tr>`}</tbody></table></div>`},
+onboarding(){return `<div class="c"><div class="ct">Onboarding</div><div class="hint">Use the Vault eTMF inbox to onboard new CRO teams.
+As documents arrive in Vault, SmartTMF groups them by study and stage, and Glean supports classification and filing oversight.</div></div>`},
+vault(){const v=state.vault||{}; return `<div class="g g2 mb"><div class="c"><div class="ct">Vault Summary</div><div class="g g4"><div class="c stat"><div class="sv">${fmt(v.studiesCount)}</div><div class="sl">Studies</div></div><div class="c stat"><div class="sv">${fmt(v.sitesCount)}</div><div class="sl">Sites</div></div><div class="c stat"><div class="sv">${fmt(v.documentsFiled)}</div><div class="sl">Recent Documents</div></div><div class="c stat"><div class="sv">${esc(state.health?.datasources?.documents?.name||'vaultetmfv2documents')}</div><div class="sl">Documents source</div></div></div></div><div class="c"><div class="ct">Vault via Glean</div><div class="hint">Vault remains the source of record.
+This view summarizes live study, site, and recent document context surfaced through the environment.</div></div></div><div class="g g2"><div class="c"><div class="ct">Documents by Study</div><table><thead><tr><th>Study</th><th>Recent Docs</th></tr></thead><tbody>${(v.documentsByStudy||[]).length?(v.documentsByStudy||[]).map(r=>`<tr><td>${esc(r.study)}</td><td>${fmt(r.count)}</td></tr>`).join(''):`<tr><td colspan="2">No Vault document summary available yet.</td></tr>`}</tbody></table></div><div class="c"><div class="ct">Recent Vault Documents</div><table><thead><tr><th>Document</th><th>Study</th><th>Updated</th></tr></thead><tbody>${(v.recentDocuments||[]).length?(v.recentDocuments||[]).map(d0=>`<tr><td><strong>${esc(d0.title__v||d0.name__v||d0.id)}</strong></td><td>${esc(d0.study__v||'Unassigned')}</td><td>${d(d0.version_modified_date__v)}</td></tr>`).join(''):`<tr><td colspan="3">No recent Vault documents available.</td></tr>`}</tbody></table></div></div>`},
+agent(){return `<div class="c"><div class="ct">USDM SmartTMF Filing Agent</div><div class="hint">The agent supports classification using the DIA TMF Reference Model, study/site context lookup, and filing preparation with human oversight.
+It works with the Vault eTMF inbox and filing process, powered by Glean.</div></div>`},
+admin(){return `<div class="c"><div class="ct">Admin Health</div><pre style="white-space:pre-wrap;font-size:12px;background:#0F172A;color:#E2E8F0;padding:14px;border-radius:10px;overflow:auto">${esc(JSON.stringify(state.health,null,2))}</pre></div>`}
 };
-const VM={dashboard:['Dashboard','Live Box intake and Vault filing oversight'],documents:['Documents','Live document worklist'],qc:['QC Workflow','Human oversight queue'],analytics:['Analytics','Admin detail and indexing health'],cro:['CRO View','Live CRO presence from intake'],onboarding:['Onboarding','Use intake to onboard new CROs'],vault:['Vault via Glean','Vault is the source of record'],agent:['Agent','Glean filing support'],admin:['Admin Health','Raw health response']} ;
+const VM={dashboard:['Dashboard','Live Vault eTMF intake and filing oversight'],documents:['Documents','Live document worklist'],qc:['QC Workflow','Human oversight queue'],analytics:['Analytics','Admin detail and indexing health'],cro:['CRO View','Live CRO presence from Vault'],onboarding:['Onboarding','Onboard new CROs via Vault inbox'],vault:['Vault via Glean','Vault is the source of record'],agent:['Agent','Glean filing support'],admin:['Admin Health','Raw health response']};
 function nav(id){document.getElementById('content').innerHTML=V[id]();document.getElementById('hT').textContent=VM[id][0];document.getElementById('hS').textContent=VM[id][1];document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.querySelector(`.nav-item[data-v="${id}"]`)?.classList.add('active');}
 document.querySelectorAll('.nav-item[data-v]').forEach(item=>item.addEventListener('click',()=>nav(item.dataset.v)));
 load(); setInterval(load,60000);
