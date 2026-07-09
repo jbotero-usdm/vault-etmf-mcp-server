@@ -1,7 +1,126 @@
+import { vqlQuery } from '../lib/vault.js';
+
 export default async function handler(req, res) {
-  res.status(200).json({
-    status: 'ok',
-    generatedAt: new Date().toISOString(),
-    note: 'Use /api/intake, /api/vault-summary, and /api/health for live data; this route is reserved for future aggregated cards.'
-  });
+  try {
+    // Active studies with document counts
+    const studyVql = `
+      SELECT study__vr.name__v AS study_name,
+             COUNT(id) AS doc_count
+      FROM documents
+      WHERE status__v != 'obsolete__v'
+      GROUP BY study__vr.name__v
+    `;
+
+    // Documents by lifecycle state
+    const statusVql = `
+      SELECT status__v,
+             COUNT(id) AS doc_count
+      FROM documents
+      GROUP BY status__v
+    `;
+
+    // Recent activity (last 30 days)
+    const recentVql = `
+      SELECT id, document_number__v, name__v, status__v,
+             study__vr.name__v AS study_name,
+             site__vr.name__v AS site_name,
+             artifact_type__v,
+             last_modified_date__v
+      FROM documents
+      WHERE last_modified_date__v >= DATEADD(day, -30, NOW())
+      ORDER BY last_modified_date__v DESC
+      LIMIT 50
+    `;
+
+    // Sites
+    const siteVql = `
+      SELECT name__v, status__v,
+             study__vr.name__v AS study_name
+      FROM site__v
+      WHERE status__v = 'active__v'
+    `;
+
+    const [studies, statuses, recentDocs, sites] = await Promise.all([
+      vqlQuery(studyVql),
+      vqlQuery(statusVql),
+      vqlQuery(recentVql),
+      vqlQuery(siteVql).catch(() => []),  // site object may not exist
+    ]);
+
+    // Build study summary with CRO mapping
+    const STUDY_CRO = {
+      'XmAb13676-06': 'Parexel',
+      'XmAb14045-08': 'Parexel',
+      'XmAb18087-16': 'Fortrea',
+      'XmAb819-01':   'ICON',
+      'XmAb942-01':   'Alimentiv',
+      'XmAb808-02':   'Syneos Health',
+    };
+
+    const studySummary = studies.map(s => ({
+      study: s.study_name || 'Unassigned',
+      cro: STUDY_CRO[s.study_name] || 'Unknown',
+      documentsFiled: s.doc_count || 0,
+    }));
+
+    // Status breakdown
+    const statusBreakdown = {};
+    for (const s of statuses) {
+      statusBreakdown[s.status__v || 'unknown'] = s.doc_count || 0;
+    }
+
+    // Total documents
+    const totalFiled = statuses.reduce((sum, s) => sum + (s.doc_count || 0), 0);
+
+    // Unclassified (inbox) count
+    const unclassified = statusBreakdown['unclassified__v'] || 0;
+
+    // Active sites count
+    const activeSites = sites.length;
+
+    // CRO partners
+    const cros = [...new Set(studySummary.map(s => s.cro).filter(c => c !== 'Unknown'))];
+
+    res.status(200).json({
+      status: 'ok',
+      generatedAt: new Date().toISOString(),
+      overview: {
+        source: 'Vault eTMF',
+        activeStudies: studySummary.length,
+        totalDocumentsFiled: totalFiled,
+        unclassifiedInbox: unclassified,
+        activeSites,
+        croPartners: cros,
+        studies: studySummary.sort((a, b) => b.documentsFiled - a.documentsFiled),
+        statusBreakdown,
+        recentActivity: recentDocs.map(d => ({
+          id: d.id,
+          document_number: d.document_number__v,
+          name: d.name__v,
+          status: d.status__v,
+          study: d.study_name || 'Unassigned',
+          site: d.site_name || null,
+          artifact_type: d.artifact_type__v || null,
+          modified_at: d.last_modified_date__v,
+        })),
+      },
+    });
+  } catch (e) {
+    res.status(200).json({
+      status: 'warning',
+      generatedAt: new Date().toISOString(),
+      overview: {
+        source: 'Vault eTMF',
+        activeStudies: 0,
+        totalDocumentsFiled: 0,
+        unclassifiedInbox: 0,
+        activeSites: 0,
+        croPartners: [],
+        studies: [],
+        statusBreakdown: {},
+        recentActivity: [],
+        note: String(e.message || e),
+      },
+    });
+  }
 }
