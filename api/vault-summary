@@ -2,132 +2,77 @@ import { vqlQuery } from '../lib/vault.js';
 
 export default async function handler(req, res) {
   try {
-    // Documents by study and status
-    const docsByStudyVql = `
-      SELECT study__vr.name__v AS study_name,
-             status__v,
-             COUNT(id) AS doc_count
-      FROM documents
-      GROUP BY study__vr.name__v, status__v
+    const studiesVql = `
+      SELECT name__v, status__v FROM study__v ORDER BY name__v
     `;
-
-    // Documents by artifact zone
-    const docsByZoneVql = `
-      SELECT study__vr.name__v AS study_name,
-             artifact_type__v,
-             COUNT(id) AS doc_count
+    const sitesVql = `
+      SELECT name__v, status__v, study__vr.name__v AS study_name FROM site__v
+    `;
+    const docsVql = `
+      SELECT id, name__v, document_number__v, status__v,
+             study__vr.name__v AS study_name,
+             artifact_type__v, version_modified_date__v
       FROM documents
       WHERE status__v != 'obsolete__v'
-      GROUP BY study__vr.name__v, artifact_type__v
+      ORDER BY version_modified_date__v DESC
+      LIMIT 50
     `;
-
-    // Sites by study
-    const sitesByStudyVql = `
-      SELECT study__vr.name__v AS study_name,
-             status__v,
-             COUNT(id) AS site_count
-      FROM site__v
-      GROUP BY study__vr.name__v, status__v
-    `;
-
-    // Filing timeliness — docs filed in last 90 days with created vs modified delta
-    const timelinessVql = `
-      SELECT id, document_number__v, name__v,
-             study__vr.name__v AS study_name,
-             status__v, artifact_type__v,
-             created_date__v, last_modified_date__v
+    const docsByStudyVql = `
+      SELECT study__vr.name__v AS study_name, COUNT(id) AS doc_count
       FROM documents
-      WHERE status__v IN ('approved__v', 'effective__v')
-        AND last_modified_date__v >= DATEADD(day, -90, NOW())
-      ORDER BY last_modified_date__v DESC
-      LIMIT 200
+      WHERE status__v != 'obsolete__v'
+      GROUP BY study__vr.name__v
     `;
 
-    const [docsByStudy, docsByZone, sitesByStudy, timeliness] = await Promise.all([
+    const [studies, sites, docs, docsByStudy] = await Promise.all([
+      vqlQuery(studiesVql).catch(() => []),
+      vqlQuery(sitesVql).catch(() => []),
+      vqlQuery(docsVql),
       vqlQuery(docsByStudyVql),
-      vqlQuery(docsByZoneVql),
-      vqlQuery(sitesByStudyVql).catch(() => []),
-      vqlQuery(timelinessVql),
     ]);
 
-    // Build per-study summary
-    const studyMap = {};
+    const documentsByStudy = docsByStudy.map(r => ({
+      study: r.study_name || 'Unassigned',
+      count: r.doc_count || 0,
+    }));
 
-    for (const row of docsByStudy) {
-      const study = row.study_name || 'Unassigned';
-      studyMap[study] ||= {
-        study,
-        totalDocuments: 0,
-        statusBreakdown: {},
-        artifactTypes: {},
-        sites: { active: 0, inactive: 0 },
-        filingTimeliness: { onTime: 0, late: 0, rate: null },
-      };
-      studyMap[study].totalDocuments += row.doc_count || 0;
-      studyMap[study].statusBreakdown[row.status__v || 'unknown'] = row.doc_count || 0;
-    }
-
-    for (const row of docsByZone) {
-      const study = row.study_name || 'Unassigned';
-      if (!studyMap[study]) continue;
-      const artifact = row.artifact_type__v || 'Unclassified';
-      studyMap[study].artifactTypes[artifact] = (studyMap[study].artifactTypes[artifact] || 0) + (row.doc_count || 0);
-    }
-
-    for (const row of sitesByStudy) {
-      const study = row.study_name || 'Unassigned';
-      if (!studyMap[study]) continue;
-      if (row.status__v === 'active__v') {
-        studyMap[study].sites.active += row.site_count || 0;
-      } else {
-        studyMap[study].sites.inactive += row.site_count || 0;
-      }
-    }
-
-    // Filing timeliness: 35-day threshold (configurable per study)
-    const FILING_DEADLINES = {
-      'XmAb13676-06': 35,
-      'XmAb14045-08': 35,
-      'XmAb18087-16': 35,
-      'XmAb819-01':   15,
-      'XmAb942-01':   15,
-      'XmAb808-02':   35,
-    };
-    const DEFAULT_DEADLINE = 35;
-
-    for (const doc of timeliness) {
-      const study = doc.study_name || 'Unassigned';
-      if (!studyMap[study]) continue;
-      const created = new Date(doc.created_date__v);
-      const modified = new Date(doc.last_modified_date__v);
-      const daysToFile = (modified - created) / (1000 * 60 * 60 * 24);
-      const deadline = FILING_DEADLINES[study] || DEFAULT_DEADLINE;
-
-      if (daysToFile <= deadline) {
-        studyMap[study].filingTimeliness.onTime += 1;
-      } else {
-        studyMap[study].filingTimeliness.late += 1;
-      }
-    }
-
-    // Calculate timeliness rate
-    for (const s of Object.values(studyMap)) {
-      const total = s.filingTimeliness.onTime + s.filingTimeliness.late;
-      s.filingTimeliness.rate = total > 0
-        ? Math.round((s.filingTimeliness.onTime / total) * 100)
-        : null;
-      s.filingTimeliness.deadline = FILING_DEADLINES[s.study] || DEFAULT_DEADLINE;
-    }
-
-    // Totals
-    const studies = Object.values(studyMap).sort((a, b) => b.totalDocuments - a.totalDocuments);
-    const totalDocs = studies.reduce((sum, s) => sum + s.totalDocuments, 0);
-    const totalOnTime = studies.reduce((sum, s) => sum + s.filingTimeliness.onTime, 0);
-    const totalLate = studies.reduce((sum, s) => sum + s.filingTimeliness.late, 0);
-    const overallTimeliness = (totalOnTime + totalLate) > 0
-      ? Math.round((totalOnTime / (totalOnTime + totalLate)) * 100)
-      : null;
+    const recentDocuments = docs.map(d => ({
+      id: d.id,
+      name__v: d.name__v,
+      document_number: d.document_number__v,
+      status: d.status__v,
+      study__v: d.study_name || 'Unassigned',
+      artifact_type: d.artifact_type__v || null,
+      version_modified_date__v: d.version_modified_date__v,
+    }));
 
     res.status(200).json({
       status: 'ok',
-    
+      generatedAt: new Date().toISOString(),
+      studiesCount: studies.length,
+      sitesCount: sites.length,
+      documentsFiled: docs.length,
+      documentsByStudy,
+      recentDocuments,
+      studies: studies.map(s => ({ name: s.name__v, status: s.status__v })),
+      sites: sites.map(s => ({
+        name: s.name__v,
+        status: s.status__v,
+        study: s.study_name || 'Unassigned',
+      })),
+    });
+  } catch (e) {
+    res.status(200).json({
+      status: 'warning',
+      generatedAt: new Date().toISOString(),
+      studiesCount: 0,
+      sitesCount: 0,
+      documentsFiled: 0,
+      documentsByStudy: [],
+      recentDocuments: [],
+      studies: [],
+      sites: [],
+      note: String(e.message || e),
+    });
+  }
+}
