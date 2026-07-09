@@ -3,47 +3,43 @@ import { vqlQuery } from '../lib/vault.js';
 export default async function handler(req, res) {
   try {
     const studiesVql = `
-      SELECT name__v, status__v FROM study__v ORDER BY name__v
+      SELECT name__v, status__v
+      FROM study__v
+      ORDER BY name__v
     `;
+
     const sitesVql = `
-      SELECT name__v, status__v, study__vr.name__v AS study_name FROM site__v
+      SELECT name__v, status__v
+      FROM site__v
+      LIMIT 200
     `;
+
     const docsVql = `
-      SELECT id, name__v, document_number__v, status__v,
-             study__vr.name__v AS study_name,
-             artifact_type__v, version_modified_date__v
+      SELECT id, name__v, document_number__v, status__v, version_modified_date__v
       FROM documents
       WHERE status__v != 'obsolete__v'
       ORDER BY version_modified_date__v DESC
-      LIMIT 50
-    `;
-    const docsByStudyVql = `
-      SELECT study__vr.name__v AS study_name, COUNT(id) AS doc_count
-      FROM documents
-      WHERE status__v != 'obsolete__v'
-      GROUP BY study__vr.name__v
+      LIMIT 200
     `;
 
-    const [studies, sites, docs, docsByStudy] = await Promise.all([
+    const [studies, sites, docs] = await Promise.all([
       vqlQuery(studiesVql).catch(() => []),
       vqlQuery(sitesVql).catch(() => []),
       vqlQuery(docsVql),
-      vqlQuery(docsByStudyVql),
     ]);
 
-    const documentsByStudy = docsByStudy.map(r => ({
-      study: r.study_name || 'Unassigned',
-      count: r.doc_count || 0,
-    }));
+    const documentsByStudy = docs.length
+      ? [{ study: 'Unassigned', count: docs.length }]
+      : [];
 
     const recentDocuments = docs.map(d => ({
       id: d.id,
-      name__v: d.name__v,
-      document_number: d.document_number__v,
-      status: d.status__v,
-      study__v: d.study_name || 'Unassigned',
-      artifact_type: d.artifact_type__v || null,
-      version_modified_date__v: d.version_modified_date__v,
+      name__v: d.name__v || 'Untitled',
+      document_number: d.document_number__v || null,
+      status: d.status__v || null,
+      study__v: 'Unassigned',
+      artifact_type: null,
+      version_modified_date__v: d.version_modified_date__v || null,
     }));
 
     res.status(200).json({
@@ -58,7 +54,7 @@ export default async function handler(req, res) {
       sites: sites.map(s => ({
         name: s.name__v,
         status: s.status__v,
-        study: s.study_name || 'Unassigned',
+        study: 'Unassigned',
       })),
     });
   } catch (e) {

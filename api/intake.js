@@ -1,63 +1,62 @@
 import { vqlQuery } from '../lib/vault.js';
 
 const STAGE_MAP = {
-  'unclassified__v':      'Intake',
+  'unclassified__v': 'Intake',
   'needs_classification': 'Needs Classification',
-  'in_qc_review__v':      'QC Review',
-  'approved__v':          'Approved',
-  'effective__v':         'Approved',
-  'rejected__v':          'Rejected',
-  'obsolete__v':          'Rejected',
+  'in_qc_review__v': 'QC Review',
+  'approved__v': 'Approved',
+  'effective__v': 'Approved',
+  'rejected__v': 'Rejected',
+  'obsolete__v': 'Rejected',
 };
 
 export default async function handler(req, res) {
   try {
     const vql = `
-      SELECT id, name__v, status__v, study__vr.name__v AS study_name, last_modified_date__v
+      SELECT id, document_number__v, name__v, status__v,
+             created_date__v, last_modified_date__v
       FROM documents
       ORDER BY last_modified_date__v DESC
-      LIMIT 25
+      LIMIT 100
     `;
 
     const docs = await vqlQuery(vql);
 
     const recentFiles = docs.map(d => ({
-      id:             d.id,
-      document_number: d.document_number__v,
-      name:           d.name__v,
-      status:         d.status__v,
-      stage:          STAGE_MAP[d.status__v] || d.status__v || 'Unknown',
-      study:          d.study_name || 'Unassigned',
-      site:           d.site_name || null,
-      country:        d.country__v || null,
-      artifactType:   d.artifact_type__v || null,
-      classification: d.classification__vs || null,
-      created_at:     d.created_date__v,
-      modified_at:    d.last_modified_date__v,
+      id: d.id,
+      document_number: d.document_number__v || null,
+      name: d.name__v || 'Untitled',
+      status: d.status__v || 'Unknown',
+      stage: STAGE_MAP[d.status__v] || d.status__v || 'Unknown',
+      study: 'Unassigned',
+      site: null,
+      country: null,
+      artifactType: null,
+      classification: null,
+      created_at: d.created_date__v || null,
+      modified_at: d.last_modified_date__v || null,
     }));
 
-    const intake       = recentFiles.filter(f => f.stage === 'Intake');
+    const intake = recentFiles.filter(f => f.stage === 'Intake');
     const classification = recentFiles.filter(f => f.stage === 'Needs Classification');
-    const qc           = recentFiles.filter(f => f.stage === 'QC Review');
-    const approved     = recentFiles.filter(f => f.stage === 'Approved');
-    const rejected     = recentFiles.filter(f => f.stage === 'Rejected');
+    const qc = recentFiles.filter(f => f.stage === 'QC Review');
+    const approved = recentFiles.filter(f => f.stage === 'Approved');
+    const rejected = recentFiles.filter(f => f.stage === 'Rejected');
 
     const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
     const agingItems = intake.filter(f =>
-      Date.now() - new Date(f.modified_at || f.created_at).getTime() > SEVEN_DAYS
+      f.modified_at && (Date.now() - new Date(f.modified_at).getTime() > SEVEN_DAYS)
     );
 
-    const byStudy = {};
-    for (const f of recentFiles) {
-      const k = f.study;
-      byStudy[k] ||= { study: k, count: 0, readyForClassification: 0, inQc: 0, aging: 0 };
-      byStudy[k].count += 1;
-      if (f.stage === 'Needs Classification') byStudy[k].readyForClassification += 1;
-      if (f.stage === 'QC Review') byStudy[k].inQc += 1;
-    }
-    for (const f of agingItems) {
-      if (byStudy[f.study]) byStudy[f.study].aging += 1;
-    }
+    const byStudy = {
+      Unassigned: {
+        study: 'Unassigned',
+        count: recentFiles.length,
+        readyForClassification: classification.length,
+        inQc: qc.length,
+        aging: agingItems.length,
+      }
+    };
 
     const cros = [...new Set(recentFiles.map(f => {
       const parts = (f.name || '').split('_');
@@ -78,7 +77,7 @@ export default async function handler(req, res) {
         agingItems: agingItems.length,
         cros,
         recentFiles: recentFiles.slice(0, 25),
-        studies: Object.values(byStudy).sort((a, b) => b.count - a.count),
+        studies: Object.values(byStudy),
       },
     });
   } catch (e) {
