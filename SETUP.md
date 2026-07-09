@@ -7,16 +7,9 @@ Deploy these files into `vault-etmf-mcp-server`:
 - `api/intake.js`
 - `api/vault-summary.js`
 - `api/overview.js`
+- `lib/vault.js`
 
 ## Required Vercel env vars
-
-### Box
-- `BOX_DEVELOPER_TOKEN`
-- `BOX_FOLDER_ID_INTAKE`
-- `BOX_FOLDER_ID_CLASSIFICATION`
-- `BOX_FOLDER_ID_QC`
-- `BOX_FOLDER_ID_APPROVED`
-- `BOX_FOLDER_ID_REJECTED`
 
 ### Vault
 - `VAULT_URL`
@@ -33,13 +26,14 @@ Deploy these files into `vault-etmf-mcp-server`:
 
 ```bash
 cd /Users/jennellbotero/Desktop/GleanLS/vault-etmf-mcp-server
-cp ~/Downloads/index.html ./index.html
-cp ~/Downloads/health.js ./api/health.js
+mkdir -p lib
+cp ~/Downloads/vault.js ./lib/vault.js
+cp ~/Downloads/overview.js ./api/overview.js
 cp ~/Downloads/intake.js ./api/intake.js
 cp ~/Downloads/vault-summary.js ./api/vault-summary.js
-cp ~/Downloads/overview.js ./api/overview.js
-
-git add index.html api/health.js api/intake.js api/vault-summary.js api/overview.js
-git commit -m "Patch SmartTMF shell for live Box intake and Vault summary"
+cp ~/Downloads/health.js ./api/health.js
+cp ~/Downloads/index.html ./index.html
+rm -f lib/box.js
+git add -A
+git commit -m "Migrate SmartTMF from Box to Vault eTMF"
 git push origin main
-```
