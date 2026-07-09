@@ -1,26 +1,12 @@
-import overviewHandler from './overview.js';
-import vaultHandler from './vault-summary.js';
-
-function run(handler) {
-  return new Promise((resolve) => {
-    const req = {};
-    const res = {
-      status(code) { this.code = code; return this; },
-      json(data) { resolve(data); }
-    };
-    handler(req, res);
-  });
-}
-
 export default async function handler(req, res) {
-  const [overview, vault] = await Promise.all([run(overviewHandler), run(vaultHandler)]);
-
-  const status = overview.overview?.health === 'green' ?
-    'ok' : overview.overview?.health === 'amber' ?
-    'warning' : 'error';
+  const envReady = Boolean(
+    process.env.VAULT_ETMF_DNS &&
+    process.env.VAULT_ETMF_USERNAME &&
+    process.env.VAULT_ETMF_PASSWORD
+  );
 
   res.status(200).json({
-    status,
+    status: envReady ? 'ok' : 'warning',
     generatedAt: new Date().toISOString(),
     environment: {
       company: 'USDM Life Sciences',
@@ -30,14 +16,14 @@ export default async function handler(req, res) {
     datasources: {
       documents: {
         name: process.env.DATASOURCE_DOCUMENTS || 'vaultetmfv2documents',
-        indexed: vault.documentsFiled || 0,
-        status: vault.status || 'warning',
+        indexed: 0,
+        status: 'unknown',
         description: 'Vault eTMF documents exposed through Glean'
       },
       objects: {
         name: process.env.DATASOURCE_OBJECTS || 'vaultetmfv2objects',
-        indexed: (vault.studiesCount || 0) + (vault.sitesCount || 0),
-        status: vault.status || 'warning',
+        indexed: 0,
+        status: 'unknown',
         description: 'Study and site context exposed through Glean'
       },
       security: {
