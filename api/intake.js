@@ -1,36 +1,88 @@
-import { discoverStageFolders, listFiles } from '../lib/box.js';
+import { vqlQuery } from '../lib/vault.js';
+
+// Map Vault lifecycle states → intake stages
+const STAGE_MAP = {
+  'unclassified__v':       'Intake',
+  'needs_classification':  'Needs Classification',
+  'in_qc_review__v':       'QC Review',
+  'approved__v':           'Approved',
+  'effective__v':          'Approved',
+  'rejected__v':           'Rejected',
+  'obsolete__v':           'Rejected',
+};
+
+function resolveStage(status) {
+  return STAGE_MAP[status] || status || 'Unknown';
+}
 
 export default async function handler(req, res) {
   try {
-    const folders = await discoverStageFolders();
-    const [intakeFiles, classificationFiles, qcFiles, approvedFiles, rejectedFiles] = await Promise.all([
-      listFiles(folders.intake),
-      listFiles(folders.classification),
-      listFiles(folders.qc),
-      listFiles(folders.approved),
-      listFiles(folders.rejected),
-    ]);
+    // Pull all documents in inbox-related lifecycle states
+    const vql = `
+      SELECT id, document_number__v, name__v, status__v,
+             study__vr.name__v AS study_name,
+             created_date__v, last_modified_date__v,
+             classification__vs, artifact_type__v,
+             site__vr.name__v AS site_name,
+             country__v
+      FROM documents
+      WHERE status__v IN (
+        'unclassified__v',
+        'needs_classification',
+        'in_qc_review__v',
+        'approved__v',
+        'effective__v',
+        'rejected__v'
+      )
+      ORDER BY last_modified_date__v DESC
+      LIMIT 100
+    `;
 
-    const recentFiles = [...intakeFiles, ...classificationFiles, ...qcFiles, ...approvedFiles, ...rejectedFiles]
-      .map(f => ({
-        ...f,
-        stage: intakeFiles.find(x => x.id === f.id) ? 'Intake' :
-               classificationFiles.find(x => x.id === f.id) ? 'Needs Classification' :
-               qcFiles.find(x => x.id === f.id) ? 'QC Review' :
-               approvedFiles.find(x => x.id === f.id) ? 'Approved' : 'Rejected',
-      }))
-      .sort((a, b) => new Date(b.modified_at || b.created_at) - new Date(a.modified_at || a.created_at))
-      .slice(0, 25);
+    const docs = await vqlQuery(vql);
 
+    // Normalize to common shape
+    const recentFiles = docs.map(d => ({
+      id:            d.id,
+      document_number: d.document_number__v,
+      name:          d.name__v,
+      status:        d.status__v,
+      stage:         resolveStage(d.status__v),
+      study:         d.study_name || 'Unassigned',
+      site:          d.site_name || null,
+      country:       d.country__v || null,
+      artifact_type: d.artifact_type__v || null,
+      classification: d.classification__vs || null,
+      created_at:    d.created_date__v,
+      modified_at:   d.last_modified_date__v,
+    }));
+
+    // Counts by stage
+    const intake       = recentFiles.filter(f => f.stage === 'Intake');
+    const classification = recentFiles.filter(f => f.stage === 'Needs Classification');
+    const qc           = recentFiles.filter(f => f.stage === 'QC Review');
+    const approved     = recentFiles.filter(f => f.stage === 'Approved');
+    const rejected     = recentFiles.filter(f => f.stage === 'Rejected');
+
+    // Aggregate by study
     const byStudy = {};
     for (const f of recentFiles) {
-      const k = f.study || 'Unassigned';
-      byStudy[k] ||= { study: k, count: 0, readyForClassification: 0, inQc: 0 };
+      const k = f.study;
+      byStudy[k] ||= { study: k, count: 0, readyForClassification: 0, inQc: 0, aging: 0 };
       byStudy[k].count += 1;
       if (f.stage === 'Needs Classification') byStudy[k].readyForClassification += 1;
       if (f.stage === 'QC Review') byStudy[k].inQc += 1;
     }
 
+    // Aging: documents in Intake > 7 days (approaching 35-day filing deadline)
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+    const agingItems = intake.filter(f =>
+      Date.now() - new Date(f.modified_at || f.created_at).getTime() > SEVEN_DAYS
+    );
+    for (const f of agingItems) {
+      if (byStudy[f.study]) byStudy[f.study].aging += 1;
+    }
+
+    // Extract unique CROs from study names or site names
     const cros = [...new Set(recentFiles.map(f => {
       const parts = (f.name || '').split('_');
       return parts.length > 1 ? parts[0] : null;
@@ -40,17 +92,16 @@ export default async function handler(req, res) {
       status: 'ok',
       generatedAt: new Date().toISOString(),
       intake: {
-        source: 'Box intake',
-        folders,
+        source: 'Vault eTMF Inbox',
         totalFiles: recentFiles.length,
-        newItems: intakeFiles.length,
-        readyForClassification: classificationFiles.length,
-        inQcReview: qcFiles.length,
-        approvedCount: approvedFiles.length,
-        rejectedCount: rejectedFiles.length,
-        agingItems: intakeFiles.filter(f => Date.now() - new Date(f.modified_at || f.created_at).getTime() > 7 * 24 * 60 * 60 * 1000).length,
+        newItems: intake.length,
+        readyForClassification: classification.length,
+        inQcReview: qc.length,
+        approvedCount: approved.length,
+        rejectedCount: rejected.length,
+        agingItems: agingItems.length,
         cros,
-        recentFiles,
+        recentFiles: recentFiles.slice(0, 25),
         studies: Object.values(byStudy).sort((a, b) => b.count - a.count),
       },
     });
@@ -59,7 +110,7 @@ export default async function handler(req, res) {
       status: 'warning',
       generatedAt: new Date().toISOString(),
       intake: {
-        source: 'Box intake',
+        source: 'Vault eTMF Inbox',
         totalFiles: 0,
         newItems: 0,
         readyForClassification: 0,
