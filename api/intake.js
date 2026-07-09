@@ -13,19 +13,10 @@ const STAGE_MAP = {
 export default async function handler(req, res) {
   try {
     const vql = `
-      SELECT id, document_number__v, name__v, status__v,
-             study__vr.name__v AS study_name,
-             site__vr.name__v AS site_name,
-             artifact_type__v, classification__vs,
-             created_date__v, last_modified_date__v, country__v
+      SELECT id, name__v, status__v, study__vr.name__v AS study_name, last_modified_date__v
       FROM documents
-      WHERE status__v IN (
-        'unclassified__v', 'needs_classification',
-        'in_qc_review__v', 'approved__v',
-        'effective__v', 'rejected__v'
-      )
       ORDER BY last_modified_date__v DESC
-      LIMIT 100
+      LIMIT 25
     `;
 
     const docs = await vqlQuery(vql);
